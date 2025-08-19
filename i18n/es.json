@@ -1,0 +1,168 @@
+{
+    "login": {
+        "title": "Iniciar sesión",
+        "go_to_register": "¿No tienes cuenta? Regístrate",
+        "login": "Entrar"
+    },
+    "register": {
+        "title": "Registrarse",
+        "go_to_login": "¿Tienes cuenta? Inicia sesión",
+        "register": "Registrarse"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "no_items_found": "No se encontraron items en tu dashboard",
+        "delete_item": "Eliminar item del dashboard",
+        "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold> del dashboard?"
+    },
+    "workspaces": {
+        "title": "Espacios de trabajo",
+        "edit": "Editar espacio de trabajo",
+        "remove": "Eliminar espacio de trabajo",
+        "remove_message": "¿Estás seguro de que quieres eliminar el espacio de trabajo <bold>{name}</bold>?",
+        "save_modal": {
+            "create_title": "Crear espacio de trabajo",
+            "edit_title": "Editar espacio de trabajo",
+            "name": "Nombre del espacio de trabajo",
+            "pick_color": "Selecciona un color"
+        }
+    },
+    "notes": {
+        "title": "Notas"
+    },
+    "lists": {
+        "title": "Listas",
+        "no_items_found": "No se encontraron listas",
+        "edit": "Editar",
+        "add_to_dashboard": "Añadir a dashboard",
+        "share": "Compartir",
+        "remove": "Eliminar",
+        "see_collaborators": "Ver colaboradores",
+        "types": {
+            "all": "Todos",
+            "movies": "Películas",
+            "movie": "Película",
+            "serie": "Serie",
+            "series": "Series"
+        },
+        "save_list": {
+            "create_title": "Crear lista",
+            "edit_title": "Editar lista",
+            "name": "Nombre de la lista",
+            "type": "Tipo de lista",
+            "folder": "Carpeta"
+        }
+    },
+    "list": {
+        "collaborators": "Colaboradores",
+        "can_edit": "Puede editar",
+        "can_not_edit": "No puede editar",
+        "toggle_seen": "Mostrar vistas",
+        "seen": "Vista",
+        "not_seen": "No vista",
+        "no_items_found": "No se encontraron items en esta lista",
+        "tasks": {
+            "item_content": "Contenido del elemento",
+            "new_item_content": "Contenido del nuevo elemento",
+            "edit_item": "Editar elemento",
+            "create_item": "Crear elemento",
+            "delete_item": "Eliminar elemento",
+            "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?"
+        },
+        "fixed": {
+            "adding_item_to_list": "Añadiendo <b>{title}</b> a la lista...",
+            "add_to_list": "Añadir a la lista",
+            "remove_from_list": "Eliminar de la lista",
+            "see_providers": "Ver proveedores",
+            "providers": "Proveedores",
+            "no_providers": "No hay proveedores disponibles todavía.",
+            "marking_item_as_seen": "Marcando <b>{title}</b> como visto...",
+            "marking_item_as_not_seen": "Marcando <b>{title}</b> como no visto...",
+            "mark_as_seen": "Marcar como visto",
+            "mark_as_not_seen": "Marcar como no visto",
+            "item_marked_as_seen": "<b>{title}</b> marcado como visto",
+            "item_marked_as_not_seen": "<b>{title}</b> marcado como no visto",
+            "removing_item_from_list": "Eliminando <b>{title}</b> de la lista...",
+            "item_removed_from_list": "<b>{title}</b> eliminado de la lista",
+            "item_added_to_list": "<b>{title}</b> añadido a la lista",
+            "search_item": "Buscar películas o series",
+            "search_movie": "Buscar película",
+            "search_series": "Buscar serie",
+            "select_category": "Selecciona una categoría",
+            "select_list_type": "Selecciona un tipo",
+            "add_item": "Añadir item",
+            "see_trailer": "Ver trailer",
+            "recommendations": "Recomendaciones",
+            "collection_title": "Esta película pertenece a la colección: <bold><underline>{collectionName}</underline></bold>",
+            "see_collection": "Ver colección",
+            "sort_by_title_asc": "Ordenar por título ascendente",
+            "sort_by_title_desc": "Ordenar por título descendente",
+            "sort_by_release_date_asc": "Ordenar por fecha de lanzamiento ascendente",
+            "sort_by_release_date_desc": "Ordenar por fecha de lanzamiento descendente",
+            "sort_by_added_at_asc": "Ordenar por fecha de añadido ascendente",
+            "sort_by_added_at_desc": "Ordenar por fecha de añadido descendente",
+            "trailer": "Trailer: <bold>{title}</bold>"
+        },
+        "books": {
+            "search_book": "Buscar libro",
+            "no_items_found": "No se encontraron libros",
+            "mark_as_read": "Marcar como leído",
+            "mark_as_not_read": "Marcar como no leído",
+            "item_marked_as_read": "<b>{title}</b> marcado como leído",
+            "item_marked_as_not_read": "<b>{title}</b> marcado como no leído",
+            "item_removed_from_list": "<b>{title}</b> eliminado de la lista",
+            "item_added_to_list": "<b>{title}</b> añadido a la lista",
+            "removing_item_from_list": "Eliminando <b>{title}</b> de la lista...",
+            "remove_from_list": "Eliminar de la lista",
+            "add_to_list": "Añadir a la lista",
+            "authors": "{length, plural, =1 {Autor} other {Autores}}",
+            "more_author_books": "Más libros del autor:",
+            "page_count": "{count, plural, =1 {1 página} other {# páginas}}",
+            "adding_item_to_list": "Añadiendo <b>{title}</b> a la lista...",
+            "marking_item_as_read": "Marcando <b>{title}</b> como leído...",
+            "marking_item_as_not_read": "Marcando <b>{title}</b> como no leído...",
+            "publisher": "Editor"
+        },
+        "delete_list": "Eliminar lista",
+        "delete_list_confirmation": "¿Estás seguro de que quieres eliminar esta lista?"
+    },
+    "folder_details": {
+        "add_list": "Añadir lista",
+        "add_note": "Añadir nota",
+        "add_folder": "Añadir carpeta"
+    },
+    "folders": {
+        "save_modal": {
+            "create_title": "Crear carpeta",
+            "edit_title": "Editar carpeta",
+            "name": "Nombre de la carpeta"
+        }
+    },
+    "validations": {
+        "required": "Campo obligatorio.",
+        "email": "Introduce un email válido.",
+        "min_length": "Al menos {value, plural, =1 {1 carácter} other {# caracteres}}.",
+        "at_least_letter": "Al menos {value, plural, =1 {1 letra} other {# letras}}.",
+        "at_least_special": "Al menos {value, plural, =1 {1 carácter especial} other {# caracteres especiales}}.",
+        "at_least_number": "Al menos {value, plural, =1 {1 número} other {# números}}.",
+        "wrong_credentials": "Credenciales incorrectas"
+    },
+    "email": "Email",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "or": "o",
+    "owner": "Propietario",
+    "collaborator": "Colaborador",
+    "create": "Crear",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "apply": "Aplicar",
+    "reset": "Restablecer",
+    "add": "Añadir",
+    "sort_by": "Ordenar por",
+    "delete": "Eliminar",
+    "no_items": "No se encontraron elementos.",
+    "confirm": "Confirmar",
+    "logout": "Cerrar sesión"
+}
