@@ -1,34 +1,35 @@
+import PageLayout from '@/components/PageLayout';
+import { sortByOptions } from '@/constants/list';
 import { useLazyApi } from '@/hooks/use-api';
 import useDebouncedText from '@/hooks/use-debounce-text';
 import { FixedItemList, ThemoviedbFixedItem } from '@/models/list';
 import { ThemoviedbProvider } from '@/models/themovieddb';
 import { KeyValue } from '@/models/utils';
+import { sortListItemsBy } from '@/services/lists';
 import { getItemProviders, searchMoviesOrSeriesItem } from '@/services/themoviedb';
 import { useUserStore } from '@/store';
-import dayjs from 'dayjs';
 import { Href, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import BottomSheet from '../BottomSheet';
-import Button from '../button';
-import Carousel from '../Carrousel';
-import Dropdown from '../Dropdown';
-import { Input } from '../input';
-import Loader from '../loader';
-import CustomPullToRefreshOnRelease from '../pullToRefresh';
-import ArrowDownWideNarrow from '../svgs/ArrowDownWideNarrow';
-import Bookmark from '../svgs/Boockmark';
-import Eye from '../svgs/Eye';
-import EyeOff from '../svgs/EyeOff';
-import Search from '../svgs/Search';
-import SlidersHorizontal from '../svgs/SlidersHorizontal';
-import Trash2 from '../svgs/Trash2';
-import Tv from '../svgs/Tv';
-import X from '../svgs/X';
-import Switch from '../Switch';
-import Text from '../Text';
+import BottomSheet from '../../components/BottomSheet';
+import Button from '../../components/button';
+import Carousel from '../../components/Carrousel';
+import Dropdown from '../../components/dropdown/Dropdown';
+import { Input } from '../../components/input';
+import Loader from '../../components/loader';
+import ArrowDownWideNarrow from '../../components/svgs/ArrowDownWideNarrow';
+import Bookmark from '../../components/svgs/Boockmark';
+import Eye from '../../components/svgs/Eye';
+import EyeOff from '../../components/svgs/EyeOff';
+import Search from '../../components/svgs/Search';
+import SlidersHorizontal from '../../components/svgs/SlidersHorizontal';
+import Trash2 from '../../components/svgs/Trash2';
+import Tv from '../../components/svgs/Tv';
+import X from '../../components/svgs/X';
+import Switch from '../../components/Switch';
+import Text from '../../components/Text';
 import FixedItemProvidersModal from './fixedItemProvidersModal';
 import MovieSeriesItem from './movieSerieItem';
 
@@ -48,35 +49,6 @@ const categories = [
     { key: 'lists.types.series', value: MoviesAndSeriesTypes.series },
 ];
 
-export const sortByOptions = [
-    { key: 'list.fixed.sort_by_title_asc', value: 'title_asc' },
-    { key: 'list.fixed.sort_by_title_desc', value: 'title_desc' },
-    { key: 'list.fixed.sort_by_release_date_asc', value: 'release_date_asc' },
-    { key: 'list.fixed.sort_by_release_date_desc', value: 'release_date_desc' },
-    { key: 'list.fixed.sort_by_added_at_asc', value: 'added_at_asc' },
-    { key: 'list.fixed.sort_by_added_at_desc', value: 'added_at_desc' },
-];
-
-
-export const sortListItemsBy = (items: any[], sortBy: string): any[] => {
-    switch (sortBy) {
-        case 'title_asc':
-            return [...items].sort((a, b) => a.data.title.localeCompare(b.data.title));
-        case 'title_desc':
-            return [...items].sort((a, b) => b.data.title.localeCompare(a.data.title));
-        case 'release_date_asc':
-            return [...items].sort((a, b) => new Date(a.data.released).getTime() - new Date(b.data.released).getTime());
-        case 'release_date_desc':
-            return [...items].sort((a, b) => new Date(b.data.released).getTime() - new Date(a.data.released).getTime());
-        case 'added_at_asc':
-            return [...items].sort((a, b) => dayjs(a.created_at).valueOf() - dayjs(b.created_at).valueOf());
-        case 'added_at_desc':
-            return [...items].sort((a, b) => dayjs(b.created_at).valueOf() - dayjs(a.created_at).valueOf());
-        default:
-            return items;
-    }
-}
-
 const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: string, listData: any, getList: () => Promise<void> }) => {
     const [filtersOpen, setFiltersOpen] = useState(false);
     const [categoryFiltersOpen, setCategoryFiltersOpen] = useState(false);
@@ -91,7 +63,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
     const insets = useSafeAreaInsets();
     const router = useRouter();
     const { colors } = useUserStore();
-    const { text: searchText, setText: setSearchText } = useDebouncedText((text) => handleSearchItems(text), 650);
+    const { text: searchText, setText: setSearchText } = useDebouncedText('', (text) => handleSearchItems(text), 650);
     const [itemSelectedProviders, setItemSelectedProviders] = useState<ThemoviedbProvider[] | null>(null);
     const [showProvidersModal, setShowProvidersModal] = useState(false);
     const [isLoadingProviders, setIsLoadingProviders] = useState(false);
@@ -121,6 +93,8 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
     }
 
     useEffect(() => {
+        console.log('listData', listData.type);
+
         applyFilters();
         if (listData.type === 'movies_and_series') {
             setCategory(categories[0]);
@@ -158,6 +132,8 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
         const items = await searchItems(filterText);
         setLoadingSearch(false);
         // setItems(_items)
+        console.log({items: items[0].data});
+
         setCarouselData(items);
     }
 
@@ -167,9 +143,11 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
             const searchType = category.value || 'all';
             const itemsSearched = await searchMoviesOrSeriesItem(filterText, searchType);
+            console.log({ itemsSearched });
+
             const itemsSearchedIds = listItemsFiltered.map((item: FixedItemList<ThemoviedbFixedItem>) => item.data.themoviedbId);
-            const itemsSearchedParsed = itemsSearched.filter((item: ThemoviedbFixedItem) =>
-                !itemsSearchedIds.includes(item.themoviedbId)).map((item: ThemoviedbFixedItem) => ({
+            const itemsSearchedParsed = itemsSearched.filter((_item: ThemoviedbFixedItem) => !itemsSearchedIds.includes(_item.themoviedbId))
+                .map((item: ThemoviedbFixedItem) => ({
                     data: item,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
@@ -246,65 +224,71 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
     return (
         <>
-            <CustomPullToRefreshOnRelease onRefresh={getList}>
-                <View className='flex flex-1 gap-6'>
-                    <View className='flex flex-row gap-6 items-end'>
-                        <View className='flex-1'>
-                            <Input
-                                label={category.value === 'all' ? 'list.fixed.search_item' : category.value === 'movies' ? 'list.fixed.search_movie' : 'list.fixed.search_series'}
-                                value={searchText}
-                                selectionColor={colors['secondary']}
-                                onChangeText={(value) => setSearchText(value)}
-                                suffixIcon={
-                                    searchText.length > 0
-                                        ? <TouchableOpacity onPress={() => setSearchText('')}>
-                                            <X size={20} className='text-base-content' />
-                                        </TouchableOpacity>
-                                        : <Search size={20} className='text-base-content' />
+            <PageLayout onRefresh={getList} breadcrumbData={listData?.breadcrumb} className='gap-0'>
+                {/* <CustomPullToRefreshOnRelease onRefresh={getList}> */}
+                    <View className='flex flex-1 gap-6'>
+                        <View className='flex flex-row gap-6 items-end'>
+                            <View className='flex-1'>
+                                <Input
+                                    label={category.value === 'all' ? 'list.fixed.search_item' : category.value === 'movies' ? 'list.fixed.search_movie' : 'list.fixed.search_series'}
+                                    value={searchText}
+                                    selectionColor={colors['secondary']}
+                                    onChangeText={(value) => setSearchText(value)}
+                                    suffixIcon={
+                                        searchText.length > 0
+                                            ? <TouchableOpacity onPress={() => setSearchText('')}>
+                                                <X size={20} className='text-base-content' />
+                                            </TouchableOpacity>
+                                            : <Search size={20} className='text-base-content' />
+                                    }
+                                />
+                            </View>
+                            <View className='flex flex-row gap-6 pb-2'>
+                                <TouchableOpacity hitSlop={10} onPress={() => setSortByOpen(true)} disabled={searchText.length > 0}>
+                                    <ArrowDownWideNarrow size={24} className={`mb-2 text-base-content ${searchText.length > 0 ? 'opacity-50' : ''}`} />
+                                </TouchableOpacity>
+                                <TouchableOpacity hitSlop={10} onPress={() => setFiltersOpen(true)} disabled={searchText.length > 0}>
+                                    <SlidersHorizontal size={24} className={`mb-2 text-base-content ${searchText.length > 0 ? 'opacity-50' : ''}`} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {loadingSearch &&
+                            <View className='flex-1 items-center justify-center'>
+                                <Loader />
+                            </View>
+                        }
+                        {!loadingSearch && carouselData.length > 0 &&
+                            <Carousel
+                                data={carouselData}
+                                keyExtractor={(item) => `${item.data.type}-${item.data.themoviedbId}`}
+                                renderItem={(item) =>
+                                    {
+                                        return (
+                                            <MovieSeriesItem
+                                                {...item.data}
+                                                itemId={item.id}
+                                                onPress={() => {
+                                                    const url = item.id
+                                                        ? `(app)/${workspaceId}/lists/moviesSeries/${listData.id}/${item.data.type}/${item.id}`
+                                                        : `(app)/${workspaceId}/lists/moviesSeries/${listData.id}/${item.data.type}/unlisted/${item.data.themoviedbId}`;
+                                                    router.push(url as Href);
+                                                }}
+                                                onLongPress={() => setItemSelected(item)}
+                                            />
+                                        );
+                                    }
                                 }
                             />
-                        </View>
-                        <View className='flex flex-row gap-6 pb-2'>
-                            <TouchableOpacity hitSlop={10} onPress={() => setSortByOpen(true)} disabled={searchText.length > 0}>
-                                <ArrowDownWideNarrow size={24} className={`mb-2 text-base-content ${searchText.length > 0 ? 'opacity-50' : ''}`} />
-                            </TouchableOpacity>
-                            <TouchableOpacity hitSlop={10} onPress={() => setFiltersOpen(true)} disabled={searchText.length > 0}>
-                                <SlidersHorizontal size={24} className={`mb-2 text-base-content ${searchText.length > 0 ? 'opacity-50' : ''}`} />
-                            </TouchableOpacity>
-                        </View>
+                        }
+                        {!loadingSearch && !carouselData.length &&
+                            <View className='flex-1 items-center justify-center'>
+                                <Text text='no_items' className='text-2xl text-base-content' />
+                            </View>
+                        }
                     </View>
-
-                    {loadingSearch &&
-                        <View className='flex-1 items-center justify-center'>
-                            <Loader />
-                        </View>
-                    }
-                    {!loadingSearch && carouselData.length > 0 &&
-                        <Carousel
-                            data={carouselData}
-                            keyExtractor={(item) => `${item.data.type}-${item.data.themoviedbId}`}
-                            renderItem={(item) => (
-                                <MovieSeriesItem
-                                    {...item.data}
-                                    itemId={item.id}
-                                    onPress={() => {
-                                        const url = item.id
-                                            ? `(app)/${workspaceId}/lists/moviesSeries/${listData.id}/${item.data.type}/${item.id}`
-                                            : `(app)/${workspaceId}/lists/moviesSeries/${listData.id}/${item.data.type}/unlisted/${item.data.themoviedbId}`;
-                                        router.push(url as Href);
-                                    }}
-                                    onLongPress={() => setItemSelected(item)}
-                                />
-                            )}
-                        />
-                    }
-                    {!loadingSearch && !carouselData.length &&
-                        <View className='flex-1 items-center justify-center'>
-                            <Text text='no_items' className='text-2xl text-base-content' />
-                        </View>
-                    }
-                </View>
-            </CustomPullToRefreshOnRelease>
+                {/* </CustomPullToRefreshOnRelease> */}
+            </PageLayout>
 
             {/* Filters */}
             <BottomSheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)}>

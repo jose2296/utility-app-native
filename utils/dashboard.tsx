@@ -1,4 +1,4 @@
-import { DashboardItem, ParsedDashboardItem } from '@/models/me';
+import { ParsedDashboardItem } from '@/models/me';
 import { DashboardItemType } from '@/models/utils';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Href } from 'expo-router';
@@ -97,9 +97,17 @@ export const parseDashboardItem = (items: any[]): ParsedDashboardItem[] => {
         return {
             ...item,
             icon: icon,
-            href: `/(app)/${item.entity.workspace.id}/${item.entity_type}/${parseListType(item.entity.type)}/${item.entity.id}` as Href,
+            href: parseDashboardItemHref(item),
             order: item.order,
             size: item.size
         }
     }) || [];
+}
+
+const parseDashboardItemHref = (item: any) => {
+    if (item.entity_type === DashboardItemType.lists) {
+        return `/(app)/${item.entity.workspace.id}/${item.entity_type}/${parseListType(item.entity.type)}/${item.entity.id}` as Href;
+    }
+
+    return `/(app)/${item.entity.workspace.id}/${item.entity_type}/${item.entity.id}` as Href;
 }

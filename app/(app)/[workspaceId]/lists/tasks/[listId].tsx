@@ -1,7 +1,7 @@
-import Breadcrumb from '@/components/breadcrumb';
-import TasksList from '@/components/lists/tasks';
 import Loader from '@/components/loader';
 import { useLazyApi } from '@/hooks/use-api';
+import useRealtimeGetData from '@/hooks/use-realtime';
+import TasksList from '@/modules/lists/tasks';
 import { useUserStore } from '@/store';
 import { parseListCommon } from '@/utils/lists';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
@@ -22,20 +22,20 @@ export const parseList = (list: any) => {
 };
 
 const TaskListScreen = () => {
-    const { listId } = useLocalSearchParams();
+    const { listId, workspaceId } = useLocalSearchParams();
     const { data: listData, loading, error, request: getList } = useLazyApi<any>(`lists/${listId}`, 'GET', null, parseList);
-    const { workspaceId } = useLocalSearchParams();
-    const workspace = useUserStore((state) => state.data?.workspaces.find((workspace) => workspace.id === Number(workspaceId)));
+    const workspace = useUserStore((state) => state.data?.workspaces?.find((workspace) => workspace.id === Number(workspaceId)));
     const navigation = useNavigation();
 
-    // useRealtimeGetData(getList, `list-${listId}`, 'update-list');
+    useRealtimeGetData(getList, `list-${listId}`, 'update-list');
+
     useEffect(() => {
         getList();
     }, [getList]);
 
     useEffect(() => {
-        navigation.setOptions({ title: workspace?.name, headerTintColor: workspace?.color });
-
+        const hideHeader = (loading && !listData) || !listData;
+        navigation.setOptions({ title: listData?.name, headerShown: !hideHeader, headerTintColor: workspace?.color });
     }, [navigation, listData, workspace]);
 
     if ((loading && !listData) || !listData) {
@@ -47,10 +47,9 @@ const TaskListScreen = () => {
     }
 
     return (
-        <View className='flex flex-1 px-4 relative'>
-            <Breadcrumb breadcrumb={listData?.breadcrumb} />
-            <TasksList listData={listData} loading={loading} getList={getList} />
-        </View>
+        // <View className='flex flex-1 px-4 relative'>
+        <TasksList listData={listData} loading={loading} getList={getList} />
+        // </View>
     );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 const AnimatedList = <T,>({ data, renderItem, getKey }: { data: T[], renderItem: (item: T, index: number) => React.ReactNode, getKey: (item: T) => string }) => {
@@ -17,18 +17,19 @@ const AnimatedList = <T,>({ data, renderItem, getKey }: { data: T[], renderItem:
     }
 
     return (
-        <View
-            onLayout={(e) => calculateWidth(e)}
-            className='flex'
-            // style={{ flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'flex-start' }}
-        >
+        // <View
+        //     onLayout={(e) => calculateWidth(e)}
+        //     className='flex'
+        //     // style={{ flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'flex-start' }}
+        // >
+            <>
             {
                 data.map((item, index) => (
                     <Animated.View
                         entering={FadeInDown.delay(index * 50).duration(500)}
                         exiting={FadeOutDown.duration(500)}
                         key={getKey(item)}
-                        className={'flex p-2'}
+                        className={'flex'}
                         // style={{
                         //     width: itemWidth * item.size?.width,
                         //     height: itemHeight * item.size?.height
@@ -38,7 +39,8 @@ const AnimatedList = <T,>({ data, renderItem, getKey }: { data: T[], renderItem:
                     </Animated.View>
                 ))
             }
-        </View>
+            </>
+        // </View>
     );
 }
 

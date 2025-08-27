@@ -1,13 +1,13 @@
-import Breadcrumb from '@/components/breadcrumb';
-import MovieSeriesList from '@/components/lists/movieSeries';
 import Loader from '@/components/loader';
 import { useLazyApi } from '@/hooks/use-api';
 import useRealtimeGetData from '@/hooks/use-realtime';
+import MovieSeriesList from '@/modules/lists/movieSeries';
 import { useUserStore } from '@/store';
 import { parseListCommon } from '@/utils/lists';
 import { useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Ellipsis } from 'lucide-react-native';
 import React, { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 export const parseList = (list: any) => {
     list = parseListCommon(list);
@@ -55,7 +55,16 @@ const ListScreen = () => {
 
     useEffect(() => {
         const hideHeader = (loading && !listData) || !listData;
-        navigation.setOptions({ title: workspace?.name, headerShown: !hideHeader, headerTintColor: workspace?.color });
+        navigation.setOptions({
+            title: listData?.name,
+            headerShown: !hideHeader,
+            headerTintColor: workspace?.color,
+            headerRight: () => (
+                <TouchableOpacity disabled={false} onPress={() => null} className={`p-4`}>
+                    <Ellipsis size={20} className='text-base-content' />
+                </TouchableOpacity>
+            )
+        });
     }, [navigation, listData, workspace]);
 
     if ((loading && !listData) || !listData) {
@@ -67,10 +76,33 @@ const ListScreen = () => {
     }
 
     return (
-        <View className='flex flex-1 px-4'>
-            <Breadcrumb breadcrumb={listData?.breadcrumb} />
+        <>
             <MovieSeriesList workspaceId={workspaceId as string} listData={listData} getList={getList} />
-        </View>
+
+            {/* <BottomSheet
+                isOpen={true}
+                onClose={() => null}
+                children={
+                    <View className='flex flex-1 items-center justify-center'>
+                        <Button name='Share list' onPress={async () => {
+                            const isAvailable = await isAvailableAsync();
+                            console.log(isAvailable);
+
+                            if (!isAvailable) return;
+
+                            Share.share({ title: 'TEST', message: 'TjEST' })
+                                .then((res) => {
+                                    console.log(res);
+                                })
+                                .catch((err) => {
+                                    err && console.log(err);
+                                });
+                            await shareAsync('https://example.com', { dialogTitle: 'TEST', UTI: 'public.url' });
+                        }} />
+                    </View>
+                }
+            /> */}
+        </>
     );
 }
 

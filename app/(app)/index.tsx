@@ -4,19 +4,19 @@ import MasonryGrid, { PositionedItem } from '@/components/MasonryGrid';
 import CustomPullToRefreshOnRelease from '@/components/pullToRefresh';
 import Text from '@/components/Text';
 import { useLazyApi } from '@/hooks/use-api';
-import { DashboardItem as DashboardItemType, ParsedDashboardItem } from '@/models/me';
+import { ParsedDashboardItem } from '@/models/me';
+import { getAnalogous, getContrastColor } from '@/services/utils';
 import { useUserStore } from '@/store';
 import { ItemIcon, parseDashboardItem } from '@/utils/dashboard';
 import { useAudioPlayer } from 'expo-audio';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { Pencil, Trash2 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
+import { Pencil, Save, Trash2 } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import React, { useCallback, useEffect, useState } from 'react';
-import { LayoutChangeEvent, LayoutRectangle, Pressable, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 
 const audioSourceTrash = require('../../assets/sounds/trash.mp3');
 
@@ -36,7 +36,7 @@ cssInterop(Trash2, {
         },
     },
 });
-export default function TabOneScreen() {
+export default function DashboardScreen() {
     const { data, setData } = useUserStore();
     const [deleteBottomModalOpen, setDeleteBottomModalOpen] = useState(false);
     const [enableEditingGrid, setEnableEditingGrid] = useState(false);
@@ -50,12 +50,28 @@ export default function TabOneScreen() {
     const { data: meData, request: getMeData, loading: loadingMeData } = useLazyApi('me');
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
 
     useFocusEffect(
         useCallback(() => {
             getMeData();
         }, [])
     );
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                !enableEditingGrid ?
+                    <TouchableOpacity onPress={() => setEnableEditingGrid(true)} className={`p-4`}>
+                        <Pencil size={20} className='text-base-content' />
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity onPress={() => handleSaveGrid()} className={`p-4`}>
+                        <Save size={20} className='text-base-content' />
+                    </TouchableOpacity>
+            )
+        });
+    }, [enableEditingGrid]);
 
     useEffect(() => {
         setData(meData);
@@ -80,36 +96,17 @@ export default function TabOneScreen() {
         setDeleteBottomModalOpen(true);
     };
 
-
-    const [positions, setPositions] = useState<{ [key: string]: LayoutRectangle }>({});
-
-
-    const [itemWidth, setItemWidth] = useState(0);
-    const [itemHeight, setItemHeight] = useState(0);
-
-    const calculateWidth = (event: LayoutChangeEvent) => {
-        const containerWidth = event.nativeEvent.layout.width;
-        const containerHeight = event.nativeEvent.layout.height;
-        const itemWidth = containerWidth / 3;
-        const itemHeight = containerHeight / 8;
-        setItemWidth(itemWidth);
-        setItemHeight(itemHeight);
-    }
-
-    const handleItemLayout = useCallback((item: DashboardItemType, layout: LayoutRectangle) => {
-        setPositions(prevPositions => ({
-            ...prevPositions,
-            [item.id]: {
-                ...layout,
-                name: item.entity.name
-            }
-        }));
-    }, []);
-
     useEffect(() => {
         // TODO: check if dropdown not fits on the screen
+        if (listItemSelected?.style.top + listItemSelected?.style.height > contentHeight - contentHeight / 6 - 2) {
+
+            y.value = listItemSelected?.style.top || 0;
+
+            y.value = withTiming(listItemSelected?.style.top - contentHeight / 6 - 2, { duration: 400 });
+        } else {
+            y.value = listItemSelected?.style.top || 0;
+        }
         x.value = listItemSelected?.style.left || 0;
-        y.value = listItemSelected?.style.top || 0;
         width.value = listItemSelected?.style.width || 0;
         height.value = listItemSelected?.style.height || 0;
     }, [listItemSelected])
@@ -146,26 +143,26 @@ export default function TabOneScreen() {
         }
     });
 
+    const handleSaveGrid = async () => {
+        const data = dashboardItems.map((item, index) => ({
+            id: item.id,
+            order: index,
+            size: item.size,
+        }))
+        await updateDashboardListItem(`dashboard`, data);
+        setEnableEditingGrid(false);
+    }
+
     return (
         <>
             <View className='p-4 flex flex-1'>
-                {/* <CustomPullToRefreshOnRelease onRefresh={getMeData} initialRefreshing={loadingMeData}> */}
-                {/* <AnimatedList
-                        data={data?.dashboardItems!}
-                        getKey={(item) => item.id.toString()}
-                        renderItem={(item) => (
-                            <DashboardItem
-                                key={item.id}
-                                item={item}
-                                handleDeleteItem={() => { handleOpenDeleteItemModal(item) }}
-                            />
-                        )}
-                    /> */}
-                <CustomPullToRefreshOnRelease onRefresh={getMeData} initialRefreshing={loadingMeData}>
-                    <ScrollView
+                <CustomPullToRefreshOnRelease
+                    onRefresh={getMeData}
+                    initialRefreshing={loadingMeData}
+                    contentContainerStyle={{ flex: 1 }}
+                >
+                    <View
                         className='flex flex-1'
-                        scrollEnabled={false}
-                        contentContainerClassName='justify-end flex-1'
                         onLayout={(e) => {
                             setContentWidth(e.nativeEvent.layout.width)
                             setContentHeight(e.nativeEvent.layout.height)
@@ -182,16 +179,17 @@ export default function TabOneScreen() {
                                     contentHeight={contentHeight}
                                     spacing={10}
                                     onItemPress={(item) => { !enableEditingGrid && router.push(item.href) }}
+                                    resizeColor={(item) => getContrastColor(item.entity?.workspace?.color!).color}
                                     onItemLongPress={(item) => {
-                                        setListItemSelected(item);
-
-                                        setEnableEditingGrid(false);
+                                        if (!enableEditingGrid) {
+                                            setListItemSelected(item);
+                                            setEnableEditingGrid(false);
+                                        }
                                     }}
                                     numColumns={3}
                                     numRows={6}
                                     renderItem={(item) => <DashboardItem item={item} />}
                                     keyExtractor={(item) => item.id.toString()}
-
                                     onItemsReorder={async (newData) => {
                                         setDashboardItems(parseDashboardItem(newData));
                                     }}
@@ -206,59 +204,27 @@ export default function TabOneScreen() {
                                     }}
                                 />
                             )}
-
                         </TouchableOpacity>
-                    </ScrollView>
+                    </View>
                 </CustomPullToRefreshOnRelease>
-
-                {/* <FlashList
-                    onLayout={calculateWidth}
-                    data={data?.dashboardItems!}
-                    scrollEnabled={false}
-                    masonry
-                    numColumns={3}
-                    overrideItemLayout={(layout, item, index, maxColumns) => {
-                        layout.span = item.size?.width;
-                    }}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) =>
-                        <View
-                            style={{
-                                height: item.size?.height * 100,
-                                padding: 10
-                            }}
-                            onLayout={(e) => {
-                                const layout = e.nativeEvent.layout;
-                                handleItemLayout(item, layout);
-                            }}
-                        >
-                            <DraggableItem item={item} positions={positions} />
-                        </View>
-                    }
-                /> */}
-                {/* </CustomPullToRefreshOnRelease> */}
-
             </View>
 
             {/* Save grid button */}
             <Animated.View
                 className={`absolute left-1/2 -translate-x-1/2 z-50`}
-                style={[{ bottom: insets.bottom + 10 }, animatedSaveButtonStyle]}
+                style={[{ bottom: insets.bottom + (Platform.OS === 'ios' ? 0 : 10) }, animatedSaveButtonStyle]}
                 pointerEvents={enableEditingGrid ? 'auto' : 'none'}
             >
                 <TouchableOpacity
                     className='px-8 py-4 bg-primary rounded-full flex-1 items-center justify-center gap-4 flex-row'
-                    onPress={async () => {
-                        const data = dashboardItems.map((item, index) => ({
-                            id: item.id,
-                            order: index,
-                            size: item.size,
-                        }))
-                        await updateDashboardListItem(`dashboard`, data);
-                        setEnableEditingGrid(false);
-                    }}
+                    onPress={handleSaveGrid}
                 >
-                    {!updatingDashboardListItem && <Text text="save" className='text-primary-content text-xl font-bold' />}
+                    {!updatingDashboardListItem &&
+                        <>
+                            <Save size={20} className='text-primary-content' />
+                            <Text text="save" className='text-primary-content text-xl font-bold' />
+                        </>
+                    }
                     {updatingDashboardListItem && <Loader className='fill-primary-content' size={20} />}
                 </TouchableOpacity>
             </Animated.View>
@@ -277,18 +243,22 @@ export default function TabOneScreen() {
                     <Animated.View className='absolute z-50 m-4 p-1 overflow-hidden' style={[animatedStyle]}>
                         <DashboardItem item={listItemSelected} />
                     </Animated.View>
-                    <Animated.View className='absolute bg-base-100 p-2 rounded-2xl mx-4 my-6 overflow-hidden' style={[animatedStyle2]}>
+                    <Animated.View
+                        className='absolute bg-base-100 p-2 rounded-2xl mx-4 my-6 overflow-hidden'
+                        style={[animatedStyle2]}
+                    >
                         <View className='flex flex-row gap-4 pl-4 pr-10 py-4'>
                             <Pencil size={20} className='stroke-base-content' />
                             <Text avoidTranslation text="Edit" className='text-base-content' />
                         </View>
-                        <View className='flex flex-row gap-4 pl-4 pr-10 py-4'>
+                        <TouchableOpacity onPress={() => handleOpenDeleteItemModal(listItemSelected)} className='flex flex-row gap-4 pl-4 pr-10 py-4'>
                             <Trash2 size={20} className='stroke-error' />
                             <Text avoidTranslation text="Delete" className='text-error' />
-                        </View>
+                        </TouchableOpacity>
                     </Animated.View>
                 </View>
             }
+
             <InformationModal
                 isOpen={deleteBottomModalOpen}
                 title="dashboard.delete_item"
@@ -304,21 +274,49 @@ export default function TabOneScreen() {
 
 
 const DashboardItem = ({ item }: { item: PositionedItem<ParsedDashboardItem> }) => {
+    const textColor = getContrastColor(item.entity?.workspace?.color!);
+    const colors = [...getAnalogous(item.entity?.workspace?.color!)] as any;
 
     return (
         <View
             key={item.id}
-            className={`flex flex-row gap-4 p-4 py-6 bg-base-100 border border-neutral-content rounded-2xl h-full items-center ${item.size.width === 1 ? 'flex-col items-center' : ''}`}
+            className={`relative overflow-hidden flex flex-1 flex-row gap-4 p-4 py-6 rounded-2xl h-full items-center justify-center`}
             style={{
-                borderColor: item.entity?.workspace?.color
+                // backgroundColor: item.entity?.workspace?.color
             }}
         // onPress={() => router.push(item.href)}
-
         >
-            {item.icon && <ItemIcon icon={item.icon} stroke={item.entity?.workspace?.color} />}
-            {/* <View className='flex flex-col gap-2 size-6 rounded-full' style={{ backgroundColor: item.entity.workspace.color }}></View> */}
-            {/* <Text avoidTranslation text={item.size?.width.toString() + ' x ' + item.size?.height.toString()} style={{ color: item.entity?.workspace?.color }} className='text-base-content text-xl font-bold' /> */}
-            <Text numberOfLines={item.size.height === 1 ? 1 : 4} avoidTranslation text={item.entity?.name || ''} style={{ color: item.entity?.workspace?.color }} className={`text-base-content flex-1 font-bold ${item.size.width === 1 ? 'text-center text-xl' : 'text-2xl'}`} />
+            <LinearGradient
+                // colors={[item.entity?.workspace?.color!, item.entity?.workspace?.color! + 'aa', item.entity?.workspace?.color! + 'ff']}
+                // colors={[item.entity?.workspace?.color!, item.entity?.workspace?.color!]}
+                colors={colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
+                }}
+            />
+            <View className={`flex-row gap-4 flex-1 items-center justify-center ${item.size.width === 1 ? 'flex-col items-center justify-center' : ''}`}>
+
+                {item.icon &&
+                    <ItemIcon icon={item.icon} stroke={textColor.color} className='flex-0 ' />
+                }
+                {/* <View className='flex flex-col gap-2 size-6 rounded-full' style={{ backgroundColor: item.entity.workspace.color }}></View> */}
+                {/* <Text avoidTranslation text={item.size?.width.toString() + ' x ' + item.size?.height.toString()} style={{ color: textColor }} className='text-base-content text-xl font-bold' /> */}
+                <View className='flex flex-initial justify-center '>
+                    <Text
+                        numberOfLines={item.size.height === 1 ? 1 : 4}
+                        avoidTranslation
+                        text={item.entity?.name || item.entity.title || ''}
+                        className={`${textColor.className} font-bold ${item.size.width === 1 ? 'text-center text-xl' : 'text-2xl items-center justify-center '}`}
+                    />
+                </View>
+
+            </View>
         </View>
     )
 }

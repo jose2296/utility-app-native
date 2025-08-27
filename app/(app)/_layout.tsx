@@ -4,16 +4,17 @@ import { useApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
 import { Folder } from '@/models/folder';
 import { useUserStore } from '@/store';
-import { DrawerContentScrollView, DrawerHeaderProps } from '@react-navigation/drawer';
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import { Href, useNavigation, usePathname, useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { ArrowLeft, LogOut, Menu, X } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
-import React, { JSX, useEffect } from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { JSX, useEffect, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AppLayout() {
@@ -33,39 +34,37 @@ export default function AppLayout() {
     }
 
     return (
-        <GestureHandlerRootView className='flex flex-1 bg-base-100'>
-            <Drawer
-                screenOptions={{
-                    swipeEdgeWidth: 70,
-                    swipeEnabled: false,
-                    drawerType: 'front',
-                    // drawerStyle: {
-                    //     backgroundColor: 'red', // lo maneja Tailwind
-                    // },
-                    headerStyle: {
-                        // backgroundColor: 'var(--color-base-100)',
-                    },
-                    headerShown: false,
-                    header: (props) => <Header {...props} />
+        <Drawer
+            screenOptions={{
+                swipeEdgeWidth: 70,
+                swipeEnabled: false,
+                drawerType: 'front',
+                // drawerStyle: {
+                //     backgroundColor: 'red', // lo maneja Tailwind
+                // },
+                headerStyle: {
+                    // backgroundColor: 'var(--color-base-100)',
+                },
+                headerShown: false,
+                header: (props) => <Header {...props} />
+            }}
+            drawerContent={props => <DrawerContent {...props} />}
+        >
+            <Drawer.Screen
+                name="index"
+                options={{
+                    title: 'dashboard.title',
+                    headerShown: true
                 }}
-                drawerContent={props => <DrawerContent {...props} />}
-            >
-                <Drawer.Screen
-                    name="index"
-                    options={{
-                        title: 'dashboard.title',
-                        headerShown: true
-                    }}
-                />
-                <Drawer.Screen
-                    name="workspaces"
-                    options={{
-                        title: 'workspaces.title',
-                        headerShown: true
-                    }}
-                />
-            </Drawer>
-        </GestureHandlerRootView>
+            />
+            <Drawer.Screen
+                name="workspaces"
+                options={{
+                    title: 'workspaces.title',
+                    headerShown: true
+                }}
+            />
+        </Drawer>
     );
 }
 
@@ -77,7 +76,7 @@ cssInterop(LogOut, {
         },
     },
 });
-const DrawerContent = (props: any) => {
+const DrawerContent = (props: DrawerContentComponentProps) => {
     const { data, logout } = useUserStore();
     const router = useRouter();
     const pathname = usePathname();
@@ -88,10 +87,10 @@ const DrawerContent = (props: any) => {
         signOut();
     }
 
-
     return (
         <View className="flex-1 flex flex-col bg-base-100 px-4">
             <DrawerContentScrollView {...props} scrollEnabled={false} contentContainerStyle={{ justifyContent: 'space-between', flex: 1, gap: 20 }}>
+            {/* <View className='flex-1 gap-5 justify-between'> */}
                 <View className='flex flex-row items-start justify-between'>
                     <View className='flex flex-col gap-2'>
                         <Text avoidTranslation text={data?.name || ""} className='text-base-content text-3xl font-bold' />
@@ -102,7 +101,7 @@ const DrawerContent = (props: any) => {
                     </TouchableOpacity>
                 </View>
                 <View className='h-0.5 bg-base-content/40' />
-                <View className='flex flex-col flex-1'>
+                <ScrollView className='flex flex-col flex-1'>
                     <DrawerItem
                         route='/'
                         active={pathname === "/"}
@@ -134,7 +133,7 @@ const DrawerContent = (props: any) => {
                             }}
                         />
                     )) || []}
-                </View>
+                </ScrollView>
                 <View className='h-0.5 bg-base-content/40' />
                 <View>
                     <TouchableOpacity onPress={handleLogout} className='text-base-content text-3xl font-bold flex flex-row items-center gap-4'>
@@ -142,24 +141,59 @@ const DrawerContent = (props: any) => {
                         <LogOut className='text-base-content' size={25} />
                     </TouchableOpacity>
                 </View>
+            {/* </View> */}
             </DrawerContentScrollView>
         </View>
     );
 }
 
 const DrawerItem = ({ route, active, color, icon, name, onPress }: { route: Href, active: boolean, color?: string, icon?: JSX.Element, name: string, onPress?: () => void }) => {
-    const router = useRouter();
-    const navigation = useNavigation();
+    const [showToolTip, setShowToolTip] = useState(false);
+    const [toolTipHeight, setToolTipHeight] = useState(0);
+    // TODO: Add component for tooltip
+    const transitionStyle = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(showToolTip ? 1 : 0),
+            transform: [
+                {
+                    translateY: withTiming(showToolTip ? -toolTipHeight : 0)
+                }
+            ]
+        }
+    });
 
     return (
-        <Pressable
-            onPress={onPress}
-            className={`p-4 flex-row items-center gap-4 rounded-xl  ${active ? "bg-neutral/40 text-neutral-content" : ""}`}
-        >
-            {icon}
-            {color && <View className='size-6 rounded-full' style={{ backgroundColor: color }} />}
-            <Text text={name} className='text-base-content text-2xl' />
-        </Pressable>
+        <View className='relative'>
+            <TouchableOpacity
+                onPress={onPress}
+                onLongPress={() => {
+                    setShowToolTip(true);
+                    setTimeout(() => {
+                        setShowToolTip(false);
+                    }, 2000);
+                }}
+                className={`p-4 flex-row items-center gap-4 rounded-xl  ${active ? "bg-neutral/40 text-neutral-content" : ""}`}
+            >
+                {icon}
+                {color && <View className='size-6 rounded-full' style={{ backgroundColor: color }} />}
+                <Text text={name} numberOfLines={1} className='text-base-content text-2xl flex-1' />
+            </TouchableOpacity>
+
+            {showToolTip && (
+                <Animated.View
+                    // style={transitionStyle}
+                    // TODO: Add animation to slide in but not from bottom (is from bottom os screen no parent element)
+                    entering={FadeIn}
+                    exiting={FadeOut}
+                    onLayout={(e) => setToolTipHeight(e.nativeEvent.layout.height)}
+                    className='absolute -top-16 left-0 bg-base-300 rounded-xl p-4'
+                >
+                    <View className='absolute -bottom-3 transform rotate-45 left-1/2 size-6 bg-base-300'
+                    />
+                    <Text text={name} className='text-base-content text-lg flex-1' />
+                </Animated.View>
+            )}
+        </View>
     );
 }
 
@@ -179,18 +213,19 @@ export const Header = (props: DrawerHeaderProps | NativeStackHeaderProps) => {
     return (
         <SafeAreaView edges={['top']} style={{ backgroundColor: 'var(--color-base-300)' }}>
             <View
-                className='px-4 pl-0 pb-2 pt-0 flex-row gap-0 items-center border-b border-base-content'
+                className='px-4 pb-2 pt-0 flex-row gap-0 items-center border-b border-base-content'
             >
-                <TouchableOpacity onPress={handlePress} className='pl-4 px-6 py-4'>
+                <TouchableOpacity onPress={handlePress} className='pl-0 px-6 py-4' hitSlop={10}>
                     {back ? (
                         <ArrowLeft size={24} className='text-base-content' />
                     ) : (
                         <Menu size={24} className='text-base-content' />
                     )}
                 </TouchableOpacity>
-                <View className='flex flex-row items-center gap-4'>
+                <View className='flex flex-1 flex-row items-center gap-4'>
                     {options.headerTintColor && <View className='size-7 rounded-full' style={{ backgroundColor: options.headerTintColor }} />}
-                    <Text text={title} className='text-base-content text-3xl font-bold' />
+                    <Text text={title} className='text-base-content text-3xl font-bold flex-1' />
+                    {options.headerRight?.({})}
                 </View>
             </View>
         </SafeAreaView>

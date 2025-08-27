@@ -5,8 +5,8 @@ import { Trash2 } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import React from 'react';
 import { TouchableOpacity, View } from "react-native";
-import Text from '../Text';
-import { CustomSwipeable, useSwipeableControl } from '../swipeable';
+import Text from '../../components/Text';
+import { CustomSwipeable, useSwipeableControl } from '../../components/swipeable';
 
 cssInterop(Trash2, {
     className: {

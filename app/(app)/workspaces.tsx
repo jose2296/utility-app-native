@@ -1,21 +1,19 @@
 import AnimatedList from "@/components/animatedList";
-import BottomSheet from '@/components/BottomSheet';
-import Button from '@/components/button';
 import InformationModal from '@/components/InformationModal';
-import { Input } from '@/components/input';
 import Loader from '@/components/loader';
-import CustomPullToRefreshOnRelease from '@/components/pullToRefresh';
-import Text from '@/components/Text';
-import WorkspaceItem from '@/components/workspace/workspaceItem';
+import PageLayout from '@/components/PageLayout';
 import { useLazyApi } from "@/hooks/use-api";
 import { Folder } from "@/models/folder";
+import { Me } from '@/models/me';
+import SaveWorkspaceModal from '@/modules/workspace/saveWorkspaceModal';
+import WorkspaceItem from '@/modules/workspace/workspaceItem';
+import { useUserStore } from '@/store';
 import { useFocusEffect } from "expo-router";
 import { Plus } from 'lucide-react-native';
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ColorPicker, { HueSlider, Panel1 } from 'reanimated-color-picker';
 
 
 const DEFAULT_COLORS = [
@@ -28,15 +26,11 @@ const DEFAULT_COLORS = [
     '#03A9F4',
     '#00BCD4',
     '#009688',
-    '#4CAF50',
     '#8BC34A',
     '#CDDC39',
-    '#FFEB3B',
     '#FFC107',
     '#FF9800',
-    '#FF5722',
     '#795548',
-    '#9E9E9E',
     '#607D8B',
 ];
 
@@ -58,6 +52,7 @@ const Workspaces = () => {
     const { request: saveWorkspace, loading: savingWorkspace } = useLazyApi<any>(`folders`, 'POST');
     const { request: deleteWorkspace, loading: deletingWorkspace } = useLazyApi<any>(`folders`, 'DELETE');
     const insets = useSafeAreaInsets();
+    const { data, setData } = useUserStore();
 
     useFocusEffect(
         useCallback(() => {
@@ -65,17 +60,25 @@ const Workspaces = () => {
         }, [])
     );
 
-    const handleSaveWorkspace = async () => {
-        if (!workspaceItemSelected?.name.trim()) {
+    useEffect(() => {
+        setData({
+            ...data as Me,
+            workspaces: folders as Folder[]
+        });
+    }, [folders]);
+
+    const handleSaveWorkspace = async (workspace: any) => {
+        if (!workspace?.name.trim()) {
             return;
         }
 
         const newWorkspace = {
-            name: workspaceItemSelected?.name,
+            name: workspace?.name,
+            color: workspace?.customColor || workspace?.color || DEFAULT_COLORS[0]
         };
 
         try {
-            await saveWorkspace(`folders`, newWorkspace);
+            await saveWorkspace(`folders/${workspace?.id}`, newWorkspace);
             setWorkspaceItemSelected(null);
             setSaveWorkspaceModalMode(null);
             setEditWorkspaceModalOpen(false);
@@ -86,14 +89,14 @@ const Workspaces = () => {
         }
     };
 
-    const handleSaveNewWorkspace = async () => {
-        if (!workspaceItemSelected?.name.trim()) {
+    const handleSaveNewWorkspace = async (workspace: any) => {
+        if (!workspace?.name.trim()) {
             return;
         }
 
         const newWorkspace = {
-            name: workspaceItemSelected?.name,
-            color: workspaceItemSelected?.color || DEFAULT_COLORS[0],
+            name: workspace?.name,
+            color: workspace?.customColor || workspace?.color || DEFAULT_COLORS[0],
         };
 
         try {
@@ -112,6 +115,13 @@ const Workspaces = () => {
         setWorkspaceItemSelected(workspace);
         setDeleteWorkspaceModalOpen(true);
     };
+
+    const handleOpenEditWorkspaceModal = async (workspace: any) => {
+        setSaveWorkspaceModalMode('edit');
+        setWorkspaceItemSelected({ ...workspace, customColor: DEFAULT_COLORS.find((color) => color === workspace.color) ? undefined : workspace.color });
+        setEditWorkspaceModalOpen(true);
+    };
+
     const handleDeleteWorkspace = async () => {
         await deleteWorkspace(`folders/${workspaceItemSelected.id}`, null);
         setDeleteWorkspaceModalOpen(false);
@@ -130,8 +140,8 @@ const Workspaces = () => {
 
     return (
         <>
-            <View className='px-4 py-4 gap-4 flex-1'>
-                <CustomPullToRefreshOnRelease onRefresh={getWorkspaces}>
+            <PageLayout onRefresh={getWorkspaces}>
+                <ScrollView contentContainerClassName='gap-4' style={{ paddingBottom: insets.bottom + 10 }}>
                     <AnimatedList<any>
                         data={folders}
                         getKey={(item) => item.id.toString()}
@@ -140,71 +150,21 @@ const Workspaces = () => {
                                 key={item.id}
                                 item={item}
                                 handleDeleteItem={handleOpenDeleteWorkspaceModal}
-                                handlePinItem={() => { }}
+                                handleEditItem={handleOpenEditWorkspaceModal}
                             />
                         )}
                     />
-                </CustomPullToRefreshOnRelease>
-
-            </View>
-
-            <BottomSheet
-                isOpen={editWorkspaceModalOpen}
-                onClose={() => { setEditWorkspaceModalOpen(false); setWorkspaceItemSelected(null); }}
-                sheetHeight={350}
-            >
-                <ScrollView className='flex flex-1 flex-col relative'>
-                    <Text text={saveWorkspaceModalMode === 'create' ? 'workspaces.save_modal.create_title' : 'workspaces.save_modal.edit_title'} className='text-base-content text-2xl font-bold' />
-                    <View className='h-0.5 bg-base-content/50 my-2' />
-                    <View className='flex flex-col gap-y-6'>
-                        <Input
-                            label={'workspaces.save_modal.name'}
-                            value={workspaceItemSelected?.name || ''}
-                            onSubmitEditing={saveWorkspaceModalMode === 'create' ? handleSaveNewWorkspace : handleSaveWorkspace}
-                            onChangeText={(value) => {
-                                setWorkspaceItemSelected({ ...workspaceItemSelected, name: value });
-                            }}
-                        />
-                        <ScrollView horizontal contentContainerClassName='gap-8 flex pb-4'>
-                            <TouchableOpacity
-                                onPress={() => setWorkspaceItemSelected({ ...workspaceItemSelected, customColor: true })}
-                                className={`w-12 h-12 items-center justify-center rounded-xl bg-transparent ${(workspaceItemSelected?.customColor) ? 'border-2 border-info' : ''}`}
-                            >
-                                <Plus size={30} className='text-base-content' />
-                            </TouchableOpacity>
-                            {DEFAULT_COLORS.map((color) => (
-                                <TouchableOpacity
-                                    key={color}
-                                    onPress={() => setWorkspaceItemSelected({ ...workspaceItemSelected, color, customColor: false })}
-                                    className={`w-12 h-12 rounded-xl ${(workspaceItemSelected?.color || DEFAULT_COLORS[0]) === color ? 'border-2 border-info' : ''}`}
-                                    style={{ backgroundColor: color }}
-                                />
-                            ))}
-                        </ScrollView>
-                        <Button
-                            name={saveWorkspaceModalMode === 'create' ? 'create' : 'save'}
-                            onPress={saveWorkspaceModalMode === 'create' ? handleSaveNewWorkspace : handleSaveWorkspace}
-                            isLoading={savingWorkspace}
-                        />
-                    </View>
                 </ScrollView>
+            </PageLayout>
 
-                {workspaceItemSelected?.customColor &&
-                    <View className='absolute top-0 left-0 right-0 z-50 bg-base-100 h-full'>
-                        <Text text={'workspaces.save_modal.pick_color'} className='text-base-content text-2xl font-bold text-center' />
-                        <ColorPicker style={{ width: '80%', margin: 'auto', gap: 10, height: 'auto' }} value={workspaceItemSelected?.color || DEFAULT_COLORS[0]} onCompleteJS={({ hex }) => setWorkspaceItemSelected({ ...workspaceItemSelected, color: hex })}>
-                            {/* <Preview /> */}
-                            <Panel1 />
-                            <HueSlider />
-                            {/* <OpacitySlider /> */}
-                        </ColorPicker>
-                        <Button
-                            name="save"
-                            onPress={() => setWorkspaceItemSelected({ ...workspaceItemSelected, customColor: false })}
-                        />
-                    </View>
-                }
-            </BottomSheet>
+            <SaveWorkspaceModal
+                isOpen={editWorkspaceModalOpen}
+                mode={saveWorkspaceModalMode!}
+                isSaving={savingWorkspace}
+                onClose={() => setEditWorkspaceModalOpen(false)}
+                workspace={workspaceItemSelected}
+                onSubmit={(workspace) => saveWorkspaceModalMode === 'create' ? handleSaveNewWorkspace(workspace) : handleSaveWorkspace(workspace)}
+            />
 
             <InformationModal
                 isOpen={deleteWorkspaceModalOpen}
@@ -217,7 +177,7 @@ const Workspaces = () => {
             />
 
             <TouchableOpacity
-                onPress={() => { setSaveWorkspaceModalMode('create'); setWorkspaceItemSelected(null); setEditWorkspaceModalOpen(true); }}
+                onPress={() => { setSaveWorkspaceModalMode('create'); setWorkspaceItemSelected({ name: '', color: DEFAULT_COLORS[0], customColor: undefined }); setEditWorkspaceModalOpen(true); }}
                 className='absolute right-4 p-4 bg-primary rounded-full shadow-lg'
                 style={{ bottom: insets.bottom + 10 }}
             >

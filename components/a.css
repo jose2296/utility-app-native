@@ -1,0 +1,22 @@
+.bn-editor, .bn-container {
+    min-height: 100vh;
+}
+
+.bn-panel {
+    max-width: 80%;
+    transform: translateX(12%);
+}
+.bn-toolbar {
+    max-width: 200px;
+    width: 200px;
+    /* transform: translateY(15px); */
+}
+
+.bn-formatting-toolbar {
+    max-width: 80% !important;
+    margin-left: 8% !important;
+    /* margin-top: 15px !important;
+    padding-top: 22px !important; */
+    /* transform: translateX(10%); */
+
+}

@@ -58,6 +58,7 @@ export type MasonryGridProps<T> = {
     contentHeight: number;
     keyExtractor: (item: T, index: number) => string;
     renderItem: (item: PositionedItem<T>) => React.ReactNode;
+    resizeColor?: (item: PositionedItem<any>) => string;
     onItemPress?: (item: PositionedItem<T>) => void;
     onItemLongPress?: (item: PositionedItem<T>) => void;
     style?: StyleProp<ViewStyle>;
@@ -200,6 +201,7 @@ type GridItemProps<T> = {
     onResizeEnd?: (id: string, dx: number, dy: number) => void;
     cellWidth: number;
     cellHeight: number;
+    resizeColor?: (item: PositionedItem<any>) => string;
 };
 
 const GridItem = React.memo(<T,>({
@@ -219,7 +221,8 @@ const GridItem = React.memo(<T,>({
     onGestureEnd,
     onResizeStart,
     onResizeMove,
-    onResizeEnd
+    onResizeEnd,
+    resizeColor
 }: GridItemProps<T>) => {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
@@ -385,7 +388,7 @@ const GridItem = React.memo(<T,>({
                 {isResizeEnabled && (
                     <GestureDetector gesture={resizePan}>
                         <Pressable className={`absolute bottom-0 right-0 w-12 h-12 items-end justify-end flex ${isResizing ? 'bg-base-content/20 rounded-2xl' : ''}`} >
-                            <Svg className='stroke-base-content w-10 h-10'>
+                            <Svg className='w-10 h-10' stroke={resizeColor?.(item) || '#000'}>
                                 <Path d="M21 15L15 21M21 8L8 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </Svg>
                         </Pressable>
@@ -519,7 +522,8 @@ const MasonryGrid = <T,>({
     isDragEnabled = false,
     isResizeEnabled = false,
     onItemsReorder,
-    onItemResize
+    onItemResize,
+    resizeColor
 }: MasonryGridProps<T>) => {
     const [orderData, setOrderData] = useState<T[]>(() => data.slice());
 
@@ -605,7 +609,7 @@ const MasonryGrid = <T,>({
 
             const result = [...orderWithoutDragged];
             const insertAt = Math.max(0, Math.min(result.length, insertionIndex));
-            result.splice(insertAt, 0, placeholder);
+            result.splice(insertAt, 0, placeholder as any);
 
             return result;
         }
@@ -1088,6 +1092,7 @@ const MasonryGrid = <T,>({
                                 onLongPress={() => onItemLongPress?.(userPositioned)}
                                 isDragEnabled={isDragEnabled}
                                 isResizeEnabled={isResizeEnabled}
+                                resizeColor={resizeColor}
                                 isDragging={isDragged}
                                 isResizing={isResizing}
                                 isShifting={isShifting}

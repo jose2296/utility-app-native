@@ -9,20 +9,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, View } from "react-native";
+import { Dimensions, TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from "react-native-webview";
-import BottomSheet from '../BottomSheet';
-import Carousel from '../Carrousel';
-import Loader from '../loader';
-import Bookmark from '../svgs/Boockmark';
-import Eye from '../svgs/Eye';
-import EyeOff from '../svgs/EyeOff';
-import Trash2 from '../svgs/Trash2';
-import Tv from '../svgs/Tv';
-import Youtube from '../svgs/Youtube';
-import Text from '../Text';
+import BottomSheet from '../../components/BottomSheet';
+import Carousel from '../../components/Carrousel';
+import Loader from '../../components/loader';
+import Bookmark from '../../components/svgs/Boockmark';
+import Eye from '../../components/svgs/Eye';
+import EyeOff from '../../components/svgs/EyeOff';
+import Trash2 from '../../components/svgs/Trash2';
+import Tv from '../../components/svgs/Tv';
+import Youtube from '../../components/svgs/Youtube';
+import Text from '../../components/Text';
 import FixedItemProvidersModal from './fixedItemProvidersModal';
 import MovieSeriesItem from './movieSerieItem';
 import Rating from './rating';
@@ -42,6 +42,7 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
     const [showProvidersModal, setShowProvidersModal] = useState(false);
     const [isLoadingProviders, setIsLoadingProviders] = useState(false);
     const [showTrailerModal, setShowTrailerModal] = useState(false);
+    const [showCollectionModal, setShowCollectionModal] = useState(false);
     const scrollRef = useRef<ScrollView>(null);
     const navigation = useNavigation();
     const insets = useSafeAreaInsets();
@@ -114,8 +115,6 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
             setLoading(true);
             const details = await getItemDetails(type, themoviedbId!);
             setData(details);
-            console.log(details.collection?.name);
-
 
             try {
                 const item = await getFixedListItemByThemoviedbId(`fixed-list-items/themoviedb/${type}/${themoviedbId}`);
@@ -195,7 +194,6 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                 }
             }
             case 'see_trailer':
-                console.log(data?.videos[0].src);
                 setShowTrailerModal(true);
                 break;
         }
@@ -306,14 +304,31 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                             <View
                                 className='rounded-xl p-6 sm:gap-10 gap-6 sm:items-start items-center sm:text-left flex-col-reverse sm:flex-row'
                             >
-                                <Image
-                                    className='rounded-xl w-full aspect-auto z-10'
-                                    style={{ aspectRatio: '1/1.5', maxWidth: 250, minWidth: 250, borderRadius: 16 }}
-                                    source={{ uri: data?.collection.poster_path }}
-                                    contentPosition='top'
-                                    contentFit='fill'
-                                    transition={400}
-                                />
+                                {!showCollectionModal &&
+                                    <Image
+                                        className='rounded-xl w-full aspect-auto z-10'
+                                        style={{ aspectRatio: '1/1.5', maxWidth: 250, minWidth: 250, borderRadius: 16 }}
+                                        source={{ uri: data?.collection.poster_path }}
+                                        contentPosition='top'
+                                        contentFit='fill'
+                                        transition={400}
+                                    />
+                                }
+                                {showCollectionModal &&
+                                    <View style={{ width: '100%', minWidth: 250 }}>
+                                        <Carousel
+                                            data={data?.collection?.movies}
+                                            keyExtractor={(item) => `collection-${item.themoviedbId}`}
+                                            renderItem={(item) => (
+                                                <MovieSeriesItem
+                                                    {...item}
+                                                    showDropdown={false}
+                                                    onPress={() => router.push(`/(app)/${workspaceId}/lists/moviesSeries/${listId}/${type}/unlisted/${item.themoviedbId}`)}
+                                                />
+                                            )}
+                                        />
+                                    </View>
+                                }
                                 <View className='flex gap-4 items-center sm:items-start flex-1'>
                                     <Text
                                         text='list.fixed.collection_title'
@@ -328,8 +343,8 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                                         className='text-base-content text-xl text-center'
                                     />
                                     {/* <p className='text-lg'>{data?.collection.movies.map(movie => movie.title).join(', ')}</p> */}
-                                    <TouchableOpacity className='bg-neutral px-6 py-3 rounded-2xl' onPress={() => null} activeOpacity={0.8}>
-                                        <Text text='list.fixed.see_collection' className='text-base-content text-2xl' />
+                                    <TouchableOpacity className='bg-neutral px-6 py-3 rounded-2xl' onPress={() => setShowCollectionModal(!showCollectionModal)} activeOpacity={0.8}>
+                                        <Text text={!showCollectionModal ? 'list.fixed.see_collection' : 'close'} className='text-base-content text-2xl' />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -374,6 +389,34 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                         />
                     </View>
 
+                </BottomSheet>
+            }
+
+            {/* Collection modal */}
+            {!!data?.collection &&
+                <BottomSheet
+                    isOpen={false}
+                    onClose={() => setShowCollectionModal(false)}
+                    sheetHeight={Dimensions.get('screen').height * 0.8}
+                >
+                    <Text text='list.fixed.collection' numberOfLines={1} translateData={{ title: data?.title! }} className='text-2xl text-base-content' />
+                    <ScrollView contentContainerClassName='w-full'>
+                        <Carousel
+                            data={data?.collection?.movies || []}
+                            keyExtractor={(item) => `collection-${item.themoviedbId}`}
+                            renderItem={(item) => (
+                                // TODO: Guardar los ids de todas las películas y series para saber si estan en la lista y si estan vistas o no. Aqui y en la colleccion y el la busqueda de items
+                                <MovieSeriesItem
+                                    {...item}
+                                    showDropdown={false}
+                                    onPress={() => {
+                                        router.push(`/(app)/${workspaceId}/lists/moviesSeries/${listId}/${type}/unlisted/${item.themoviedbId}`);
+                                        setShowCollectionModal(false);
+                                    }}
+                                />
+                            )}
+                        />
+                    </ScrollView>
                 </BottomSheet>
             }
 

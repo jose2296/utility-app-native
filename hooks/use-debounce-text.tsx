@@ -1,13 +1,13 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from "react";
 
-const useDebouncedText = (onDebouncedChange: (text: string) => void, delay = 500) => {
-    const [text, setText] = useState("");
-    const [debouncedText, setDebouncedText] = useState("");
+const useDebouncedText = (defaultText: string, onDebouncedChange: (text: string) => void, delay = 500) => {
+    const [text, setText] = useState(defaultText);
+    const [debouncedText, setDebouncedText] = useState(defaultText);
 
     useFocusEffect(
         useCallback(() => {
-            setText('');
+            setText(defaultText);
         }, [])
     );
 

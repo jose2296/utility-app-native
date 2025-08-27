@@ -1,8 +1,9 @@
+import { ListTypeValue } from '@/modules/lists/saveListModal';
 import { Href } from 'expo-router';
+import { ITEMS_ICONS } from '../utils/dashboard';
 import { List } from './list';
 import { Note } from './note';
 import { Breadcrumb } from './utils';
-import { ITEMS_ICONS } from '../utils/dashboard';
 
 export interface Folder {
     id: number;
@@ -26,6 +27,8 @@ export interface FolderDetailsData {
         id: number;
         name: string;
         type: string;
+        listType?: ListTypeValue;
+        isOwner?: boolean;
         icon: keyof typeof ITEMS_ICONS;
         href: Href;
     }[];

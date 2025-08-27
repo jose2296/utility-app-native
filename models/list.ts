@@ -1,14 +1,14 @@
+import { BookFixedItem } from './books';
+
 export interface List {
     id: number;
     name: string;
     type: string;
     user_id: number;
+    isOwner?: boolean;
     created_at: string;
     updated_at: string;
 }
-
-
-
 
 
 export interface FixedItemList<T = ThemoviedbFixedItem | BookFixedItem> {
@@ -34,20 +34,6 @@ export type ThemoviedbFixedItem = {
     image: string;
     type: 'movies' | 'series';
     released: string;
-}
-export interface BookFixedItem {
-    externalId: string;
-    checked: boolean;
-    title: string;
-    image: string;
-    authors: string[];
-    released: string;
-    description: string;
-    pageCount: number;
-    language: string;
-    publisher: string;
-    score: number;
-    categories: string;
 }
 
 export type ThemoviedbFixedItemDetails = {

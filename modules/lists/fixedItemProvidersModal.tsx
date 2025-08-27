@@ -1,10 +1,10 @@
 import { ThemoviedbProvider } from '@/models/themovieddb';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import BottomSheet from '../BottomSheet';
-import Image from '../Image';
-import Text from '../Text';
-import Loader from '../loader';
+import BottomSheet from '../../components/BottomSheet';
+import Image from '../../components/Image';
+import Text from '../../components/Text';
+import Loader from '../../components/loader';
 
 const FixedItemProvidersModal = ({ itemSelectedProviders, isLoading, isOpen, onClose }: { itemSelectedProviders: ThemoviedbProvider[] | null, isLoading: boolean, isOpen: boolean, onClose: () => void }) => {
     return (

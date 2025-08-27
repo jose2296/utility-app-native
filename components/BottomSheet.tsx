@@ -92,9 +92,10 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,
+    SlideOutDown,
     useAnimatedStyle,
     useSharedValue,
-    withTiming,
+    withTiming
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -171,7 +172,7 @@ const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: 
 
     const animatedBackdropStyle = useAnimatedStyle(() => ({
         opacity: backdropOpacity.value,
-        zIndex: backdropOpacity.value === 0 ? -1 : 10,
+        zIndex: backdropOpacity.value === 0 ? -1 : 50,
     }));
 
     return (
@@ -189,7 +190,7 @@ const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: 
 
             {/* Sheet */}
             <Animated.View
-                className="absolute left-0 right-0 bottom-0 rounded-t-2xl pt-1 bg-base-content/80"
+                className="absolute left-0 right-0 bottom-0 rounded-t-2xl pt-1 "
                 style={[
                     {
                         // height: sheetHeight + keyboardHeight,
@@ -197,16 +198,18 @@ const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: 
                     },
                     animatedStyle,
                 ]}
+
+                exiting={SlideOutDown}
             >
                 <View className='bg-base-100 flex-1 rounded-t-2xl'>
                     {/* Solo el handler activa el gesto */}
                     <GestureDetector gesture={panGesture}>
                         <View className="w-full items-center justify-center pt-6 pb-3">
-                            <View className="w-10 h-1.5 bg-neutral-content rounded-full" />
+                            <View className="w-10 h-1.5 bg-neutral-content/20 rounded-full" />
                         </View>
                     </GestureDetector>
 
-                    <View className="flex-1 mt-2 px-4" style={{ paddingBottom: insets.bottom }} onLayout={(e) => {
+                    <View className="flex-1 mt-2 px-4 pt-2" style={{ paddingBottom: insets.bottom }} onLayout={(e) => {
                         // console.log(e.nativeEvent.layout.height);
                         // height.value = e.nativeEvent.layout.height;
                     }}>

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { Ref, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TextInput, TextInputProps, View } from "react-native";
 import Animated, {
@@ -15,6 +15,7 @@ interface FloatingLabelInputProps extends TextInputProps {
     value: string;
     suffixIcon?: React.ReactNode;
     onChangeText: (text: string) => void;
+    ref?: Ref<TextInput> | undefined
 }
 
 export const Input = ({
@@ -24,6 +25,7 @@ export const Input = ({
     placeholder,
     secureTextEntry,
     suffixIcon,
+    ref,
     ...props
 }: FloatingLabelInputProps) => {
     const [isFocused, setIsFocused] = useState(false);
@@ -66,6 +68,7 @@ export const Input = ({
 
             <TextInput
                 {...props}
+                ref={ref}
                 placeholder={t(placeholder || '')}
                 secureTextEntry={secureTextEntry}
                 className={`pl-0 pr-10 border-b py-2 w-full text-base-content ${isFocused ? "border-base-content" : "border-base-content/40"}`}

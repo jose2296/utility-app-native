@@ -48,7 +48,8 @@ export interface ParsedDashboardItem {
 
 interface DashboardItemEntity {
     id: number;
-    name: string;
+    name?: string;
+    title?: string;
     type: DashboardItemType;
     user: any;
     created_at: string;

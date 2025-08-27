@@ -15,7 +15,7 @@ const searchTypes = {
 
 export const searchMoviesOrSeriesItem = async (search: string, type: 'movies' | 'series' | 'all') => {
     const url = `${API_URL}/search/${searchTypes[type]}?api_key=${API_KEY}&query=${search}&language=es-ES`;
-    const items = (await (await fetch(url)).json()).results;
+    const items = (await (await fetch(url)).json()).results as ThemoviedbItem[];
 
     return parseItemsFromApi(items, type !== 'all' ? type : undefined);
 };
@@ -27,7 +27,7 @@ export const getItemToSaveByThemoviedbId = async (type: 'movies' | 'series', the
     return {
         themoviedbId: item.id,
         title: (item as ThemoviedbMovieDetail).title || (item as ThemoviedbSeriesDetail).name,
-        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/item-placeholder.png',
+        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
         released: (item as ThemoviedbMovieDetail).release_date || (item as ThemoviedbSeriesDetail).first_air_date,
         type,
         checked: false
@@ -66,7 +66,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
         status: item.status,
         tagline: item.tagline,
         genres,
-        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/item-placeholder.png',
+        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
         released: (item as ThemoviedbMovieDetail).release_date || (item as ThemoviedbSeriesDetail).first_air_date,
         images,
         imagesBackdrops,
@@ -74,7 +74,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
         recommendations: item.recommendations.results.map(recommendation => ({
             themoviedbId: recommendation.id,
             title: (recommendation as RecommendationsMoviesResult).title || (recommendation as RecommendationsSeriesResult).name,
-            image: recommendation.poster_path ? `${API_IMAGE_URL}/${recommendation.poster_path}` : '/item-placeholder.png',
+            image: recommendation.poster_path ? `${API_IMAGE_URL}/${recommendation.poster_path}` : '/images/movie-serie-item-placeholder.png',
             released: (recommendation as RecommendationsMoviesResult).release_date || (recommendation as RecommendationsSeriesResult).first_air_date,
             type: type
         })),
@@ -92,7 +92,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
             const movies = collectionData.parts.sort((a, b) => a.release_date?.localeCompare(b.release_date)).map(part => ({
                 themoviedbId: part.id,
                 title: part.title,
-                image: part.poster_path ? `${API_IMAGE_URL}/${part.poster_path}` : '/item-placeholder.png',
+                image: part.poster_path ? `${API_IMAGE_URL}/${part.poster_path}` : '/images/movie-serie-item-placeholder.png',
                 released: part.release_date,
                 type: 'movies' as const
             }));
@@ -141,14 +141,16 @@ export const getItemProviders = async (type: 'movies' | 'series', themoviedbId: 
 };
 
 const parseItemsFromApi = (data: ThemoviedbItem[], type?: 'movies' | 'series') => {
-    const _items = data.map(item => ({
-        themoviedbId: item.id,
-        title: item.title || item.name,
-        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/item-placeholder.png',
-        released: item.release_date || item.first_air_date,
-        type: type || item.media_type === 'tv' ? 'series' : (item.media_type === 'movie' ? 'movies' : ''),
-        checked: false
-    } as ThemoviedbFixedItem)).filter(item => !!item.type);
+    const _items = data.map(item => {
+        return {
+            themoviedbId: item.id,
+            title: item.title || item.name,
+            image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
+            released: item.release_date || item.first_air_date,
+            type: type || (item.media_type === 'tv' ? 'series' : (item.media_type === 'movie' ? 'movies' : '')),
+            checked: false
+        } as ThemoviedbFixedItem
+    }).filter(item => !!item.type);
 
     return _items;
 };

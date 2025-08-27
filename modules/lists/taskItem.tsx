@@ -1,11 +1,11 @@
-import { Check, Pencil, Trash2 } from 'lucide-react-native';
+import { Check, Pencil, Trash2, Undo } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import React from 'react';
 import { TouchableOpacity, View } from "react-native";
-import Text from '../Text';
-import Checkbox from '../checkbox';
-import Loader from '../loader';
-import { CustomSwipeable, useSwipeableControl } from '../swipeable';
+import Text from '../../components/Text';
+import Checkbox from '../../components/checkbox';
+import Loader from '../../components/loader';
+import { CustomSwipeable, useSwipeableControl } from '../../components/swipeable';
 
 cssInterop(Pencil, {
     className: {
@@ -46,9 +46,9 @@ const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: { savi
         <View className='flex flex-row flex-1 items-center pr-4'>
             <TouchableOpacity
                 onPress={() => { handleToggleCompletedItem(item.id, !item.completed); }}
-                className='h-full flex-1 rounded-xl flex bg-success items-center justify-center p-4 px-6'
+                className={`h-full flex-1 rounded-xl flex ${item.completed ? 'bg-warning' : 'bg-success'} items-center justify-center p-4 px-6`}
             >
-                {savingListItem ? <Loader size={35} /> : <Check size={35} className='text-success-content' />}
+                {savingListItem ? <Loader size={35} /> : item.completed ? <Undo size={35} className='text-warning-content' /> : <Check size={35} className='text-success-content' />}
             </TouchableOpacity>
         </View>
     );

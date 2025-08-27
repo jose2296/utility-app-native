@@ -1,4 +1,6 @@
 import Loader from '@/components/loader';
+import { ModalContainer } from '@/components/modal/modal.container';
+import { ModalProvider } from '@/components/modal/modal.context';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SessionProvider, useSession } from '@/hooks/useSession';
 import '@/i18n';
@@ -9,8 +11,10 @@ import { Stack, } from 'expo-router';
 import { Protected } from 'expo-router/build/views/Protected';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Toaster } from 'sonner-native';
 import "../global.css";
 import { Header } from './(app)/_layout';
 
@@ -25,7 +29,6 @@ export const unstable_settings = {
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
     const [loaded, error] = useFonts({
@@ -63,30 +66,51 @@ function RootLayoutNav() {
     }
 
     return (
-        <SafeAreaProvider>
-            <ThemeProvider>
-                <NavigationThemeProvider value={{
-                    ...DefaultTheme,
-                    colors: {
-                        ...DefaultTheme.colors,
-                        background: 'var(--color-base-100)',
-                    }
-                }} >
-                    <Stack screenOptions={{
-                        header(props) {
-                            return <Header {...props} />
-                        },
-                    }}>
-                        <Protected guard={!!session}>
-                            <Stack.Screen name="(app)" options={{ headerShown: false }} />
-                        </Protected>
-                        <Protected guard={!session}>
-                            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                        </Protected>
-                        <Stack.Screen name="+not-found" options={{ headerShown: true, title: 'not Found', animation: 'simple_push' }} />
-                    </Stack>
-                </NavigationThemeProvider>
-            </ThemeProvider>
-        </SafeAreaProvider>
+        <ModalProvider>
+            <GestureHandlerRootView className='flex flex-1 bg-base-100'>
+                <SafeAreaProvider>
+                    <ThemeProvider>
+                        <NavigationThemeProvider value={{
+                            ...DefaultTheme,
+                            colors: {
+                                ...DefaultTheme.colors,
+                                background: 'var(--color-base-100)',
+                            }
+                        }} >
+                            <Stack screenOptions={{
+                                header(props) {
+                                    return <Header {...props} />
+                                },
+                            }}>
+                                <Protected guard={!!session}>
+                                    <Stack.Screen name="(app)" options={{ headerShown: false }} />
+                                </Protected>
+                                <Protected guard={!session}>
+                                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                                </Protected>
+                                <Stack.Screen name="+not-found" options={{ headerShown: true, title: 'not Found', animation: 'simple_push' }} />
+                            </Stack>
+                        </NavigationThemeProvider>
+
+                        <ModalContainer />
+
+                        <Toaster position='bottom-center' styles={{
+                            toastContainer: {
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '90%',
+                                maxWidth: '90%',
+                            },
+                            toast: {
+                                backgroundColor: 'blue'
+                            },
+                            toastContent: {
+                                backgroundColor: 'green',
+                            }
+                        }} />
+                    </ThemeProvider>
+                </SafeAreaProvider>
+            </GestureHandlerRootView>
+        </ModalProvider>
     );
 }

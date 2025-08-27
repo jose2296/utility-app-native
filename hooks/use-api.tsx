@@ -19,7 +19,7 @@ type ApiResponse<T> = CommonApiResponse<T> & {
 type LazyApiResponse<T> = CommonApiResponse<T> & {
     request: FetchOptions<T>;
 };
-type ApiError = {
+export type ApiError = {
     message: string;
     status?: number;
 };
@@ -96,7 +96,7 @@ export function useApi<T = any>(endpoint: string, method: Method = 'GET', body?:
     const { request, ...api } = useLazyApi<T>(endpoint, method, body, transformFunction);
 
     useEffect(() => {
-        request(body);
+        request(endpoint, body);
     }, [request]);
 
     return { ...api, refetch: request };

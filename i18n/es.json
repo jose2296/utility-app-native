@@ -13,7 +13,10 @@
         "title": "Dashboard",
         "no_items_found": "No se encontraron items en tu dashboard",
         "delete_item": "Eliminar item del dashboard",
-        "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold> del dashboard?"
+        "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold> del dashboard?",
+        "adding_item_to_dashboard": "Añadiendo <bold>{name}</bold> al dashboard...",
+        "item_added_to_dashboard": "<bold><underline>{name}</underline></bold> se ha añadido al dashboard",
+        "item_already_in_dashboard": "<bold><underline>{name}</underline></bold> ya está en el dashboard"
     },
     "workspaces": {
         "title": "Espacios de trabajo",
@@ -27,8 +30,12 @@
             "pick_color": "Selecciona un color"
         }
     },
-    "notes": {
-        "title": "Notas"
+    "list_types": {
+        "tasks": "Tareas",
+        "movies": "Películas",
+        "series": "Series",
+        "movies_and_series": "Películas y series",
+        "books": "Libros"
     },
     "lists": {
         "title": "Listas",
@@ -55,6 +62,15 @@
     },
     "list": {
         "collaborators": "Colaboradores",
+        "collaborate": {
+            "title": "Invitación a colaborar",
+            "message": "Te han invitado a colaborar en la lista <bold><underline>{title}</underline></bold>",
+            "select_location": "Selecciona un espacio de trabajo y/o la carpeta dónde quieres que se guarde la lista",
+            "select_workspace": "Selecciona un espacio de trabajo",
+            "select_folder": "Selecciona una carpeta",
+            "accept_invitation": "Aceptar",
+            "decline_invitation": "Rechazar"
+        },
         "can_edit": "Puede editar",
         "can_not_edit": "No puede editar",
         "toggle_seen": "Mostrar vistas",
@@ -124,7 +140,7 @@
             "publisher": "Editor"
         },
         "delete_list": "Eliminar lista",
-        "delete_list_confirmation": "¿Estás seguro de que quieres eliminar esta lista?"
+        "delete_list_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?"
     },
     "folder_details": {
         "add_list": "Añadir lista",
@@ -132,10 +148,23 @@
         "add_folder": "Añadir carpeta"
     },
     "folders": {
+        "delete": "Eliminar carpeta",
+        "delete_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?",
         "save_modal": {
             "create_title": "Crear carpeta",
             "edit_title": "Editar carpeta",
             "name": "Nombre de la carpeta"
+        }
+    },
+    "notes": {
+        "title": "Notas",
+        "delete": "Eliminar nota",
+        "delete_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?",
+        "add_to_dashboard": "Añadir nota al dashboard",
+        "save_modal": {
+            "create_title": "Crear nota",
+            "edit_title": "Editar nota",
+            "name": "Nombre de la nota"
         }
     },
     "validations": {

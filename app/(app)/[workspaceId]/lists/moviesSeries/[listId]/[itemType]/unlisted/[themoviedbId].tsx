@@ -1,4 +1,4 @@
-import MovieSeriesItemDetails from '@/components/lists/movieSeriesItemDetails';
+import MovieSeriesItemDetails from '@/modules/lists/movieSeriesItemDetails';
 import { useLocalSearchParams } from "expo-router";
 
 const ThemeMovieDbItem = () => {

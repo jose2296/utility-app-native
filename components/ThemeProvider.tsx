@@ -261,7 +261,7 @@ const themes = {
     light: pastelTheme
 }
 
-const themesInRgb = Object.entries(themes).reduce((acc, [key, value]) => {
+export const themesInRgb = Object.entries(themes).reduce((acc, [key, value]) => {
     return {
         ...acc,
         [key]: vars(Object.entries(value).reduce((acc, [key, value]) => {
