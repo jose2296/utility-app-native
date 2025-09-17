@@ -1,3 +1,4 @@
+import Checkbox from '@/components/checkbox';
 import { useModal } from '@/components/modal/modal.context';
 import { ModalProps } from '@/components/modal/modal.model';
 import { useLazyApi } from '@/hooks/use-api';
@@ -106,13 +107,15 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                     {...props}
                     listData={listData}
                     item={listItem}
-                    sheetHeight={280}
+                    sheetHeight={380}
                     mode='edit'
                     defaultValue={listItem.content}
+                    toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
+
                 />
             ),
             {
-                sheetHeight: 280
+                sheetHeight: 380
             }
         );
         // setSaveBottomModalMode('edit');
@@ -232,13 +235,14 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                             <ItemModal
                                 {...props}
                                 listData={listData}
-                                sheetHeight={280}
+                                sheetHeight={380}
                                 mode='create'
                                 defaultValue=''
+                                toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
                             />
                         ),
                         {
-                            sheetHeight: 280
+                            sheetHeight: 380
                         }
                         //     isLoading: savingListItem,
                         //     onSave: async (value) => {
@@ -299,9 +303,10 @@ interface ItemModalProps extends ModalProps {
     mode: 'create' | 'edit',
     defaultValue: string,
     item?: any,
-    listData: any
+    listData: any;
+    toggleMatchItem: (item: number, completed: boolean) => void;
 }
-const ItemModal = ({ mode, defaultValue, item, listData, onClose }: ItemModalProps) => {
+const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClose }: ItemModalProps) => {
     const [inputValue, setNewListItemContent] = useState(defaultValue);
     const { request: saveListItem, loading: savingListItem } = useLazyApi<any>(`list-items`, 'POST');
     const playerWrite = useAudioPlayer(audioSourceWrite);
@@ -341,20 +346,52 @@ const ItemModal = ({ mode, defaultValue, item, listData, onClose }: ItemModalPro
         onClose();
     };
 
+    const handleToggleMatchItem = async (item: any) => {
+        await toggleMatchItem(item.id, !item.completed);
+        onClose();
+    };
+    const matchItemsInList = listData.listItems.filter((_item: any) => _item.content.toLowerCase().includes(inputValue.toLowerCase()));
+
     return (
-        <ScrollView className='flex flex-1 flex-col'>
+        <ScrollView className='flex flex-1 flex-col relative'>
             <Text
                 text={mode === 'create' ? 'list.tasks.create_item' : 'list.tasks.edit_item'}
                 className='text-base-content text-2xl font-bold'
             />
             <View className='h-0.5 bg-base-content/50 my-2' />
+
             <View className='flex flex-col gap-y-6'>
-                <Input
-                    label={mode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
-                    value={inputValue}
-                    onSubmitEditing={handleSave}
-                    onChangeText={setNewListItemContent}
-                />
+                <View className='flex flex-col gap-y-2'>
+                    <Input
+                        label={mode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
+                        value={inputValue}
+                        onSubmitEditing={handleSave}
+                        onChangeText={setNewListItemContent}
+                    />
+                    {inputValue!! && matchItemsInList.length > 0 && (
+                        <View className='flex-1 gap-2 pb-2'>
+                            <Text text='list.tasks.match_items_in_list' className='text-base-content text-md font-bold' />
+                            <ScrollView className='h-20' contentContainerClassName='px-2'>
+                                <AnimatedList
+                                    data={matchItemsInList}
+                                    renderItem={(_item: any, index: number) => (
+                                        <TouchableOpacity onPress={() => handleToggleMatchItem(_item)} className={`flex flex-row gap-4 py-3 items-center border-b border-base-content/40 ${index === matchItemsInList.length - 1 ? 'border-b-0' : ''}`}>
+                                            <Checkbox
+                                                size={24}
+                                                onChange={(checked) => handleToggleMatchItem(_item)}
+                                                checked={_item.completed}
+                                                className='flex-row gap-4 items-center'
+                                            />
+                                            <Text className='text-base-content text-lg' avoidTranslation text={_item.content} />
+                                        </TouchableOpacity>
+                                    )}
+                                    getKey={(_item: any) => _item.id}
+                                />
+
+                            </ScrollView>
+                        </View>
+                    )}
+                </View>
                 <Button
                     size='xl'
                     name={mode === 'create' ? 'create' : 'save'}

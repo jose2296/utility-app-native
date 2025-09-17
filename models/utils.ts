@@ -23,5 +23,5 @@ export type SelectOption = {
 
 export interface KeyValue {
     key: string;
-    value: string;
+    value: IdOrValue;
 }

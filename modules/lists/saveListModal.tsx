@@ -72,6 +72,7 @@ const SaveListModal = ({ mode, data, isOpen, onClose, onSubmit }: { mode: 'creat
             {/* List type */}
             {mode === 'create' && (
                 <DropDownModal
+                    text='list.fixed.select_list_type'
                     isOpen={showListTypeModal}
                     onClose={() => setShowListTypeModal(false)}
                     options={LIST_TYPES}

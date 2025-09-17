@@ -3,10 +3,12 @@ import Text from '@/components/Text';
 import { useApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
 import { Folder } from '@/models/folder';
+import { cn, getAnalogous } from '@/services/utils';
 import { useUserStore } from '@/store';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Href, usePathname, useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { ArrowLeft, LogOut, Menu, X } from 'lucide-react-native';
@@ -90,7 +92,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
     return (
         <View className="flex-1 flex flex-col bg-base-100 px-4">
             <DrawerContentScrollView {...props} scrollEnabled={false} contentContainerStyle={{ justifyContent: 'space-between', flex: 1, gap: 20 }}>
-            {/* <View className='flex-1 gap-5 justify-between'> */}
+                {/* <View className='flex-1 gap-5 justify-between'> */}
                 <View className='flex flex-row items-start justify-between'>
                     <View className='flex flex-col gap-2'>
                         <Text avoidTranslation text={data?.name || ""} className='text-base-content text-3xl font-bold' />
@@ -141,7 +143,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                         <LogOut className='text-base-content' size={25} />
                     </TouchableOpacity>
                 </View>
-            {/* </View> */}
+                {/* </View> */}
             </DrawerContentScrollView>
         </View>
     );
@@ -175,7 +177,7 @@ const DrawerItem = ({ route, active, color, icon, name, onPress }: { route: Href
                 className={`p-4 flex-row items-center gap-4 rounded-xl  ${active ? "bg-neutral/40 text-neutral-content" : ""}`}
             >
                 {icon}
-                {color && <View className='size-6 rounded-full' style={{ backgroundColor: color }} />}
+                {color && <GradientBall color={color} className='size-6' />}
                 <Text text={name} numberOfLines={1} className='text-base-content text-2xl flex-1' />
             </TouchableOpacity>
 
@@ -223,11 +225,33 @@ export const Header = (props: DrawerHeaderProps | NativeStackHeaderProps) => {
                     )}
                 </TouchableOpacity>
                 <View className='flex flex-1 flex-row items-center gap-4'>
-                    {options.headerTintColor && <View className='size-7 rounded-full' style={{ backgroundColor: options.headerTintColor }} />}
+                    {options.headerTintColor && (
+                        <GradientBall color={options.headerTintColor} />
+                    )}
                     <Text text={title} className='text-base-content text-3xl font-bold flex-1' />
                     {options.headerRight?.({})}
                 </View>
             </View>
         </SafeAreaView>
     );
+}
+
+export const GradientBall = ({ color, className }: { color: string, className?: string }) => {
+    const colors = [...getAnalogous(color)] as any;
+    return (
+        <View className={cn(`size-7 rounded-full overflow-hidden`, className)} style={{ backgroundColor: color }}>
+            <LinearGradient
+                colors={colors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
+                }}
+            />
+        </View>
+    )
 }

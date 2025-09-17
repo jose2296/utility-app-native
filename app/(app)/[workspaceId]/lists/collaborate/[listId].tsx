@@ -85,10 +85,11 @@ const CollaborateListScreen = () => {
             </View>
 
             <DropDownModal
+                text='list.fixed.select_list_type'
                 options={data?.workspaces!.map((workspace) => ({ key: workspace.name, value: workspace.id.toString() }))!}
                 isOpen={dropWorkspaceModalOpen}
                 value={workspaceSelected.id.toString()}
-                onPress={(option) => setWorkspaceSelected(data?.workspaces!.find((workspace) => workspace.id.toString() === option.value)!)}
+                onPress={(option) => setWorkspaceSelected(data?.workspaces?.find((workspace) => workspace.id.toString() === option.value)!)}
                 onClose={() => setDropWorkspaceModalOpen(false)}
             />
 

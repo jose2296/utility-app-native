@@ -69,7 +69,7 @@ const BooksScreen = () => {
     const { listId } = useLocalSearchParams();
     const { data: listData, loading, request: getList } = useLazyApi<any>(`lists/${listId}`, 'GET', null, parseList);
     const { workspaceId } = useLocalSearchParams();
-    const workspace = useUserStore((state) => state.data?.workspaces.find((workspace) => workspace.id === Number(workspaceId)));
+    const workspace = useUserStore((state) => state.data?.workspaces?.find((workspace) => workspace.id === Number(workspaceId)));
     const navigation = useNavigation();
 
     const [filtersOpen, setFiltersOpen] = useState(false);

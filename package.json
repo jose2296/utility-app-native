@@ -63,6 +63,7 @@
     "react-native-webview": "13.13.5",
     "reanimated-color-picker": "^4.1.0",
     "sonner-native": "^0.21.0",
+    "streaming-availability": "^4.4.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",
     "zustand": "^5.0.6"

@@ -21,10 +21,11 @@ type ItemProps = {
         updated_at: string;
     };
     isCollaborating?: boolean;
+    placeholderImage?: keyof typeof placeholderImages;
     onPress?: () => void;
     onLongPress?: () => void;
 }
-const MovieSeriesItem = ({ itemId, title, image, type, released, user, isCollaborating, checked, onPress, onLongPress }: ItemProps) => {
+const MovieSeriesItem = ({ itemId, title, image, type, released, user, isCollaborating, placeholderImage, checked, onPress, onLongPress }: ItemProps) => {
     return (
         <View className='flex flex-1 flex-col gap-4 w-full'>
             <View className='flex flex-row gap-x-4 items-center justify-between w-full pb-1'>
@@ -48,7 +49,10 @@ const MovieSeriesItem = ({ itemId, title, image, type, released, user, isCollabo
                 onLongPress={onLongPress}
                 className='rounded-xl relative overflow-hidden '>
 
-                {image ? <ItemImage source={{ uri: image }}/> : <PlaceholderImage /> }
+                {image
+                    ? <ItemImage source={{ uri: image }} />
+                    : <PlaceholderImage placeholderImage={placeholderImage} />
+                }
                 {itemId &&
                     <View className={`absolute w-32 h-32 -top-16 -right-16 ${checked ? 'bg-primary' : 'bg-secondary'} transform rotate-45 z-10 pb-3 items-center justify-end`}>
                         {checked ? (
@@ -89,15 +93,19 @@ const ItemImage = ({ source }: { source: ImageSourcePropType }) => {
     );
 }
 
-const PlaceholderImage = () => {
+const placeholderImages = {
+    moviesSeries: require('@/assets/images/lists/movie-serie-item-placeholder.png'),
+    books: require('@/assets/images/lists/book-item-placeholder.png')
+}
+
+const PlaceholderImage = ({ placeholderImage = 'moviesSeries' }: { placeholderImage?: keyof typeof placeholderImages }) => {
     // const placeholderImage = useImage('/assets/images/movie-serie-item-placeholder.png');
-    const placeholderImage = require('@/assets/images/lists/a.webp');
 
     return (
         <Image
             style={{ width: '100%', aspectRatio: '1/1.5', borderRadius: 16 }}
             className='bg-red-50 '
-            source={placeholderImage}
+            source={placeholderImages[placeholderImage]}
             contentPosition='top'
             // placeholder={{ blurhash }}
             contentFit='fill'

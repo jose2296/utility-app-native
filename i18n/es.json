@@ -40,10 +40,10 @@
     "lists": {
         "title": "Listas",
         "no_items_found": "No se encontraron listas",
-        "edit": "Editar",
-        "add_to_dashboard": "Añadir a dashboard",
-        "share": "Compartir",
-        "remove": "Eliminar",
+        "edit": "Editar lista",
+        "add_to_dashboard": "Añadir lista al dashboard",
+        "share": "Compartir lista",
+        "remove": "Eliminar lista",
         "see_collaborators": "Ver colaboradores",
         "types": {
             "all": "Todos",
@@ -83,7 +83,8 @@
             "edit_item": "Editar elemento",
             "create_item": "Crear elemento",
             "delete_item": "Eliminar elemento",
-            "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?"
+            "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?",
+            "match_items_in_list": "Elementos que coinciden en la lista"
         },
         "fixed": {
             "adding_item_to_list": "Añadiendo <b>{title}</b> a la lista...",
@@ -161,6 +162,7 @@
         "delete": "Eliminar nota",
         "delete_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?",
         "add_to_dashboard": "Añadir nota al dashboard",
+        "share": "Compartir nota",
         "save_modal": {
             "create_title": "Crear nota",
             "edit_title": "Editar nota",

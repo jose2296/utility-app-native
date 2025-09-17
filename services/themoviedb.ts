@@ -27,7 +27,7 @@ export const getItemToSaveByThemoviedbId = async (type: 'movies' | 'series', the
     return {
         themoviedbId: item.id,
         title: (item as ThemoviedbMovieDetail).title || (item as ThemoviedbSeriesDetail).name,
-        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
+        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : undefined,
         released: (item as ThemoviedbMovieDetail).release_date || (item as ThemoviedbSeriesDetail).first_air_date,
         type,
         checked: false
@@ -66,7 +66,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
         status: item.status,
         tagline: item.tagline,
         genres,
-        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
+        image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : undefined,
         released: (item as ThemoviedbMovieDetail).release_date || (item as ThemoviedbSeriesDetail).first_air_date,
         images,
         imagesBackdrops,
@@ -74,7 +74,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
         recommendations: item.recommendations.results.map(recommendation => ({
             themoviedbId: recommendation.id,
             title: (recommendation as RecommendationsMoviesResult).title || (recommendation as RecommendationsSeriesResult).name,
-            image: recommendation.poster_path ? `${API_IMAGE_URL}/${recommendation.poster_path}` : '/images/movie-serie-item-placeholder.png',
+            image: recommendation.poster_path ? `${API_IMAGE_URL}/${recommendation.poster_path}` : undefined,
             released: (recommendation as RecommendationsMoviesResult).release_date || (recommendation as RecommendationsSeriesResult).first_air_date,
             type: type
         })),
@@ -92,7 +92,7 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
             const movies = collectionData.parts.sort((a, b) => a.release_date?.localeCompare(b.release_date)).map(part => ({
                 themoviedbId: part.id,
                 title: part.title,
-                image: part.poster_path ? `${API_IMAGE_URL}/${part.poster_path}` : '/images/movie-serie-item-placeholder.png',
+                image: part.poster_path ? `${API_IMAGE_URL}/${part.poster_path}` : undefined,
                 released: part.release_date,
                 type: 'movies' as const
             }));
@@ -100,8 +100,8 @@ export const getItemDetails = async (type: 'movies' | 'series', themoviedbId: nu
                 id: collectionData.id,
                 name: collectionData.name,
                 overview: collectionData.overview,
-                poster_path: `${API_IMAGE_URL}/${belongsToCollection.poster_path}`,
-                backdrop_path: `${API_IMAGE_URL}/${belongsToCollection.backdrop_path}`,
+                poster_path: belongsToCollection.poster_path ? `${API_IMAGE_URL}/${belongsToCollection.poster_path}` : undefined,
+                backdrop_path: belongsToCollection.backdrop_path ? `${API_IMAGE_URL}/${belongsToCollection.backdrop_path}` : undefined,
                 movies
             };
 
@@ -145,7 +145,7 @@ const parseItemsFromApi = (data: ThemoviedbItem[], type?: 'movies' | 'series') =
         return {
             themoviedbId: item.id,
             title: item.title || item.name,
-            image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : '/images/movie-serie-item-placeholder.png',
+            image: item.poster_path ? `${API_IMAGE_URL}/${item.poster_path}` : undefined,
             released: item.release_date || item.first_air_date,
             type: type || (item.media_type === 'tv' ? 'series' : (item.media_type === 'movie' ? 'movies' : '')),
             checked: false

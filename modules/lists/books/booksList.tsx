@@ -28,6 +28,7 @@ const BooksList = ({ books, handleItemSelected }: { books: FixedItemList<BookFix
                                 itemId={book.id}
                                 title={book.data.title}
                                 image={book.data.image}
+                                placeholderImage='books'
                                 released={book.data.released}
                                 checked={book.data.checked}
                                 onPress={() => null}

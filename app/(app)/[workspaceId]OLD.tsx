@@ -125,7 +125,7 @@ export default function WorkspaceScreen() {
     const { workspaceId } = useLocalSearchParams();
     const navigation = useNavigation();
     const router = useRouter();
-    const workspace = useUserStore((state) => state.data?.workspaces.find((workspace) => workspace.id === Number(workspaceId)));
+    const workspace = useUserStore((state) => state.data?.workspaces?.find((workspace) => workspace.id === Number(workspaceId)));
     const { data, loading } = useApi(`folders/${workspaceId}`, 'GET', null, parseFolder);
 
     useEffect(() => {

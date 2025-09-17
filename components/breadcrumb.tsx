@@ -1,3 +1,4 @@
+import { GradientBall } from '@/app/(app)/_layout';
 import { Breadcrumb as BreadcrumbType } from '@/models/utils';
 import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -15,7 +16,7 @@ const Breadcrumb = ({ breadcrumb }: { breadcrumb: BreadcrumbType[] }) => {
                             onPress={() => router.replace(item.href)}
                             className='transition-all text-base-content flex flex-row items-center gap-2'
                         >
-                            {item.color && <View className='size-4 rounded-full' style={{ backgroundColor: item.color }} />}
+                            {item.color && <GradientBall color={item.color} className='size-4' />}
                             <Text className='text-base-content/50'>{item.avoidTranslation ? item.name : item.name}</Text>
                         </TouchableOpacity>
                         {index !== breadcrumb.length - 1 && <Text className='text-base-content/50'> / </Text>}

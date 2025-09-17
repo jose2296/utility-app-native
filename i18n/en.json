@@ -40,10 +40,10 @@
     "lists": {
         "title": "Lists",
         "no_items_found": "No items found in your dashboard",
-        "edit": "Edit",
-        "add_to_dashboard": "Add to dashboard",
-        "share": "Share",
-        "remove": "Remove",
+        "edit": "Edit list",
+        "add_to_dashboard": "Add list to dashboard",
+        "share": "Share list",
+        "remove": "Remove list",
         "see_collaborators": "See collaborators",
         "types": {
             "all": "All",
@@ -83,7 +83,8 @@
             "edit_item": "Edit item",
             "create_item": "Create item",
             "delete_item": "Delete item",
-            "delete_item_confirmation": "Are you sure you want to delete <bold>{name}</bold>?"
+            "delete_item_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
+            "match_items_in_list": "Items that match in the list"
         },
         "fixed": {
             "adding_item_to_list": "Adding <b>{title}</b> to list...",

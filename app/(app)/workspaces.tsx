@@ -5,7 +5,7 @@ import PageLayout from '@/components/PageLayout';
 import { useLazyApi } from "@/hooks/use-api";
 import { Folder } from "@/models/folder";
 import { Me } from '@/models/me';
-import SaveWorkspaceModal from '@/modules/workspace/saveWorkspaceModal';
+import SaveWorkspaceModal, { DEFAULT_COLORS } from '@/modules/workspace/saveWorkspaceModal';
 import WorkspaceItem from '@/modules/workspace/workspaceItem';
 import { useUserStore } from '@/store';
 import { useFocusEffect } from "expo-router";
@@ -14,25 +14,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
-const DEFAULT_COLORS = [
-    '#f44336',
-    '#E91E63',
-    '#9C27B0',
-    '#673AB7',
-    '#3F51B5',
-    '#2196F3',
-    '#03A9F4',
-    '#00BCD4',
-    '#009688',
-    '#8BC34A',
-    '#CDDC39',
-    '#FFC107',
-    '#FF9800',
-    '#795548',
-    '#607D8B',
-];
 
 const parseWorkspaces = (data: any) => {
     return data.map((folder: any) => {

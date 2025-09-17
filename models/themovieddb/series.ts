@@ -2,7 +2,7 @@ import { Credits, Genre, Images, Keywords, ProductionCompany, ProductionCountry,
 
 export interface ThemoviedbSeriesDetail {
     adult: boolean
-    backdrop_path: string
+    backdrop_path?: string
     created_by: CreatedBy[]
     episode_run_time: any[]
     first_air_date: string
@@ -23,7 +23,7 @@ export interface ThemoviedbSeriesDetail {
     original_name: string
     overview: string
     popularity: number
-    poster_path: string
+    poster_path?: string
     production_companies: ProductionCompany[]
     production_countries: ProductionCountry[]
     seasons: Season[]

@@ -39,15 +39,15 @@ const listOptions = [
 ];
 
 const noteOptions = [
-    { icon: <Pencil className='text-warning' />, key: 'notes.edit', value: 'edit_note' },
+    { icon: <Pencil className='text-warning' />, key: 'notes.save_modal.edit_title', value: 'edit_note' },
     { icon: <Pin className='text-info' />, key: 'notes.add_to_dashboard', value: 'add_note_to_dashboard' },
     { icon: <UsersRound className='text-secondary' />, key: 'notes.share', value: 'share_note' },
-    { icon: <Trash2 className='text-error' />, key: 'notes.remove', value: 'remove_note' },
+    { icon: <Trash2 className='text-error' />, key: 'notes.delete', value: 'remove_note' },
 ];
 
 const folderOptions = [
-    { icon: <Pencil className='text-warning' />, key: 'folders.edit', value: 'edit_folder' },
-    { icon: <Trash2 className='text-error' />, key: 'folders.remove', value: 'remove_folder' },
+    { icon: <Pencil className='text-warning' />, key: 'folders.save_modal.edit_title', value: 'edit_folder' },
+    { icon: <Trash2 className='text-error' />, key: 'folders.delete', value: 'remove_folder' },
 ];
 
 const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDetailsData => {
@@ -55,7 +55,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
         id: item.id,
         name: item.name,
         type: 'lists',
-        listType: item,
+        listType: item.type,
         isOwner: item.isOwner,
         icon: item.type as keyof typeof ITEMS_ICONS,
         href: `/(app)/${workspaceId}/lists/${parseListType(item.type)}/${item.id}` as Href
@@ -347,8 +347,13 @@ export default function WorkspaceScreen() {
     const handleListOptionSelected = async (value: string) => {
         switch (value) {
             case 'edit_list':
+                setShowListOptionsModal(false);
+                await handleEditItem(listItemSelected!);
                 break;
             case 'add_list_to_dashboard':
+                await handlePinItem(listItemSelected!);
+                setListItemSelected(null);
+                setShowListOptionsModal(false);
                 break;
             case 'share_list':
                 setShowListOptionsModal(false);
@@ -358,6 +363,8 @@ export default function WorkspaceScreen() {
                 });
                 break;
             case 'remove_list':
+                setShowListOptionsModal(false);
+                await handleOpenDeleteItemModal(listItemSelected!);
                 break;
         }
     }
@@ -365,8 +372,13 @@ export default function WorkspaceScreen() {
     const handleNoteOptionSelected = async (value: string) => {
         switch (value) {
             case 'edit_note':
+                setShowNoteOptionsModal(false);
+                await handleEditItem(noteItemSelected!);
                 break;
             case 'add_note_to_dashboard':
+                await handlePinItem(noteItemSelected!);
+                setNoteItemSelected(null);
+                setShowNoteOptionsModal(false);
                 break;
             case 'share_note':
                 setShowNoteOptionsModal(false);
@@ -376,6 +388,8 @@ export default function WorkspaceScreen() {
                 });
                 break;
             case 'remove_note':
+                setShowNoteOptionsModal(false);
+                await handleOpenDeleteItemModal(noteItemSelected!);
                 break;
         }
     }
@@ -383,8 +397,12 @@ export default function WorkspaceScreen() {
     const handleFolderOptionSelected = async (value: string) => {
         switch (value) {
             case 'edit_folder':
+                setShowFolderOptionsModal(false);
+                await handleEditItem(folderItemSelected!);
                 break;
             case 'remove_folder':
+                setShowFolderOptionsModal(false);
+                await handleOpenDeleteItemModal(folderItemSelected!);
                 break;
         }
     }
@@ -440,7 +458,7 @@ export default function WorkspaceScreen() {
                 onPress={(value) => handleAddItem(value!)}
             />
 
-            {/* Add list modal */}
+            {/* Save list modal */}
             <SaveListModal
                 isOpen={showSaveListModal}
                 mode={listItemSelected ? 'edit' : 'create'}

@@ -4,22 +4,22 @@
         "slug": "utility-app-native",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
         "scheme": "jose-jerez-utility-app",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
-        "splash": {
-            "image": "./assets/images/splash-icon.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
         "ios": {
             "supportsTablet": true,
+            "icon": {
+                "light": "./assets/logos/ios-light.png",
+                "dark": "./assets/logos/ios-dark.png",
+                "tinted": "./assets/logos/ios-tinted.png"
+            },
             "bundleIdentifier": "com.jose.jerez.utilityapp"
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "foregroundImage": "./assets/logos/adaptive-icon.png",
+                "monochromeImage": "./assets/logos/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
             },
             "edgeToEdgeEnabled": true,
@@ -49,7 +49,7 @@
         "web": {
             "bundler": "metro",
             "output": "single",
-            "favicon": "./assets/images/favicon.png"
+            "favicon": "./assets/logos/logo-1"
         },
         "plugins": [
             "expo-router",
@@ -61,6 +61,18 @@
                 {
                     "supportsBackgroundPlayback": true,
                     "supportsPictureInPicture": true
+                }
+            ],
+            [
+                "expo-splash-screen",
+                {
+                    "backgroundColor": "#ffffff",
+                    "image": "./assets/logos/splash-icon-dark.png",
+                    "dark": {
+                        "image": "./assets/logos/splash-icon-light.png",
+                        "backgroundColor": "#282a36"
+                    },
+                    "imageWidth": 200
                 }
             ]
         ],

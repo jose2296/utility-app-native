@@ -127,7 +127,7 @@ export const searchBookByTitle = async (title: string): Promise<BookFixedItem[]>
     return items?.items?.map((item) => ({
         externalId: item.id,
         title: item.volumeInfo.title,
-        image: item.volumeInfo.imageLinks?.medium || item.volumeInfo.imageLinks?.small || item.volumeInfo.imageLinks?.thumbnail || item.volumeInfo.imageLinks?.smallThumbnail,
+        image: (item.volumeInfo.imageLinks?.extraLarge || item.volumeInfo.imageLinks?.large || item.volumeInfo.imageLinks?.medium || item.volumeInfo.imageLinks?.small || item.volumeInfo.imageLinks?.thumbnail || item.volumeInfo.imageLinks?.smallThumbnail).replace('http://', 'https://'),
         authors: item.volumeInfo.authors,
         released: item.volumeInfo.publishedDate,
         description: item.volumeInfo.description,

@@ -1,7 +1,9 @@
+import { GradientBall } from '@/app/(app)/_layout';
 import BottomSheet from '@/components/BottomSheet';
 import Button from '@/components/button';
 import { Input } from '@/components/input';
 import Text from '@/components/Text';
+import { getContrastColor } from '@/services/utils';
 import { Plus } from 'lucide-react-native';
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -68,20 +70,24 @@ const SaveWorkspaceModal = ({ isOpen, mode, onClose, workspace, onSubmit, isSavi
                         <ScrollView horizontal contentContainerClassName='gap-8 flex py-4'>
                             <TouchableOpacity
                                 onPress={() => setShowCustomColor(true)}
-                                className={`w-12 h-12 items-center justify-center rounded-xl bg-transparent border-2  ${(workspaceItemSelected?.customColor) ? 'border-info' : 'border-base-300'}`}
-                                style={{ backgroundColor: workspaceItemSelected?.customColor, transform: [{ translateY: workspaceItemSelected?.customColor ? -2 : 0 }] }}
+                                className={`w-12 h-12 items-center justify-center rounded-xl bg-transparent border-2 overflow-hidden ${(workspaceItemSelected?.customColor) ? 'border-info' : 'border-base-300'}`}
+                                style={{ transform: [{ translateY: workspaceItemSelected?.customColor ? -2 : 0 }] }}
                             >
                                 {/* <Plus size={30} className={`${workspaceItemSelected?.customColor ? getContrastColor(workspaceItemSelected?.customColor) === 'black' ? 'text-black' : 'text-white' : 'text-white'}`} /> */}
-                                <Plus size={30} className='text-base-content' />
+                                <GradientBall color={workspaceItemSelected?.customColor || DEFAULT_COLORS[0]} className='size-full rounded-none absolute' />
+                                <Plus size={20} stroke={getContrastColor(workspaceItemSelected?.customColor || DEFAULT_COLORS[0]).color} className='absolute' />
                             </TouchableOpacity>
-                            {DEFAULT_COLORS.map((color, index) => (
-                                <TouchableOpacity
-                                    key={color + index}
-                                    onPress={() => setWorkspaceItemSelected({ ...workspaceItemSelected, color, customColor: undefined })}
-                                    className={`w-12 h-12 rounded-xl border-2  ${(!workspaceItemSelected?.customColor && (workspaceItemSelected?.color || DEFAULT_COLORS[0])) === color ? 'border-info' : 'border-base-300'}`}
-                                    style={{ backgroundColor: color, transform: [{ translateY: (!workspaceItemSelected?.customColor && (workspaceItemSelected?.color || DEFAULT_COLORS[0])) === color ? -2 : 0 }] }}
-                                />
-                            ))}
+                            {DEFAULT_COLORS.map((color, index) => {
+                                return (
+                                    <TouchableOpacity
+                                        key={color + index}
+                                        onPress={() => setWorkspaceItemSelected({ ...workspaceItemSelected, color, customColor: undefined })}
+                                        className={`w-12 h-12 rounded-xl border-2 overflow-hidden ${(!workspaceItemSelected?.customColor && (workspaceItemSelected?.color || DEFAULT_COLORS[0])) === color ? 'border-info' : 'border-base-300'}`}
+                                        style={{ transform: [{ translateY: (!workspaceItemSelected?.customColor && (workspaceItemSelected?.color || DEFAULT_COLORS[0])) === color ? -2 : 0 }] }}
+                                    >
+                                        <GradientBall color={color} className='size-full rounded-none' />
+                                    </TouchableOpacity>
+                                )})}
                         </ScrollView>
                         <View className='items-end'>
                             <Button

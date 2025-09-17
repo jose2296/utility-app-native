@@ -1,3 +1,4 @@
+import { GradientBall } from '@/app/(app)/_layout';
 import { useRouter } from 'expo-router';
 import { Pencil, Pin, Trash2 } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
@@ -63,7 +64,7 @@ const WorkspaceItem = ({ item, handleDeleteItem, handleEditItem }: { item: any, 
                 // TODO: Tooltip on long press
                 onLongPress={() => null}
             >
-                <View className='min-w-fit text-base-content size-8 rounded-full' style={{ backgroundColor: item.color }} />
+                <GradientBall color={item.color} className='size-8 ' />
                 <Text avoidTranslation text={item.name} numberOfLines={1} className='text-base-content text-2xl flex-1 font-bold' />
             </TouchableOpacity>
         </CustomSwipeable>

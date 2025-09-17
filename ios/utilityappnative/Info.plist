@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>utilityappnative</string>
+          <string>jose-jerez-utility-app</string>
           <string>com.jose.jerez.utilityapp</string>
         </array>
       </dict>

@@ -42,7 +42,7 @@ export const parseList = (list: any) => {
 const ListScreen = () => {
     const { listId, workspaceId } = useLocalSearchParams();
     const { data: listData, loading, error, request: getList } = useLazyApi<any>(`lists/${listId}`, 'GET', null, parseList);
-    const workspace = useUserStore((state) => state.data?.workspaces.find((workspace) => workspace.id === Number(workspaceId)));
+    const workspace = useUserStore((state) => state.data?.workspaces?.find((workspace) => workspace.id === Number(workspaceId)));
     const navigation = useNavigation();
 
     useRealtimeGetData(getList, `list-${listId}`, 'update-list');

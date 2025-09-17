@@ -34,7 +34,7 @@ export type ThemoviedbFixedItemDetails = {
     synopsis: string;
     tagline: string;
     status: string;
-    image: string;
+    image?: string;
     released: string;
     genres: string;
 
@@ -43,12 +43,12 @@ export type ThemoviedbFixedItemDetails = {
         id: number;
         name: string;
         overview: string;
-        poster_path: string;
-        backdrop_path: string;
+        poster_path?: string;
+        backdrop_path?: string;
         movies: {
             themoviedbId: number;
             title: string;
-            image: string;
+            image?: string;
             released: string;
             type: 'movies' | 'series';
         }[];
