@@ -109,6 +109,7 @@ type BottomSheetProps = {
     children: React.ReactNode;
 };
 
+// TODO: Dynamic sheetHeight
 const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: BottomSheetProps) => {
     const translateY = useSharedValue(sheetHeight);
     const height = useSharedValue(sheetHeight);
@@ -179,7 +180,7 @@ const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: 
         <>
             {/* Backdrop */}
             <Animated.View
-                className="absolute top-0 left-0 right-0 bottom-0 bg-black/40"
+                className="absolute top-0 left-0 right-0 bottom-0 bg-black/40 z-50"
                 style={animatedBackdropStyle}
             >
                 <Pressable onPress={() => {
@@ -190,7 +191,7 @@ const BottomSheet = ({ isOpen, onClose, children, sheetHeight = SHEET_HEIGHT }: 
 
             {/* Sheet */}
             <Animated.View
-                className="absolute left-0 right-0 bottom-0 rounded-t-2xl pt-1 "
+                className="absolute left-0 right-0 bottom-0 rounded-t-2xl pt-1 z-50"
                 style={[
                     {
                         // height: sheetHeight + keyboardHeight,

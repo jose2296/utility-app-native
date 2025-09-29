@@ -48,7 +48,6 @@ const SaveWorkspaceModal = ({ isOpen, mode, onClose, workspace, onSubmit, isSavi
 
     return (
         <>
-
             <BottomSheet
                 isOpen={isOpen}
                 onClose={() => { onClose(); }}

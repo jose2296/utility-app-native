@@ -1,6 +1,7 @@
 import BottomSheet from '@/components/BottomSheet';
 import Button from '@/components/button';
 import { Input } from '@/components/input';
+import Text from '@/components/Text';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
@@ -24,6 +25,12 @@ const SaveFolderModal = ({ mode, name, isOpen, onClose, onSubmit }: { mode: 'cre
             onClose={onClose}
             sheetHeight={220}
         >
+
+            <Text
+                text={mode === 'create' ? 'folders.save_modal.create_title' : 'folders.save_modal.edit_title'}
+                className='text-2xl font-bold text-base-content border-b border-base-content pb-2 mb-1'
+            />
+
             <View className='flex-1 justify-between'>
                 <Input
                     label={mode === 'create' ? 'folders.save_modal.create_title' : 'folders.save_modal.edit_title'}

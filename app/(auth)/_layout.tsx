@@ -8,15 +8,25 @@ export default function AuthLayout() {
         <View className='flex flex-1 bg-base-100'>
             <Stack
                 screenOptions={{
-                    headerShown: false
-                }}>
-            <Stack.Screen
-                name="index"
-                options={{
-                    title: 'Login'
+                    headerShown: false,
+                    animation: 'default'
                 }}
-            />
-        </Stack>
+            >
+                <Stack.Screen
+                    name="index"
+                    options={{
+                        title: 'Login',
+                        animation: 'slide_from_left'
+                    }}
+                />
+                <Stack.Screen
+                    name="register"
+                    options={{
+                        title: 'Register',
+                        animation: 'slide_from_right'
+                    }}
+                />
+            </Stack>
         </View>
     );
 }

@@ -1,7 +1,8 @@
 import { GradientBall } from '@/app/(app)/_layout';
 import { Breadcrumb as BreadcrumbType } from '@/models/utils';
 import { useRouter } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import Text from './Text';
 
 const Breadcrumb = ({ breadcrumb }: { breadcrumb: BreadcrumbType[] }) => {
     const router = useRouter();
@@ -17,9 +18,13 @@ const Breadcrumb = ({ breadcrumb }: { breadcrumb: BreadcrumbType[] }) => {
                             className='transition-all text-base-content flex flex-row items-center gap-2'
                         >
                             {item.color && <GradientBall color={item.color} className='size-4' />}
-                            <Text className='text-base-content/50'>{item.avoidTranslation ? item.name : item.name}</Text>
+                            <Text
+                                className='text-base-content/50'
+                                avoidTranslation={!!item.avoidTranslation}
+                                text={item.name}
+                            />
                         </TouchableOpacity>
-                        {index !== breadcrumb.length - 1 && <Text className='text-base-content/50'> / </Text>}
+                        {index !== breadcrumb.length - 1 && <Text className='text-base-content/50' avoidTranslation text=' / '/>}
                     </View>
                 </View>
             ))}

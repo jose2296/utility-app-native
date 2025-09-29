@@ -61,8 +61,15 @@ const CollaborateListScreen = () => {
         <>
             <View className='flex flex-1 px-10' style={{ paddingBottom: insets.bottom }}>
                 <View className='flex flex-1 items-center justify-center gap-4 '>
-                    <Text className='text-4xl text-center text-base-content' text='list.collaborate.message' translateData={{ title: listTitle }} />
-                    <Text className='text-2xl text-center text-base-content' text='list.collaborate.select_location' />
+                    <Text
+                        className='text-4xl text-center text-base-content'
+                        text='list.collaborate.message'
+                        translateData={{ title: listTitle }}
+                    />
+                    <Text
+                        className='text-2xl text-center text-base-content'
+                        text='list.collaborate.select_location'
+                    />
 
                     <Dropdown
                         label='list.collaborate.select_workspace'

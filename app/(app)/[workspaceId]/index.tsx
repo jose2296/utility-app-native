@@ -1,10 +1,10 @@
 import AnimatedList from '@/components/animatedList';
-import BottomSheet from '@/components/BottomSheet';
 import FixedButton from '@/components/FixedButton';
 import InformationModal from '@/components/InformationModal';
 import Loader from '@/components/loader';
+import BottomSheetOptions, { BottomSheetOption } from '@/components/modal/bottom-sheet-options';
+import CollaboratorsModal from '@/components/modal/collaborators-modal';
 import PageLayout from '@/components/PageLayout';
-import Text from '@/components/Text';
 import { useLazyApi } from '@/hooks/use-api';
 import { FolderDetailsData } from '@/models/folder';
 import FolderItem from '@/modules/folder/folderItem';
@@ -13,10 +13,10 @@ import SaveListModal, { ListTypeValue } from '@/modules/lists/saveListModal';
 import SaveNoteModal from '@/modules/notes/saveNoteModal';
 import SaveWorkspaceModal, { DEFAULT_COLORS } from '@/modules/workspace/saveWorkspaceModal';
 import { toast } from '@/services/toast';
-import { ItemIcon, ITEMS_ICONS } from '@/utils/dashboard';
+import { ITEMS_ICONS } from '@/utils/dashboard';
 import { parseListType } from '@/utils/lists';
 import { Href, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Ellipsis, Pencil, Pin, Trash2, UsersRound } from 'lucide-react-native';
+import { Ellipsis, Pencil, Pin, Share2, Trash2, UsersRound } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { Share, TouchableOpacity, View } from 'react-native';
 
@@ -26,26 +26,28 @@ const addOptions = [
     { text: 'folder_details.add_folder', value: 'add_folder' }
 ];
 
-const workspaceOptions = [
+export const workspaceOptions: BottomSheetOption[] = [
     { icon: <Pencil className='text-warning' />, key: 'workspaces.edit', value: 'edit_workspace' },
     { icon: <Trash2 className='text-error' />, key: 'workspaces.remove', value: 'remove_workspace' },
 ];
 
-const listOptions = [
+export const listOptions: BottomSheetOption[] = [
     { icon: <Pencil className='text-warning' />, key: 'lists.edit', value: 'edit_list' },
     { icon: <Pin className='text-info' />, key: 'lists.add_to_dashboard', value: 'add_list_to_dashboard' },
-    { icon: <UsersRound className='text-secondary' />, key: 'lists.share', value: 'share_list' },
+    { icon: <Share2 className='text-secondary' />, key: 'lists.share', value: 'share_list' },
+    { icon: <UsersRound className='text-secondary' />, key: 'lists.see_collaborators', value: 'see_collaborators' },
     { icon: <Trash2 className='text-error' />, key: 'lists.remove', value: 'remove_list' },
 ];
 
-const noteOptions = [
+export const noteOptions: BottomSheetOption[] = [
     { icon: <Pencil className='text-warning' />, key: 'notes.save_modal.edit_title', value: 'edit_note' },
     { icon: <Pin className='text-info' />, key: 'notes.add_to_dashboard', value: 'add_note_to_dashboard' },
-    { icon: <UsersRound className='text-secondary' />, key: 'notes.share', value: 'share_note' },
+    // { icon: <Share2 className='text-secondary' />, key: 'notes.share', value: 'share_note' },
+    // { icon: <UsersRound className='text-secondary' />, key: 'notes.see_collaborators', value: 'see_collaborators' },
     { icon: <Trash2 className='text-error' />, key: 'notes.delete', value: 'remove_note' },
 ];
 
-const folderOptions = [
+export const folderOptions: BottomSheetOption[] = [
     { icon: <Pencil className='text-warning' />, key: 'folders.save_modal.edit_title', value: 'edit_folder' },
     { icon: <Trash2 className='text-error' />, key: 'folders.delete', value: 'remove_folder' },
 ];
@@ -57,6 +59,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
         type: 'lists',
         listType: item.type,
         isOwner: item.isOwner,
+        collaborators: item.collaborators,
         icon: item.type as keyof typeof ITEMS_ICONS,
         href: `/(app)/${workspaceId}/lists/${parseListType(item.type)}/${item.id}` as Href
     }));
@@ -109,7 +112,8 @@ export default function WorkspaceScreen() {
     const [showFolderOptionsModal, setShowFolderOptionsModal] = useState(false);
     const [deleteListModalOpen, setDeleteListModalOpen] = useState(false);
     const [deleteNoteModalOpen, setDeleteNoteModalOpen] = useState(false);
-
+    const [seeCollaboratorsModalOpen, setSeeCollaboratorsModalOpen] = useState(false);
+    const [_listOptions, setListOptions] = useState(listOptions);
     const [listItemSelected, setListItemSelected] = useState<FolderDetailsData['items'][number] | null>(null);
     const [deleteFolderModalOpen, setDeleteFolderModalOpen] = useState(false);
     const [folderItemSelected, setFolderItemSelected] = useState<FolderDetailsData['items'][number] | null>(null);
@@ -128,17 +132,18 @@ export default function WorkspaceScreen() {
     }, [folderId, workspaceId]);
 
     useEffect(() => {
-        if (workspace) {
-            navigation.setOptions({
-                title: workspace.name,
-                headerTintColor: workspace.color,
-                headerRight: () => (
-                    <TouchableOpacity disabled={workspaceOptionsOpen} onPress={() => setWorkspaceOptionsOpen(true)} className={`p-4 ${workspaceOptionsOpen ? 'opacity-50' : ''}`} hitSlop={10}>
-                        <Ellipsis size={20} className='text-base-content' />
-                    </TouchableOpacity>
-                )
-            });
-        }
+        const hideHeader = (loadingFolderData && !workspace) || !workspace;
+
+        navigation.setOptions({
+            title: workspace?.name,
+            headerShown: !hideHeader,
+            headerTintColor: workspace?.color || (workspace as any)?.root?.color,
+            headerRight: () => (
+                <TouchableOpacity disabled={workspaceOptionsOpen} onPress={() => setWorkspaceOptionsOpen(true)} className={`p-4 ${workspaceOptionsOpen ? 'opacity-50' : ''}`} hitSlop={10}>
+                    <Ellipsis size={20} className='text-base-content' />
+                </TouchableOpacity>
+            )
+        });
     }, [workspace, workspaceOptionsOpen]);
 
     const handlePinItem = async (item: FolderDetailsData['items'][number]) => {
@@ -298,6 +303,7 @@ export default function WorkspaceScreen() {
     }
 
     const handleItemOptionSelected = (value: string) => {
+        setWorkspaceOptionsOpen(false);
         switch (value) {
             case 'edit_workspace':
                 setOpenSaveWorkspaceModal(true);
@@ -332,6 +338,7 @@ export default function WorkspaceScreen() {
             case 'lists':
                 setListItemSelected(item);
                 setShowListOptionsModal(true);
+                setListOptions(item.collaborators?.length ? listOptions : listOptions.filter((option) => option.value !== 'see_collaborators'));
                 break;
             case 'notes':
                 setNoteItemSelected(item);
@@ -359,8 +366,12 @@ export default function WorkspaceScreen() {
                 setShowListOptionsModal(false);
                 await Share.share({
                     title: listItemSelected?.name || '',
-                    message: `jose-jerez-utility-app://${workspaceId}/lists/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
+                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
+                    // message: `jose-jerez-utility-app://${workspaceId}/lists/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
                 });
+                break;
+            case 'see_collaborators':
+                handleSeeCollaborators(listItemSelected!);
                 break;
             case 'remove_list':
                 setShowListOptionsModal(false);
@@ -387,6 +398,9 @@ export default function WorkspaceScreen() {
                     message: `jose-jerez-utility-app://${workspaceId}/notes/${noteItemSelected?.id}?canEdit=true&title=${noteItemSelected?.name}`,
                 });
                 break;
+            case 'see_collaborators':
+                handleSeeCollaborators(noteItemSelected!);
+                break;
             case 'remove_note':
                 setShowNoteOptionsModal(false);
                 await handleOpenDeleteItemModal(noteItemSelected!);
@@ -406,6 +420,20 @@ export default function WorkspaceScreen() {
                 break;
         }
     }
+
+    const handleSeeCollaborators = (item: FolderDetailsData['items'][number]) => {
+        switch (item.type) {
+            case 'lists':
+                setShowListOptionsModal(false);
+                setListItemSelected(item);
+                break;
+            // case 'notes':
+            //     setNoteItemSelected(item);
+            //     break;
+        }
+        setSeeCollaboratorsModalOpen(true);
+    }
+
     if (loadingFolderData || !workspace) {
         return (
             <View className='flex flex-1 flex-col items-center gap-2 justify-center'>
@@ -427,6 +455,7 @@ export default function WorkspaceScreen() {
                             handleDeleteItem={() => handleOpenDeleteItemModal(item)}
                             handleEditItem={() => handleEditItem(item)}
                             handlePinItem={() => handlePinItem(item)}
+                            handleSeeCollaborators={() => handleSeeCollaborators(item)}
                         />
                     )}
                 />
@@ -495,26 +524,6 @@ export default function WorkspaceScreen() {
                 }}
             />
 
-            {/* workspace Item Options */}
-            <BottomSheet isOpen={!!workspaceOptionsOpen} onClose={() => { setWorkspaceOptionsOpen(false); setListItemSelected(null); }} sheetHeight={300}>
-                <View className='flex flex-1 px-4'>
-                    <Text avoidTranslation text={workspace?.name || ''} className='text-xl font-bold text-base-content' />
-
-                    <View className='flex gap-4 pt-4'>
-                        {workspaceOptions?.map((_itemOption) => (
-                            <TouchableOpacity
-                                key={_itemOption.value}
-                                className={`flex-row items-center gap-6 px-6 py-4 rounded-xl border-2 border-base-content/40`}
-                                onPress={() => handleItemOptionSelected(_itemOption.value)}
-                            >
-                                {_itemOption.icon}
-                                <Text text={_itemOption.key} className={`text-2xl text-base-content`} />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-            </BottomSheet>
-
             {/* Save workspace modal */}
             <SaveWorkspaceModal
                 isOpen={openSaveWorkspaceModal}
@@ -528,74 +537,49 @@ export default function WorkspaceScreen() {
                 }}
             />
 
-            {/* List options */}
-            <BottomSheet isOpen={!!showListOptionsModal} onClose={() => setShowListOptionsModal(false)} sheetHeight={440}>
-                <View className='flex flex-1 px-4 gap-2'>
-                    <View className='flex flex-row items-center gap-4'>
-                        {listItemSelected?.icon && <ItemIcon icon={listItemSelected?.icon!} />}
-                        <Text avoidTranslation text={listItemSelected?.name || ''} className='text-xl font-bold text-base-content' />
-                    </View>
+            {/* workspace Item Options */}
+            <BottomSheetOptions
+                isOpen={workspaceOptionsOpen}
+                onClose={() => { setWorkspaceOptionsOpen(false); setListItemSelected(null); }}
+                options={workspaceOptions}
+                title={workspace?.name || ''}
+                handleItemOptionSelected={(value) => handleItemOptionSelected(value)}
+            />
 
-                    <View className='flex gap-4 pt-4'>
-                        {listOptions?.map((_itemOption) => (
-                            <TouchableOpacity
-                                key={_itemOption.value}
-                                className={`flex-row items-center gap-6 px-6 py-4 rounded-xl border-2 border-base-content/40`}
-                                onPress={() => handleListOptionSelected(_itemOption.value)}
-                            >
-                                {_itemOption.icon}
-                                <Text text={_itemOption.key} className={`text-2xl text-base-content`} />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-            </BottomSheet>
+            {/* List options */}
+            <BottomSheetOptions
+                isOpen={showListOptionsModal}
+                onClose={() => setShowListOptionsModal(false)}
+                options={_listOptions}
+                sheetHeight={(_listOptions.length * 75) + 100}
+                title={listItemSelected?.name || ''}
+                handleItemOptionSelected={(value) => handleListOptionSelected(value)}
+            />
 
             {/* Note options */}
-            <BottomSheet isOpen={!!showNoteOptionsModal} onClose={() => setShowNoteOptionsModal(false)} sheetHeight={440}>
-                <View className='flex flex-1 px-4 gap-2'>
-                    <View className='flex flex-row items-center gap-4'>
-                        {noteItemSelected?.icon && <ItemIcon icon={noteItemSelected?.icon!} />}
-                        <Text avoidTranslation text={noteItemSelected?.name || ''} className='text-xl font-bold text-base-content' />
-                    </View>
-
-                    <View className='flex gap-4 pt-4'>
-                        {noteOptions?.map((_itemOption) => (
-                            <TouchableOpacity
-                                key={_itemOption.value}
-                                className={`flex-row items-center gap-6 px-6 py-4 rounded-xl border-2 border-base-content/40`}
-                                onPress={() => handleNoteOptionSelected(_itemOption.value)}
-                            >
-                                {_itemOption.icon}
-                                <Text text={_itemOption.key} className={`text-2xl text-base-content`} />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-            </BottomSheet>
+            <BottomSheetOptions
+                isOpen={showNoteOptionsModal}
+                onClose={() => setShowNoteOptionsModal(false)}
+                options={noteOptions}
+                title={noteItemSelected?.name || ''}
+                handleItemOptionSelected={(value) => handleNoteOptionSelected(value)}
+            />
 
             {/* Folder options */}
-            <BottomSheet isOpen={!!showFolderOptionsModal} onClose={() => setShowFolderOptionsModal(false)} sheetHeight={300}>
-                <View className='flex flex-1 px-4 gap-2'>
-                    <View className='flex flex-row items-center gap-4'>
-                        {folderItemSelected?.icon && <ItemIcon icon={folderItemSelected?.icon!} />}
-                        <Text avoidTranslation text={folderItemSelected?.name || ''} className='text-xl font-bold text-base-content' />
-                    </View>
+            <BottomSheetOptions
+                isOpen={showFolderOptionsModal}
+                onClose={() => setShowFolderOptionsModal(false)}
+                options={folderOptions}
+                title={folderItemSelected?.name || ''}
+                handleItemOptionSelected={(value) => handleFolderOptionSelected(value)}
+            />
 
-                    <View className='flex gap-4 pt-4'>
-                        {folderOptions?.map((_itemOption) => (
-                            <TouchableOpacity
-                                key={_itemOption.value}
-                                className={`flex-row items-center gap-6 px-6 py-4 rounded-xl border-2 border-base-content/40`}
-                                onPress={() => handleFolderOptionSelected(_itemOption.value)}
-                            >
-                                {_itemOption.icon}
-                                <Text text={_itemOption.key} className={`text-2xl text-base-content`} />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-            </BottomSheet>
+            {/* collaborators modal */}
+            <CollaboratorsModal
+                isOpen={seeCollaboratorsModalOpen}
+                onClose={() => { setSeeCollaboratorsModalOpen(false); setListItemSelected(null); }}
+                collaborators={listItemSelected?.collaborators || []}
+            />
 
             {/* Delete list modal */}
             <InformationModal

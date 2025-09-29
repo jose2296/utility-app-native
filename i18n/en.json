@@ -7,7 +7,10 @@
     "register": {
         "title": "Register",
         "go_to_login": "Already have an account? Log in",
-        "register": "Sign up"
+        "register": "Sign up",
+        "verification_code": "Verification code",
+        "confirm_code": "Confirm code",
+        "error": "Error registering, contact the administrator"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -156,6 +159,7 @@
         }
     },
     "validations": {
+        "fill_all_fields": "Please fill in all fields.",
         "required": "Required field.",
         "email": "Enter a valid email.",
         "min_length": "At least {value, plural, =1 {1 character} other {# characters}}.",
@@ -163,6 +167,23 @@
         "at_least_special": "At least {value, plural, =1 {1 special character} other {# special characters}}.",
         "at_least_number": "At least {value, plural, =1 {1 number} other {# numbers}}.",
         "wrong_credentials": "Wrong credentials"
+    },
+    "profile": {
+        "title": "Profile",
+        "select_language": "Select language",
+        "user_data": "User data",
+        "security": "Security",
+        "change_password": "Change password",
+        "new_password": "New password",
+        "change_email": "Change email",
+        "change_name": "Change name",
+        "language_changed_successfully": "Language changed successfully",
+        "email_changed_successfully": "Email changed successfully",
+        "password_changed_successfully": "Password changed successfully"
+    },
+    "languages": {
+        "en": "English",
+        "es": "Spanish"
     },
     "email": "Email",
     "password": "Password",
@@ -172,6 +193,7 @@
     "collaborator": "Collaborator",
     "create": "Create",
     "save": "Save",
+    "update": "Update",
     "cancel": "Cancel",
     "close": "Close",
     "apply": "Apply",
@@ -181,5 +203,7 @@
     "delete": "Delete",
     "no_items": "No items found.",
     "confirm": "Confirm",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loading": "Loading...",
+    "error": "An error has occurred"
 }

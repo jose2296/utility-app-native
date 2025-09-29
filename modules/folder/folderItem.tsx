@@ -53,7 +53,7 @@ const RightActions = ({ handleDeleteItem, handleEditItem, handlePinItem, item }:
     </View>
 );
 
-const FolderItem = ({ item, handleDeleteItem, handleEditItem, handlePinItem, onLongPress }: { item: FolderDetailsData['items'][number], handleDeleteItem: (listItem: any) => void, handleEditItem: (listItem: any) => void, handlePinItem: (listItem: any) => void, onLongPress: () => void }) => {
+const FolderItem = ({ item, handleDeleteItem, handleEditItem, handlePinItem, handleSeeCollaborators, onLongPress }: { item: FolderDetailsData['items'][number], handleDeleteItem: (listItem: any) => void, handleEditItem: (listItem: any) => void, handlePinItem: (listItem: any) => void, handleSeeCollaborators: (listItem: any) => void, onLongPress: () => void }) => {
     const { ref: swipeableRef, reset } = useSwipeableControl();
     const router = useRouter();
 
@@ -81,7 +81,7 @@ const FolderItem = ({ item, handleDeleteItem, handleEditItem, handlePinItem, onL
                 </View>
                 <View className='flex flex-row flex-1 items-center justify-between gap-2 pr-2'>
                     <Text avoidTranslation text={item.name} className='text-base-content text-2xl font-bold' />
-                    {!item.isOwner && <TouchableOpacity hitSlop={20} onPress={() => { handleEditItem?.(item); reset(); }}><UsersRound size={20} className='text-base-content' /></TouchableOpacity>}
+                    {!item.isOwner && <TouchableOpacity hitSlop={20} onPress={() => { handleSeeCollaborators?.(item); reset(); }}><UsersRound size={20} className='text-base-content' /></TouchableOpacity>}
                 </View>
             </TouchableOpacity>
         </CustomSwipeable>

@@ -1,9 +1,9 @@
+import FixedButton from '@/components/FixedButton';
 import Checkbox from '@/components/checkbox';
 import { useModal } from '@/components/modal/modal.context';
 import { ModalProps } from '@/components/modal/modal.model';
 import { useLazyApi } from '@/hooks/use-api';
 import { useAudioPlayer } from 'expo-audio';
-import { Plus } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
@@ -107,7 +107,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                     {...props}
                     listData={listData}
                     item={listItem}
-                    sheetHeight={380}
+                    sheetHeight={400}
                     mode='edit'
                     defaultValue={listItem.content}
                     toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
@@ -115,7 +115,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                 />
             ),
             {
-                sheetHeight: 380
+                sheetHeight: 400
             }
         );
         // setSaveBottomModalMode('edit');
@@ -225,24 +225,22 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                 </CustomPullToRefreshOnRelease>
             </View> */}
 
-            <TouchableOpacity
+            <FixedButton
                 onPress={() => {
-                    // setSaveBottomModalMode('create');
-                    // setEditBottomModalOpen(true);
                     openSaveItemModal(
                         'bottomSheet',
                         (props) => (
                             <ItemModal
                                 {...props}
                                 listData={listData}
-                                sheetHeight={380}
+                                sheetHeight={400}
                                 mode='create'
                                 defaultValue=''
                                 toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
                             />
                         ),
                         {
-                            sheetHeight: 380
+                            sheetHeight: 400
                         }
                         //     isLoading: savingListItem,
                         //     onSave: async (value) => {
@@ -252,11 +250,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                         // }
                     );
                 }}
-                className='absolute right-4 p-4 bg-primary rounded-full shadow-lg'
-                style={{ bottom: insets.bottom + 10 }}
-            >
-                <Plus size={35} className='text-primary-content' />
-            </TouchableOpacity>
+            />
 
             {/* <BottomSheet
                 isOpen={editBottomModalOpen}
@@ -350,7 +344,7 @@ const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClos
         await toggleMatchItem(item.id, !item.completed);
         onClose();
     };
-    const matchItemsInList = listData.listItems.filter((_item: any) => _item.content.toLowerCase().includes(inputValue.toLowerCase()));
+    const matchItemsInList = listData.listItems.filter((_item: any) => _item.content.trim().toLowerCase().includes(inputValue.trim().toLowerCase()));
 
     return (
         <ScrollView className='flex flex-1 flex-col relative'>
@@ -360,7 +354,7 @@ const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClos
             />
             <View className='h-0.5 bg-base-content/50 my-2' />
 
-            <View className='flex flex-col gap-y-6'>
+            <View className='flex flex-col gap-y-4'>
                 <View className='flex flex-col gap-y-2'>
                     <Input
                         label={mode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
@@ -371,14 +365,14 @@ const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClos
                     {inputValue!! && matchItemsInList.length > 0 && (
                         <View className='flex-1 gap-2 pb-2'>
                             <Text text='list.tasks.match_items_in_list' className='text-base-content text-md font-bold' />
-                            <ScrollView className='h-20' contentContainerClassName='px-2'>
+                            <ScrollView className='h-32' contentContainerClassName='px-2'>
                                 <AnimatedList
                                     data={matchItemsInList}
                                     renderItem={(_item: any, index: number) => (
                                         <TouchableOpacity onPress={() => handleToggleMatchItem(_item)} className={`flex flex-row gap-4 py-3 items-center border-b border-base-content/40 ${index === matchItemsInList.length - 1 ? 'border-b-0' : ''}`}>
                                             <Checkbox
                                                 size={24}
-                                                onChange={(checked) => handleToggleMatchItem(_item)}
+                                                onChange={() => handleToggleMatchItem(_item)}
                                                 checked={_item.completed}
                                                 className='flex-row gap-4 items-center'
                                             />

@@ -25,7 +25,7 @@ export const toast = {
     loading: (props: ToastProps) => {
         return sonnerToast.custom(<CustomToast type='loading' {...props} />, { duration: Infinity });
     },
-    promise: (promise: Promise<any>, { loading, success, error }: { loading: ToastProps, success: ToastProps, error: ToastProps }) => {
+    promise: async (promise: Promise<any>, { loading, success, error }: { loading: ToastProps, success: ToastProps, error: ToastProps }) => {
         const id = sonnerToast.custom(<CustomToast {...loading} type="loading" />,
             { duration: Infinity }
         );

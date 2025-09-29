@@ -1,6 +1,6 @@
 import Loader from '@/components/loader';
 import Text from '@/components/Text';
-import { useApi } from '@/hooks/use-api';
+import { useApi, useLazyApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
 import { Folder } from '@/models/folder';
 import { cn, getAnalogous } from '@/services/utils';
@@ -14,6 +14,7 @@ import { Drawer } from 'expo-router/drawer';
 import { ArrowLeft, LogOut, Menu, X } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import React, { JSX, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut, useAnimatedStyle, withTiming } from 'react-native-reanimated';
@@ -22,17 +23,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function AppLayout() {
     const { data, loading } = useApi('me', 'GET');
     const { setData, data: userData } = useUserStore();
+    const { i18n } = useTranslation()
 
     useEffect(() => {
         if (data) {
             setData(data);
+            i18n.changeLanguage(data.language)
         }
     }, [data]);
 
     if (loading || !userData) {
-        return <View className='flex flex-1 items-center justify-center'>
-            <Loader size={50} />
-        </View>;
+        return (
+            <View className='flex flex-1 items-center justify-center bg-base-100'>
+                <Loader size={50} />
+            </View>
+        );
     }
 
     return (
@@ -66,6 +71,20 @@ export default function AppLayout() {
                     headerShown: true
                 }}
             />
+            <Drawer.Screen
+                name="profile"
+                options={{
+                    title: 'profile.title',
+                    headerShown: true
+                }}
+            />
+            <Drawer.Screen
+                name="calendar"
+                options={{
+                    title: 'calendar.title',
+                    headerShown: true
+                }}
+            />
         </Drawer>
     );
 }
@@ -80,14 +99,20 @@ cssInterop(LogOut, {
 });
 const DrawerContent = (props: DrawerContentComponentProps) => {
     const { data, logout } = useUserStore();
+    const { request: logoutRequest } = useLazyApi('auth/logout', 'POST');
     const router = useRouter();
     const pathname = usePathname();
     const { signOut } = useSession();
 
     const handleLogout = async () => {
-        await logout();
-        signOut();
-    }
+        try {
+            await logoutRequest('auth/logout', {});
+
+            await logout();
+            signOut();
+        } catch (error) {
+        }
+    };
 
     return (
         <View className="flex-1 flex flex-col bg-base-100 px-4">
@@ -136,6 +161,25 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                         />
                     )) || []}
                 </ScrollView>
+
+                <DrawerItem
+                    route='/calendar'
+                    active={pathname === "/calendar"}
+                    name='calendar.title'
+                    onPress={() => {
+                        router.replace('/calendar')
+                        props.navigation.dispatch(DrawerActions.toggleDrawer());
+                    }}
+                />
+                <DrawerItem
+                    route='/profile'
+                    active={pathname === "/profile"}
+                    name='profile.title'
+                    onPress={() => {
+                        router.replace('/profile')
+                        props.navigation.dispatch(DrawerActions.toggleDrawer());
+                    }}
+                />
                 <View className='h-0.5 bg-base-content/40' />
                 <View>
                     <TouchableOpacity onPress={handleLogout} className='text-base-content text-3xl font-bold flex flex-row items-center gap-4'>

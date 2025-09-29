@@ -11,6 +11,7 @@ import { Stack, } from 'expo-router';
 import { Protected } from 'expo-router/build/views/Protected';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -53,17 +54,24 @@ export default function RootLayout() {
     }
 
     return (
-        <SessionProvider>
-            <RootLayoutNav />
-        </SessionProvider>
+        // <ClerkProvider tokenCache={tokenCache}>
+            <SessionProvider>
+                <RootLayoutNav />
+            </SessionProvider>
+        // </ClerkProvider>
     );
 }
 
 function RootLayoutNav() {
     const { session, isLoading } = useSession();
+    // const { isSignedIn, isLoaded } = useAuth()
 
     if (isLoading) {
-        return <Loader />;
+        return (
+            <View className='flex flex-1 items-center justify-center bg-base-100'>
+                <Loader />
+            </View>
+        );
     }
 
     return (

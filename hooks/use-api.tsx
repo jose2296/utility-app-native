@@ -3,7 +3,9 @@
 
 // import { useRouter } from '@i18n/navigation';
 import { useUserStore } from '@/store';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { useSession } from './useSession';
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -30,10 +32,11 @@ export function useLazyApi<T = any, R = T>(endpoint: string, method: Method = 'G
     const [data, setData] = useState<R | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<ApiError | null>(null);
-    const { session, signOut } = useSession();
+    const { session, signOut, refreshToken } = useSession();
     const { logout } = useUserStore();
+    // const { getToken, signOut: signOutAuth } = useAuth();
 
-    // const router = useRouter();
+    const router = useRouter();
 
     const request = useCallback(
         async (_endpoint?: string, _body?: any): Promise<R | null> => {
@@ -42,20 +45,30 @@ export function useLazyApi<T = any, R = T>(endpoint: string, method: Method = 'G
 
             try {
                 const url = `${process.env.EXPO_PUBLIC_API_URL}/${_endpoint || endpoint}`;
+                const headers =new Headers();
+                headers.set('Content-Type', 'application/json');
+                headers.set('Authorization', `Bearer ${session?.access_token!}`);
+                headers.set('refresh_token', session?.refresh_token!);
+
                 const res = await fetch(url, {
                     method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session}`
-                    },
+                    headers,
                     body: method === 'GET' || method === 'DELETE' ? null : JSON.stringify(_body ?? body ?? null)
                 });
+
+                if (res.status === 409) {
+                    Alert.alert('Session expired');
+                    await refreshToken();
+                    router.push('/');
+                    return null;
+                }
 
                 if (res.status === 401) {
                     // router.push('/auth/login')
                     const json = await res.json().catch(() => null);
                     const message = json?.error || res.statusText || 'Unknown error';
                     const error = { message, status: res.status };
+
                     setError(error);
                     await logout();
                     signOut();

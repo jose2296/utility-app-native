@@ -35,8 +35,8 @@
                     "data": [
                         {
                             "scheme": "https",
-                            "host": "utility-app-web.vercel.app",
-                            "pathPrefix": "/"
+                            "host": "thorough-communication-production.up.railway.app",
+                            "pathPrefix": "/api/collaborate"
                         }
                     ],
                     "category": [

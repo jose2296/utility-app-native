@@ -1,4 +1,5 @@
 import { BookFixedItem } from './books';
+import { User } from './me';
 
 export interface List {
     id: number;
@@ -6,6 +7,7 @@ export interface List {
     type: string;
     user_id: number;
     isOwner?: boolean;
+    collaborators?: User[];
     created_at: string;
     updated_at: string;
 }

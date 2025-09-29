@@ -1,3 +1,4 @@
+import { ThemeColors } from '@/components/ThemeProvider';
 import { Me } from '@/models/me';
 import { parseDashboardItem } from '@/utils/dashboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,8 +7,13 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface UserState {
     data?: Me;
-    colors?: any;
-    setColors: (colors: any) => void;
+    colors?: Record<ThemeColors, string>;
+    setColors: (colors: Record<ThemeColors, string>) => void;
+    updateProfile: (data: {
+        name?: string;
+        language?: string;
+        email?: string;
+    }) => void;
     setData: (data: Me) => void;
     logout: () => Promise<void>;
 }
@@ -17,8 +23,16 @@ export const useUserStore = create<UserState>()(
         (set, get) => ({
             data: undefined,
             colors: undefined,
+            updateProfile: (data) => set((currentData: any) => {
+                return {
+                    ...currentData,
+                    data: {
+                        ...currentData.data,
+                        ...data,
+                    }
+                };
+            }),
             setData: (data) => set(() => {
-
                 return {
                     data: {
                         ...data,

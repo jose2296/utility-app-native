@@ -127,6 +127,34 @@ export const getTriadic = (hex: string) => {
 };
 
 
+export const hexToRgba = (hex: string, alpha: number): string => {
+    // Normalizamos el hex (quitamos # si existe)
+    let cleanHex = hex.replace(/^#/, "");
+
+    // Expandimos #RGB -> #RRGGBB
+    if (cleanHex.length === 3) {
+        cleanHex = cleanHex
+            .split("")
+            .map((c) => c + c)
+            .join("");
+    }
+
+    if (cleanHex.length !== 6) {
+        throw new Error("Formato hex inválido");
+    }
+
+    // Extraemos valores de R, G y B
+    const r = parseInt(cleanHex.slice(0, 2), 16);
+    const g = parseInt(cleanHex.slice(2, 4), 16);
+    const b = parseInt(cleanHex.slice(4, 6), 16);
+
+    // Validamos opacidad
+    if (alpha < 0 || alpha > 1) {
+        throw new Error("La opacidad debe estar entre 0 y 1");
+    }
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 
 
@@ -138,5 +166,5 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export const cn = (...inputs: any[]) => {
-  return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 };

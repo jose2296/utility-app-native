@@ -2,6 +2,7 @@ import { ListTypeValue } from '@/modules/lists/saveListModal';
 import { Href } from 'expo-router';
 import { ITEMS_ICONS } from '../utils/dashboard';
 import { List } from './list';
+import { User } from './me';
 import { Note } from './note';
 import { Breadcrumb } from './utils';
 
@@ -29,6 +30,7 @@ export interface FolderDetailsData {
         type: string;
         listType?: ListTypeValue;
         isOwner?: boolean;
+        collaborators?: User[];
         icon: keyof typeof ITEMS_ICONS;
         href: Href;
     }[];

@@ -37,7 +37,7 @@ cssInterop(Trash2, {
     },
 });
 export default function DashboardScreen() {
-    const { data, setData } = useUserStore();
+    const { data, setData, colors } = useUserStore();
     const [deleteBottomModalOpen, setDeleteBottomModalOpen] = useState(false);
     const [enableEditingGrid, setEnableEditingGrid] = useState(false);
     const [dashboardItems, setDashboardItems] = useState<ParsedDashboardItem[]>([]);
@@ -51,6 +51,7 @@ export default function DashboardScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const saveGridButtonColors = [...getAnalogous(colors?.['primary-hex']!)] as any;
 
     useFocusEffect(
         useCallback(() => {
@@ -63,14 +64,16 @@ export default function DashboardScreen() {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                !enableEditingGrid ?
-                    <TouchableOpacity onPress={() => setEnableEditingGrid(true)} className={`p-4`}>
-                        <Pencil size={20} className='text-base-content' />
-                    </TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => handleSaveGrid()} className={`p-4`}>
-                        <Save size={20} className='text-base-content' />
-                    </TouchableOpacity>
+                dashboardItems?.length ?
+                    !enableEditingGrid ?
+                        <TouchableOpacity onPress={() => setEnableEditingGrid(true)} className={`p-4`}>
+                            <Pencil size={20} className='text-base-content' />
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity onPress={() => handleSaveGrid()} className={`p-4`}>
+                            <Save size={20} className='text-base-content' />
+                        </TouchableOpacity>
+                    : null
             )
         });
     }, [enableEditingGrid]);
@@ -155,6 +158,14 @@ export default function DashboardScreen() {
         setEnableEditingGrid(false);
     }
 
+    if (loadingMeData && !dashboardItems) {
+        return (
+            <View className='flex flex-1 items-center justify-center bg-base-100'>
+                <Loader size={50} />
+            </View>
+        );
+    }
+
     return (
         <>
             <View className='p-4 flex flex-1'>
@@ -170,8 +181,8 @@ export default function DashboardScreen() {
                             setContentHeight(e.nativeEvent.layout.height)
                         }}
                     >
-                        <TouchableOpacity activeOpacity={0.85} className='flex-1' onLongPress={() => { setEnableEditingGrid(true) }}>
-                            {!!dashboardItems?.length && (
+                        {!!dashboardItems?.length && (
+                            <TouchableOpacity activeOpacity={0.85} className='flex-1' onLongPress={() => { setEnableEditingGrid(true) }}>
                                 <MasonryGrid
                                     data={dashboardItems}
                                     contentWidth={contentWidth}
@@ -205,8 +216,14 @@ export default function DashboardScreen() {
                                         );
                                     }}
                                 />
-                            )}
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+                        )}
+
+                        {!dashboardItems.length && (
+                            <View className='flex-1 items-center justify-center'>
+                                <Text text="no_items" className='text-base-content text-2xl' />
+                            </View>
+                        )}
                     </View>
                 </CustomPullToRefreshOnRelease>
             </View>
@@ -218,9 +235,21 @@ export default function DashboardScreen() {
                 pointerEvents={enableEditingGrid ? 'auto' : 'none'}
             >
                 <TouchableOpacity
-                    className='px-8 py-4 bg-primary rounded-full flex-1 items-center justify-center gap-4 flex-row'
+                    className='px-8 py-4 overflow-hidden rounded-full flex-1 items-center justify-center gap-4 flex-row'
                     onPress={handleSaveGrid}
                 >
+                    <LinearGradient
+                        colors={saveGridButtonColors}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0
+                        }}
+                    />
                     {!updatingDashboardListItem &&
                         <>
                             <Save size={20} className='text-primary-content' />
@@ -283,14 +312,8 @@ const DashboardItem = ({ item }: { item: PositionedItem<ParsedDashboardItem> }) 
         <View
             key={item.id}
             className={`relative overflow-hidden flex flex-1 flex-row gap-4 p-4 py-6 rounded-2xl h-full items-center justify-center`}
-            style={{
-                // backgroundColor: item.entity?.workspace?.color
-            }}
-        // onPress={() => router.push(item.href)}
         >
             <LinearGradient
-                // colors={[item.entity?.workspace?.color!, item.entity?.workspace?.color! + 'aa', item.entity?.workspace?.color! + 'ff']}
-                // colors={[item.entity?.workspace?.color!, item.entity?.workspace?.color!]}
                 colors={colors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -317,7 +340,6 @@ const DashboardItem = ({ item }: { item: PositionedItem<ParsedDashboardItem> }) 
                         className={`${textColor.className} font-bold ${item.size.width === 1 ? 'text-center text-xl' : 'text-2xl items-center justify-center '}`}
                     />
                 </View>
-
             </View>
         </View>
     )

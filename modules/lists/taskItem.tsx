@@ -1,3 +1,6 @@
+import { getAnalogous } from '@/services/utils';
+import { useUserStore } from '@/store';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Check, Pencil, Trash2, Undo } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 import React from 'react';
@@ -24,30 +27,86 @@ cssInterop(Trash2, {
     },
 });
 
-const RightActions = ({ handleEditItem, handleDeleteItem, item }: { handleEditItem: (listItem: any) => void, handleDeleteItem: (listItem: any) => void, item: any }) => (
-    <View className='flex flex-row items-center pl-4'>
-        <TouchableOpacity
-            onPress={() => { handleEditItem(item); }}
-            className='h-full rounded-l-xl bg-secondary flex items-center justify-center p-4 px-6'
-        >
-            <Pencil size={24} className='text-secondary-content' />
-        </TouchableOpacity>
-        <TouchableOpacity
-            onPress={() => { handleDeleteItem(item); }}
-            className='h-full rounded-r-xl bg-error flex items-center justify-center p-4 px-6'
-        >
-            <Trash2 size={24} className='text-error-content' />
-        </TouchableOpacity>
-    </View>
-);
+interface TaskItemProps {
+    item: any;
+    handleEditItem: (listItem: any) => void;
+    handleDeleteItem: (listItem: any) => void;
+}
 
-const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: { savingListItem: boolean, handleToggleCompletedItem: (listItemId: number, completed: boolean) => void, item: any }) => {
+const RightActions = ({ handleEditItem, handleDeleteItem, item }: TaskItemProps) => {
+    const storeColors = useUserStore(state => state.colors);
+    const colorsEdit = [...getAnalogous(storeColors!['secondary-hex']!)] as any;
+    const colorsDelete = [...getAnalogous(storeColors!['error-hex']!)] as any;
+
+    return (
+        <View className='flex flex-row items-center pl-4'>
+            <TouchableOpacity
+                onPress={() => { handleEditItem(item); }}
+                className='h-full rounded-l-xl overflow-hidden flex items-center justify-center p-4 px-6'
+            >
+                <LinearGradient
+                    colors={colorsEdit}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0
+                    }}
+                />
+                <Pencil size={24} className='text-secondary-content' />
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => { handleDeleteItem(item); }}
+                className='h-full rounded-r-xl overflow-hidden flex items-center justify-center p-4 px-6'
+            >
+                <LinearGradient
+                    colors={colorsDelete}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0
+                    }}
+                />
+                <Trash2 size={24} className='text-error-content' />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+interface LeftActionsProps {
+    savingListItem: boolean;
+    handleToggleCompletedItem: (listItemId: number, completed: boolean) => void;
+    item: any;
+}
+const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: LeftActionsProps) => {
+    const storeColors = useUserStore(state => state.colors);
+    const colors = [...getAnalogous(item.completed ? storeColors!['warning-hex']! : storeColors!['success-hex']!)] as any;
+
     return (
         <View className='flex flex-row flex-1 items-center pr-4'>
             <TouchableOpacity
                 onPress={() => { handleToggleCompletedItem(item.id, !item.completed); }}
-                className={`h-full flex-1 rounded-xl flex ${item.completed ? 'bg-warning' : 'bg-success'} items-center justify-center p-4 px-6`}
+                className={`h-full flex-1 rounded-xl relative overflow-hidden flex items-center justify-center p-4 px-6`}
             >
+                <LinearGradient
+                    colors={colors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0
+                    }}
+                />
                 {savingListItem ? <Loader size={35} /> : item.completed ? <Undo size={35} className='text-warning-content' /> : <Check size={35} className='text-success-content' />}
             </TouchableOpacity>
         </View>
@@ -68,12 +127,12 @@ const TaskItem = ({ item, savingListItem, handleToggleCompletedItem, handleEditI
                 />}
             rightActions={
                 <RightActions
-                    handleEditItem={() => {handleEditItem(item); reset(); }}
-                    handleDeleteItem={() => {handleDeleteItem(item); reset(); }}
+                    handleEditItem={() => { handleEditItem(item); reset(); }}
+                    handleDeleteItem={() => { handleDeleteItem(item); reset(); }}
                     item={item}
                 />
             }
-            onSwipeLeftComplete={() => { handleToggleCompletedItem(item.id, !item.completed).then(() => { reset(); })}}
+            onSwipeLeftComplete={() => { handleToggleCompletedItem(item.id, !item.completed).then(() => { reset(); }) }}
         >
             <View className='px-4 flex-row gap-4 items-center border bg-base-100 border-base-content rounded-xl' key={item.id}>
                 <Checkbox

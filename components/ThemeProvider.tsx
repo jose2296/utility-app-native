@@ -2,13 +2,6 @@ import { useUserStore } from '@/store';
 import { useColorScheme, vars } from "nativewind";
 import React, { useEffect } from 'react';
 import { Keyboard, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback } from 'react-native';
-const hexToRgb = (hex: string) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-
-    return `${r} ${g} ${b}`;
-};
 
 const draculaTheme = [
     {
@@ -131,7 +124,7 @@ const draculaTheme = [
         "hex": "#160202",
         "rgb": "rgb(22, 2, 2)"
     }
-];
+] as const;
 
 const pastelTheme = [
     {
@@ -143,14 +136,14 @@ const pastelTheme = [
     {
         "name": "base-200",
         "key": "--color-base-200",
-        "hex": "#f9fafb",
-        "rgb": "rgb(249, 250, 251)"
+        "hex": "#fcfcfd",
+        "rgb": "rgb(252, 252, 253)"
     },
     {
         "name": "base-300",
         "key": "--color-base-300",
-        "hex": "#e5e6e7",
-        "rgb": "rgb(229, 230, 231)"
+        "hex": "#eeeff0",
+        "rgb": "rgb(238, 239, 240)"
     },
     {
         "name": "base-content",
@@ -161,38 +154,38 @@ const pastelTheme = [
     {
         "name": "primary",
         "key": "--color-primary",
-        "hex": "#e9d4ff",
-        "rgb": "rgb(233, 212, 255)"
+        "hex": "#8bc2ff",
+        "rgb": "rgb(139, 194, 255)"
     },
     {
         "name": "primary-content",
         "key": "--color-primary-content",
-        "hex": "#8000d9",
-        "rgb": "rgb(128, 0, 217)"
+        "hex": "#1244e3",
+        "rgb": "rgb(18, 68, 227)"
     },
     {
         "name": "secondary",
         "key": "--color-secondary",
-        "hex": "#feccd2",
-        "rgb": "rgb(254, 204, 210)"
+        "hex": "#93d9a9",
+        "rgb": "rgb(147, 217, 169)"
     },
     {
         "name": "secondary-content",
         "key": "--color-secondary-content",
-        "hex": "#c50035",
-        "rgb": "rgb(197, 0, 53)"
+        "hex": "#00776f",
+        "rgb": "rgb(0, 119, 111)"
     },
     {
         "name": "accent",
         "key": "--color-accent",
-        "hex": "#a3f2ce",
-        "rgb": "rgb(163, 242, 206)"
+        "hex": "#c4b3ff",
+        "rgb": "rgb(196, 179, 255)"
     },
     {
         "name": "accent-content",
         "key": "--color-accent-content",
-        "hex": "#007853",
-        "rgb": "rgb(0, 120, 83)"
+        "hex": "#7007e7",
+        "rgb": "rgb(112, 7, 231)"
     },
     {
         "name": "neutral",
@@ -209,8 +202,8 @@ const pastelTheme = [
     {
         "name": "info",
         "key": "--color-info",
-        "hex": "#51e8fb",
-        "rgb": "rgb(81, 232, 251)"
+        "hex": "#95bcf6",
+        "rgb": "rgb(149, 188, 246)"
     },
     {
         "name": "info-content",
@@ -254,7 +247,14 @@ const pastelTheme = [
         "hex": "#bf0004",
         "rgb": "rgb(191, 0, 4)"
     }
-];
+] as const;
+
+type DraculaThemeNames = typeof draculaTheme[number]["name"];
+type PastelThemeNames = typeof pastelTheme[number]["name"];
+type ThemeNames = DraculaThemeNames | PastelThemeNames;
+
+// 🔑 Ahora generamos nuevas variantes con template literals:
+export type ThemeColors = ThemeNames | `${ThemeNames}-hex` | `${ThemeNames}-rgb`;
 
 const themes = {
     dark: draculaTheme,
@@ -285,7 +285,8 @@ export function ThemeProvider({ children }: any) {
             return {
                 ...acc,
                 [item.name]: item.rgb,
-                [item.name + '-rgb']: item.rgb.slice(4, -1)
+                [item.name + '-rgb']: item.rgb.slice(4, -1),
+                [item.name + '-hex']: item.hex,
             };
         }, {} as Record<string, any>);
         setColors(colors);

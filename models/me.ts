@@ -3,12 +3,16 @@ import { Href } from 'expo-router';
 import { Folder } from './folder';
 import { DashboardItemType } from './utils';
 
-export interface Me {
+export interface Me extends User {
+    dashboardItems: ParsedDashboardItem[];
+    workspaces: Folder[];
+}
+
+export interface User {
     id: number;
     name: string;
     email: string;
-    dashboardItems: ParsedDashboardItem[];
-    workspaces: Folder[];
+    language: string;
     created_at: string;
     updated_at: string;
 }

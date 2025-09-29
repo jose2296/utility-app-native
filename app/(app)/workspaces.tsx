@@ -1,4 +1,5 @@
 import AnimatedList from "@/components/animatedList";
+import FixedButton from '@/components/FixedButton';
 import InformationModal from '@/components/InformationModal';
 import Loader from '@/components/loader';
 import PageLayout from '@/components/PageLayout';
@@ -9,9 +10,8 @@ import SaveWorkspaceModal, { DEFAULT_COLORS } from '@/modules/workspace/saveWork
 import WorkspaceItem from '@/modules/workspace/workspaceItem';
 import { useUserStore } from '@/store';
 import { useFocusEffect } from "expo-router";
-import { Plus } from 'lucide-react-native';
 import React, { useCallback, useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -157,13 +157,17 @@ const Workspaces = () => {
                 isLoading={deletingWorkspace}
             />
 
+            <FixedButton
+                onPress={() => { setSaveWorkspaceModalMode('create'); setWorkspaceItemSelected({ name: '', color: DEFAULT_COLORS[0], customColor: undefined }); setEditWorkspaceModalOpen(true); }}
+            />
+{/*
             <TouchableOpacity
                 onPress={() => { setSaveWorkspaceModalMode('create'); setWorkspaceItemSelected({ name: '', color: DEFAULT_COLORS[0], customColor: undefined }); setEditWorkspaceModalOpen(true); }}
                 className='absolute right-4 p-4 bg-primary rounded-full shadow-lg'
                 style={{ bottom: insets.bottom + 10 }}
             >
                 <Plus size={35} className='text-primary-content' />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </>
     );
 }
