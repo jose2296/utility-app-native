@@ -23,7 +23,6 @@ const SaveNoteModal = ({ mode, name, isOpen, onClose, onSubmit }: { mode: 'creat
         <BottomSheet
             isOpen={isOpen}
             onClose={onClose}
-            sheetHeight={220}
         >
 
             <Text
@@ -31,7 +30,7 @@ const SaveNoteModal = ({ mode, name, isOpen, onClose, onSubmit }: { mode: 'creat
                 className='text-2xl font-bold text-base-content border-b border-base-content pb-2 mb-1'
             />
 
-            <View className='flex-1 justify-between'>
+            <View className='justify-between gap-6'>
                 <Input
                     label={mode === 'create' ? 'notes.save_modal.create_title' : 'notes.save_modal.edit_title'}
                     value={noteName}

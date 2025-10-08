@@ -18,8 +18,12 @@ interface BottomSheetOptionsProps {
 }
 const BottomSheetOptions = ({ isOpen, options, title, sheetHeight, onClose, handleItemOptionSelected }: BottomSheetOptionsProps) => {
     return (
-        <BottomSheet isOpen={isOpen} onClose={onClose} sheetHeight={sheetHeight || (options.length * 75) + 100}>
-            <View className='flex flex-1 px-4'>
+        <BottomSheet
+            isOpen={isOpen}
+            onClose={onClose}
+            // sheetHeight={sheetHeight || (options.length * 75) + 100}
+        >
+            <View className='flex px-4'>
                 <Text avoidTranslation text={title || ''} className='text-xl font-bold text-base-content' />
 
                 <View className='flex gap-4 pt-4'>

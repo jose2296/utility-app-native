@@ -44,8 +44,8 @@ const SaveListModal = ({ mode, data, isOpen, onClose, onSubmit }: { mode: 'creat
                     className='text-2xl font-bold text-base-content border-b border-base-content pb-2 mb-1'
                 />
 
-                <View className='flex-1 justify-between'>
-                    <View className='flex flex-col gap-y-4 flex-1'>
+                <View className='justify-between gap-6'>
+                    <View className='flex flex-col gap-y-4'>
                         <Input
                             label='lists.save_list.name'
                             value={saveListName}

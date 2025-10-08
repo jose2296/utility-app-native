@@ -12,7 +12,8 @@ export interface Breadcrumb {
 
 export enum DashboardItemType {
     lists = 'lists',
-    notes = 'notes'
+    notes = 'notes',
+    folders = 'folders'
 }
 
 export type SelectOption = {

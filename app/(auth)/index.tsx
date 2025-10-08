@@ -1,18 +1,21 @@
 import Button from '@/components/button';
 import { Input } from '@/components/input';
+import Eye from '@/components/svgs/Eye';
+import EyeOff from '@/components/svgs/EyeOff';
 import Text from '@/components/Text';
 import { useLazyApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
 import { toast } from '@/services/toast';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Dimensions, Keyboard, KeyboardEvent, TextInput, View } from 'react-native';
+import { Dimensions, Keyboard, KeyboardEvent, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const { signIn, isLoading } = useSession();
     const passwordRef = useRef<TextInput>(null);
     const { request: signInRequest, loading: isSigningIn, error } = useLazyApi('auth/login', 'POST');
@@ -41,6 +44,11 @@ export default function LoginScreen() {
                 refresh_token: response.refresh_token
             });
         } catch (error) {
+            if ((error as any).status === 401) {
+                toast.error({
+                    title: 'validations.wrong_credentials'
+                });
+            }
             console.error(error);
         }
     }
@@ -85,7 +93,7 @@ export default function LoginScreen() {
                         <Text text='login.title' className='text-3xl font-bold text-base-content' />
                         <Input
                             label='Email'
-                            autoComplete="email"
+                            autoComplete="password"
                             autoCapitalize="none"
                             textContentType="username"
                             importantForAutofill='yes'
@@ -100,12 +108,17 @@ export default function LoginScreen() {
                             ref={passwordRef}
                             label='Password'
                             autoCapitalize="none"
-                            secureTextEntry
+                            secureTextEntry={!isPasswordVisible}
                             autoComplete="password"
                             importantForAutofill='yes'
                             textContentType='password'
                             value={password}
                             onChangeText={(text) => setPassword(text)}
+                            suffixIcon={
+                                <TouchableOpacity hitSlop={15} onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                                    {isPasswordVisible ? <Eye className='text-base-content' /> : <EyeOff className='text-base-content' />}
+                                </TouchableOpacity>
+                            }
                             onSubmitEditing={handleSignIn}
                             returnKeyType='done'
                         />

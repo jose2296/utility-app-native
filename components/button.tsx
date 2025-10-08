@@ -58,11 +58,11 @@ const CustomLineGradient = ({ type }: { type: ButtonProps['type'] }) => {
 
     if (type === 'primary' || type === 'secondary' || type === 'error' || type === 'info' || type === 'success') {
         const key = type + '-hex' as ThemeColors;
-        const color = storeColors![key];
+        const color = storeColors?.[key];
 
         return (
             <LinearGradient
-                colors={[...getAnalogous(color)] as any}
+                colors={[...getAnalogous(color || '#000')] as any}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{

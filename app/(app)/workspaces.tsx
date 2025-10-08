@@ -4,7 +4,7 @@ import InformationModal from '@/components/InformationModal';
 import Loader from '@/components/loader';
 import PageLayout from '@/components/PageLayout';
 import { useLazyApi } from "@/hooks/use-api";
-import { Folder } from "@/models/folder";
+import { FolderDetailsData } from "@/models/folder";
 import { Me } from '@/models/me';
 import SaveWorkspaceModal, { DEFAULT_COLORS } from '@/modules/workspace/saveWorkspaceModal';
 import WorkspaceItem from '@/modules/workspace/workspaceItem';
@@ -25,7 +25,7 @@ const parseWorkspaces = (data: any) => {
 }
 
 const Workspaces = () => {
-    const { request: getWorkspaces, data: folders, loading } = useLazyApi<Folder[]>('folders', 'GET', null, parseWorkspaces);
+    const { request: getWorkspaces, data: folders, loading } = useLazyApi<FolderDetailsData[]>('folders', 'GET', null, parseWorkspaces);
     const [editWorkspaceModalOpen, setEditWorkspaceModalOpen] = useState(false);
     const [saveWorkspaceModalMode, setSaveWorkspaceModalMode] = useState<'edit' | 'create' | null>(null);
     const [deleteWorkspaceModalOpen, setDeleteWorkspaceModalOpen] = useState(false);
@@ -44,7 +44,7 @@ const Workspaces = () => {
     useEffect(() => {
         setData({
             ...data as Me,
-            workspaces: folders as Folder[]
+            workspaces: folders || []
         });
     }, [folders]);
 

@@ -147,7 +147,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                             props.navigation.dispatch(DrawerActions.toggleDrawer());
                         }}
                     />
-                    {data?.workspaces?.map((workspace: Folder) => (
+                    {data?.workspaces?.map((workspace) => (
                         <DrawerItem
                             key={workspace.id}
                             route={`/${workspace.id}`}

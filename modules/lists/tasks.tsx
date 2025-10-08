@@ -1,11 +1,10 @@
+import BottomSheet from '@/components/BottomSheet';
 import FixedButton from '@/components/FixedButton';
 import Checkbox from '@/components/checkbox';
-import { useModal } from '@/components/modal/modal.context';
-import { ModalProps } from '@/components/modal/modal.model';
 import { useLazyApi } from '@/hooks/use-api';
 import { useAudioPlayer } from 'expo-audio';
-import React, { useState } from 'react';
-import { TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { Keyboard, TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import InformationModal from '../../components/InformationModal';
@@ -36,11 +35,12 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
     const { request: deleteListItem, loading: deletingListItem } = useLazyApi<any>(`list-items`, 'DELETE');
     const playerCompleted = useAudioPlayer(audioSourceCompleted);
     const playerTrash = useAudioPlayer(audioSourceTrash);
-    // const [saveBottomModalMode, setSaveBottomModalMode] = useState<'edit' | 'create' | null>(null);
+    const [saveBottomModalMode, setSaveBottomModalMode] = useState<'edit' | 'create'>('create');
+    const [saveItemModalOpen, setSaveItemModalOpen] = useState(false);
     const [deleteBottomModalOpen, setDeleteBottomModalOpen] = useState(false);
     const insets = useSafeAreaInsets();
 
-    const { openModal: openSaveItemModal, updateModalProps: updateSaveItemModalProps, closeModal: closeSaveItemModal } = useModal();
+    // const { openModal: openSaveItemModal, updateModalProps: updateSaveItemModalProps, closeModal: closeSaveItemModal } = useModal();
 
     // useEffect(() => {
     //     const listItemsNotCompleted = listData.listItems.filter((item: any) => !item.completed);
@@ -93,33 +93,34 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
             playerCompleted.volume = 0.5;
             playerCompleted.play();
         }
-        // await getList();
+        await getList();
 
         return updatedData;
     };
 
     const handleEditItem = async (listItem: any) => {
         setListItemSelected(listItem);
-        openSaveItemModal(
-            'bottomSheet',
-            (props) => (
-                <ItemModal
-                    {...props}
-                    listData={listData}
-                    item={listItem}
-                    sheetHeight={400}
-                    mode='edit'
-                    defaultValue={listItem.content}
-                    toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
+        // openSaveItemModal(
+        //     'bottomSheet',
+        //     (props) => (
+        //         <ItemModal
+        //             {...props}
+        //             listData={listData}
+        //             item={listItem}
+        //             sheetHeight={400}
+        //             mode='edit'
+        //             defaultValue={listItem.content}
+        //             toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
 
-                />
-            ),
-            {
-                sheetHeight: 400
-            }
-        );
-        // setSaveBottomModalMode('edit');
-        // setEditBottomModalOpen(true);
+        //         />
+        //     ),
+        //     {
+        //         sheetHeight: 400
+        //     }
+        // );
+
+        setSaveBottomModalMode('edit');
+        setSaveItemModalOpen(true);
     };
 
     const handleOpenDeleteItemModal = async (listItem: any) => {
@@ -134,7 +135,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
         playerTrash.play();
         setDeleteBottomModalOpen(false);
         setListItemSelected(null);
-        // await getList();
+        await getList();
     };
 
     return (
@@ -227,56 +228,20 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
 
             <FixedButton
                 onPress={() => {
-                    openSaveItemModal(
-                        'bottomSheet',
-                        (props) => (
-                            <ItemModal
-                                {...props}
-                                listData={listData}
-                                sheetHeight={400}
-                                mode='create'
-                                defaultValue=''
-                                toggleMatchItem={(itemId, completed) => handleToggleCompletedItem(itemId, completed)}
-                            />
-                        ),
-                        {
-                            sheetHeight: 400
-                        }
-                        //     isLoading: savingListItem,
-                        //     onSave: async (value) => {
-                        //         await handleSaveNewListItem(value);
-                        //         closeSaveItemModal(id);
-                        //     }
-                        // }
-                    );
+                    setSaveBottomModalMode('create');
+                    setSaveItemModalOpen(true);
                 }}
             />
 
-            {/* <BottomSheet
-                isOpen={editBottomModalOpen}
-                onClose={() => { setEditBottomModalOpen(false); setListItemSelected(null); }}
-                sheetHeight={280}
-            >
-                <ScrollView className='flex flex-1 flex-col'>
-                    <Text text={saveBottomModalMode === 'create' ? 'list.tasks.create_item' : 'list.tasks.edit_item'} className='text-base-content text-2xl font-bold' />
-                    <View className='h-0.5 bg-base-content/50 my-2' />
-                    <View className='flex flex-col gap-y-6'>
-                        <Input
-                            label={saveBottomModalMode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
-                            value={saveBottomModalMode === 'create' ? newListItemContent : listItemSelected?.content || ''}
-                            onSubmitEditing={saveBottomModalMode === 'create' ? handleSaveNewListItem : handleSaveListItem}
-                            onChangeText={(value) => {
-                                if (saveBottomModalMode === 'create') {
-                                    setNewListItemContent(value);
-                                } else {
-                                    setListItemSelected({ ...listItemSelected, content: value });
-                                }
-                            }}
-                        />
-                        <Button name={saveBottomModalMode === 'create' ? 'create' : 'save'} onPress={saveBottomModalMode === 'create' ? handleSaveNewListItem : handleSaveListItem} isLoading={savingListItem} />
-                    </View>
-                </ScrollView>
-            </BottomSheet> */}
+            <SaveItemModal
+                isOpen={saveItemModalOpen}
+                mode={saveBottomModalMode}
+                item={listItemSelected}
+                listData={listData}
+                toggleMatchItem={handleToggleCompletedItem}
+                onClose={() => { setSaveItemModalOpen(false); setListItemSelected(null); Keyboard.dismiss(); }}
+                onGetList={async () => await getList() }
+            />
 
             <InformationModal
                 isOpen={deleteBottomModalOpen}
@@ -293,17 +258,23 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
 
 export default TasksList;
 
-interface ItemModalProps extends ModalProps {
+interface ItemModalProps {
+    isOpen: boolean;
+    onClose: () => void;
     mode: 'create' | 'edit',
-    defaultValue: string,
     item?: any,
     listData: any;
     toggleMatchItem: (item: number, completed: boolean) => void;
+    onGetList: () => void
 }
-const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClose }: ItemModalProps) => {
-    const [inputValue, setNewListItemContent] = useState(defaultValue);
+const SaveItemModal = ({ isOpen, mode, item, listData, toggleMatchItem, onClose, onGetList }: ItemModalProps) => {
+    const [inputValue, setNewListItemContent] = useState(item?.content || '');
     const { request: saveListItem, loading: savingListItem } = useLazyApi<any>(`list-items`, 'POST');
     const playerWrite = useAudioPlayer(audioSourceWrite);
+
+    useEffect(() => {
+        setNewListItemContent(item?.content || '');
+    }, [item]);
 
     const handleSaveListItem = async () => {
         await saveListItem(`list-items/${item.id}`, { content: inputValue });
@@ -337,63 +308,70 @@ const ItemModal = ({ mode, defaultValue, item, listData, toggleMatchItem, onClos
         } else {
             await handleSaveListItem();
         }
+        setNewListItemContent('');
         onClose();
+        onGetList();
     };
 
     const handleToggleMatchItem = async (item: any) => {
         await toggleMatchItem(item.id, !item.completed);
         onClose();
     };
-    const matchItemsInList = listData.listItems.filter((_item: any) => _item.content.trim().toLowerCase().includes(inputValue.trim().toLowerCase()));
+    const matchItemsInList = listData.listItems.filter((_item: any) => _item.id !== item?.id && _item.content.trim().toLowerCase().includes(inputValue.trim().toLowerCase()));
 
     return (
-        <ScrollView className='flex flex-1 flex-col relative'>
-            <Text
-                text={mode === 'create' ? 'list.tasks.create_item' : 'list.tasks.edit_item'}
-                className='text-base-content text-2xl font-bold'
-            />
-            <View className='h-0.5 bg-base-content/50 my-2' />
-
-            <View className='flex flex-col gap-y-4'>
-                <View className='flex flex-col gap-y-2'>
-                    <Input
-                        label={mode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
-                        value={inputValue}
-                        onSubmitEditing={handleSave}
-                        onChangeText={setNewListItemContent}
-                    />
-                    {inputValue!! && matchItemsInList.length > 0 && (
-                        <View className='flex-1 gap-2 pb-2'>
-                            <Text text='list.tasks.match_items_in_list' className='text-base-content text-md font-bold' />
-                            <ScrollView className='h-32' contentContainerClassName='px-2'>
-                                <AnimatedList
-                                    data={matchItemsInList}
-                                    renderItem={(_item: any, index: number) => (
-                                        <TouchableOpacity onPress={() => handleToggleMatchItem(_item)} className={`flex flex-row gap-4 py-3 items-center border-b border-base-content/40 ${index === matchItemsInList.length - 1 ? 'border-b-0' : ''}`}>
-                                            <Checkbox
-                                                size={24}
-                                                onChange={() => handleToggleMatchItem(_item)}
-                                                checked={_item.completed}
-                                                className='flex-row gap-4 items-center'
-                                            />
-                                            <Text className='text-base-content text-lg' avoidTranslation text={_item.content} />
-                                        </TouchableOpacity>
-                                    )}
-                                    getKey={(_item: any) => _item.id}
-                                />
-
-                            </ScrollView>
-                        </View>
-                    )}
-                </View>
-                <Button
-                    size='xl'
-                    name={mode === 'create' ? 'create' : 'save'}
-                    onPress={handleSave}
-                    disabled={savingListItem || !inputValue.trim()}
-                    isLoading={savingListItem}
+        <BottomSheet
+            isOpen={isOpen}
+            onClose={onClose}
+        // sheetHeight={sheetHeight}
+        >
+            <View className='flex flex-col relative'>
+                <Text
+                    text={mode === 'create' ? 'list.tasks.create_item' : 'list.tasks.edit_item'}
+                    className='text-base-content text-2xl font-bold'
                 />
+                <View className='h-0.5 bg-base-content/50 my-2' />
+
+                <View className='flex flex-col gap-y-4'>
+                    <View className='flex flex-col gap-y-2'>
+                        <Input
+                            label={mode === 'create' ? 'list.tasks.new_item_content' : 'list.tasks.item_content'}
+                            value={inputValue}
+                            onSubmitEditing={handleSave}
+                            onChangeText={setNewListItemContent}
+                        />
+                        {!!inputValue && matchItemsInList.length > 0 && (
+                            <View className='gap-2 pb-2 '>
+                                <Text text='list.tasks.match_items_in_list' className='text-base-content text-md font-bold' />
+                                <ScrollView className='max-h-32'>
+                                    <AnimatedList
+                                        data={matchItemsInList}
+                                        renderItem={(_item: any, index: number) => (
+                                            <TouchableOpacity onPress={() => handleToggleMatchItem(_item)} className={`flex flex-row gap-4 py-3 items-center border-b border-base-content/40 ${index === matchItemsInList.length - 1 ? 'border-b-0' : ''}`}>
+                                                <Checkbox
+                                                    size={24}
+                                                    onChange={() => handleToggleMatchItem(_item)}
+                                                    checked={_item.completed}
+                                                    className='flex-row gap-4 items-center'
+                                                />
+                                                <Text className='text-base-content text-lg' avoidTranslation text={_item.content} />
+                                            </TouchableOpacity>
+                                        )}
+                                        getKey={(_item: any) => _item.id}
+                                    />
+                                </ScrollView>
+                            </View>
+                        )}
+                    </View>
+                    <Button
+                        size='xl'
+                        name={mode === 'create' ? 'create' : 'save'}
+                        onPress={handleSave}
+                        disabled={savingListItem || !inputValue.trim()}
+                        isLoading={savingListItem}
+                    />
+                </View>
             </View>
-        </ScrollView>
+        </BottomSheet>
     )
 }

@@ -9,7 +9,7 @@ import Loader from '../../components/loader';
 const FixedItemProvidersModal = ({ itemSelectedProviders, isLoading, isOpen, onClose }: { itemSelectedProviders: ThemoviedbProvider[] | null, isLoading: boolean, isOpen: boolean, onClose: () => void }) => {
     return (
         <BottomSheet isOpen={isOpen} onClose={onClose}>
-            <View className='flex flex-1 px-4'>
+            <View className='flex px-4'>
                 <Text text='list.fixed.providers' className='text-xl font-bold text-base-content' />
 
                 {isLoading &&
@@ -18,7 +18,7 @@ const FixedItemProvidersModal = ({ itemSelectedProviders, isLoading, isOpen, onC
                     </View>
                 }
                 {!isLoading &&
-                    <ScrollView className='flex-1' contentContainerClassName='gap-x-8 gap-y-8 pt-4 items-stretch justify-center flex-wrap flex-row'>
+                    <ScrollView  contentContainerClassName='gap-x-8 gap-y-8 pt-4 items-stretch justify-center flex-wrap flex-row'>
                         {itemSelectedProviders?.map(provider => (
                             <View key={provider.name} className='flex flex-col w-[100px]'>
                                 <Image

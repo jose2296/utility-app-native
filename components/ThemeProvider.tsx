@@ -1,6 +1,6 @@
 import { useUserStore } from '@/store';
 import { useColorScheme, vars } from "nativewind";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
 const draculaTheme = [
@@ -277,6 +277,7 @@ export const themesInRgb = Object.entries(themes).reduce((acc, [key, value]) => 
 export function ThemeProvider({ children }: any) {
     const { colorScheme = 'light' } = useColorScheme();
     const { setColors } = useUserStore();
+    const [isLoading, setIsLoading] = useState(true);
     // console.log({ colorScheme });
     // console.log(themes);
 
@@ -289,8 +290,14 @@ export function ThemeProvider({ children }: any) {
                 [item.name + '-hex']: item.hex,
             };
         }, {} as Record<string, any>);
+
         setColors(colors);
+        setIsLoading(false);
     }, [colorScheme]);
+
+    if (isLoading) {
+        return null;
+    }
 
     return (
         <KeyboardAvoidingView style={{ flex: 1 }}>

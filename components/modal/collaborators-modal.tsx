@@ -5,14 +5,18 @@ import Text from '../Text';
 
 const CollaboratorsModal = ({ isOpen, onClose, collaborators }: { isOpen: boolean; onClose: () => void; collaborators: User[] }) => {
     return (
-        <BottomSheet isOpen={isOpen} onClose={onClose} sheetHeight={(collaborators.length * 75) + 100}>
-            <View className='flex flex-1 px-4'>
+        <BottomSheet
+            isOpen={isOpen}
+            onClose={onClose}
+            // sheetHeight={(collaborators.length * 75) + 100}
+        >
+            <View className='flex px-4'>
                 <Text text='list.collaborators' className='text-xl font-bold text-base-content' />
 
                 <View className='flex gap-4 pt-4'>
-                    {collaborators?.map((collaborator) => (
+                    {collaborators?.map((collaborator, index) => (
                         <View
-                            key={collaborator.id}
+                            key={collaborator.id + '-' + collaborator.name + '-' + index}
                             className={`flex-row items-center gap-6 px-6 py-4 rounded-xl border-2 border-base-content/40`}
                         >
                             <Text text={collaborator.name} className={`text-2xl text-base-content`} />

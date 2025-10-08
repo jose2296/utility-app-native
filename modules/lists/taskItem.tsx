@@ -134,14 +134,14 @@ const TaskItem = ({ item, savingListItem, handleToggleCompletedItem, handleEditI
             }
             onSwipeLeftComplete={() => { handleToggleCompletedItem(item.id, !item.completed).then(() => { reset(); }) }}
         >
-            <View className='px-4 flex-row gap-4 items-center border bg-base-100 border-base-content rounded-xl' key={item.id}>
+            <View className='px-4 flex-row gap-4 items-center border-0 bg-base-100 border-base-content rounded-xl' key={item.id}>
                 <Checkbox
                     size={24}
                     onChange={(checked) => handleToggleCompletedItem(item.id, checked)}
                     checked={item.completed}
                     className='flex-row gap-4 py-6 items-center'
                 />
-                <TouchableOpacity className='flex-1 justify-center' onPress={() => { handleEditItem(item); reset(); }}>
+                <TouchableOpacity className='flex-1 h-full justify-center' onPress={() => { handleEditItem(item); reset(); }}>
                     <Text text={item.content} numberOfLines={1} avoidTranslation className={`text-base-content text-xl ${item.completed ? 'line-through' : ''}`} />
                 </TouchableOpacity>
             </View>

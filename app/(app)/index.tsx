@@ -182,7 +182,7 @@ export default function DashboardScreen() {
                         }}
                     >
                         {!!dashboardItems?.length && (
-                            <TouchableOpacity activeOpacity={0.85} className='flex-1' onLongPress={() => { setEnableEditingGrid(true) }}>
+                            <TouchableOpacity activeOpacity={0.96} className='flex-1' onLongPress={() => { setEnableEditingGrid(true) }}>
                                 <MasonryGrid
                                     data={dashboardItems}
                                     contentWidth={contentWidth}
@@ -278,10 +278,10 @@ export default function DashboardScreen() {
                         className='absolute bg-base-100 p-2 rounded-2xl mx-4 my-6 overflow-hidden'
                         style={[animatedStyle2]}
                     >
-                        <View className='flex flex-row gap-4 pl-4 pr-10 py-4'>
+                        {/* <View className='flex flex-row gap-4 pl-4 pr-10 py-4'>
                             <Pencil size={20} className='stroke-base-content' />
                             <Text avoidTranslation text="Edit" className='text-base-content' />
-                        </View>
+                        </View> */}
                         <TouchableOpacity onPress={() => handleOpenDeleteItemModal(listItemSelected)} className='flex flex-row gap-4 pl-4 pr-10 py-4'>
                             <Trash2 size={20} className='stroke-error' />
                             <Text avoidTranslation text="Delete" className='text-error' />
@@ -294,7 +294,7 @@ export default function DashboardScreen() {
                 isOpen={deleteBottomModalOpen}
                 title="dashboard.delete_item"
                 message="dashboard.delete_item_confirmation"
-                messageTranslateData={{ name: listItemSelected?.entity?.name || '' }}
+                messageTranslateData={{ name: listItemSelected?.entity?.name || listItemSelected?.entity?.title || '' }}
                 onClose={() => setDeleteBottomModalOpen(false)}
                 onSubmit={handleDeleteItem}
                 isLoading={deletingDashboardListItem}

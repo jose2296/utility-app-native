@@ -4,6 +4,8 @@ import Dropdown from '@/components/dropdown/Dropdown';
 import DropDownModal from '@/components/dropdown/DropdownModal';
 import { Input } from '@/components/input';
 import PageLayout from '@/components/PageLayout';
+import Eye from '@/components/svgs/Eye';
+import EyeOff from '@/components/svgs/EyeOff';
 import Text from '@/components/Text';
 import { useLazyApi } from '@/hooks/use-api';
 import { toast } from '@/services/toast';
@@ -11,7 +13,7 @@ import { useUserStore } from '@/store';
 import { Languages, Pencil, RectangleEllipsis, UserPen } from 'lucide-react-native';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 export default function ProfileScreen() {
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -72,9 +74,9 @@ export default function ProfileScreen() {
         setIsChangeEmailModalOpen(false);
     };
 
-    const handleUpdatePassword = async (password: string) => {
+    const handleUpdatePassword = async ({ current_password, new_password }: { current_password: string; new_password: string }) => {
         await toast.promise(
-            updatePassword('users/update-password', { password }),
+            updatePassword('users/update-password', { current_password, new_password }),
             {
                 loading: {
                     title: 'loading',
@@ -169,7 +171,6 @@ export default function ProfileScreen() {
             {/* <BottomSheet
                 isOpen={isChangeEmailModalOpen}
                 onClose={() => setIsChangeEmailModalOpen(false)}
-                sheetHeight={250}
             >
                 <View>
                     <Input
@@ -233,7 +234,6 @@ const ChangeNameModal = ({
         <BottomSheet
             isOpen={isOpen}
             onClose={onClose}
-            sheetHeight={250}
         >
             <View>
                 <Text
@@ -263,13 +263,27 @@ const ChangePasswordModal = ({
 }: {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (password: string) => void;
+    onSubmit: ({ current_password, new_password }: { current_password: string; new_password: string }) => void;
 }) => {
-    const [password, setPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(false);
+    const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
 
     const handleUpdatePassword = async () => {
-        onSubmit(password);
-        setPassword('');
+        if (!currentPassword || !newPassword || currentPassword.length < 6 || newPassword.length < 6) {
+            alert('Minimo 6 caracteres')
+            // toast.error({
+            //     title: 'validations.min_length',
+            //     translateData: {
+            //         count: 22 as any
+            //     }
+            // })
+            return;
+        }
+        onSubmit({ current_password: currentPassword, new_password: newPassword });
+        setNewPassword('');
+        setCurrentPassword('');
         onClose();
     };
 
@@ -277,24 +291,45 @@ const ChangePasswordModal = ({
         <BottomSheet
             isOpen={isOpen}
             onClose={onClose}
-            sheetHeight={250}
         >
-            <View>
+            <View className='gap-4'>
                 <Text
                     text='profile.change_password'
                     className='text-2xl font-bold text-base-content'
                 />
-                <Input
-                    label='profile.new_password'
-                    keyboardType='visible-password'
-                    value={password || ''}
-                    onChangeText={(text) => setPassword(text)}
-                    autoCapitalize="none"
-                    secureTextEntry
-                    textContentType='password'
-                    onSubmitEditing={handleUpdatePassword}
-                    returnKeyType='done'
-                />
+                <View>
+                    <Input
+                        label='profile.current_password'
+                        keyboardType='visible-password'
+                        value={currentPassword || ''}
+                        onChangeText={(text) => setCurrentPassword(text)}
+                        autoCapitalize="none"
+                        secureTextEntry={!isCurrentPasswordVisible}
+                        textContentType='password'
+                        returnKeyType='done'
+                        suffixIcon={
+                            <TouchableOpacity hitSlop={15} onPress={() => setIsCurrentPasswordVisible(!isCurrentPasswordVisible)}>
+                                {isCurrentPasswordVisible ? <Eye className='text-base-content' /> : <EyeOff className='text-base-content' />}
+                            </TouchableOpacity>
+                        }
+                    />
+                    <Input
+                        label='profile.new_password'
+                        keyboardType='visible-password'
+                        value={newPassword || ''}
+                        onChangeText={(text) => setNewPassword(text)}
+                        autoCapitalize="none"
+                        secureTextEntry={!isNewPasswordVisible}
+                        textContentType='password'
+                        onSubmitEditing={handleUpdatePassword}
+                        returnKeyType='done'
+                        suffixIcon={
+                            <TouchableOpacity hitSlop={15} onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}>
+                                {isNewPasswordVisible ? <Eye className='text-base-content' /> : <EyeOff className='text-base-content' />}
+                            </TouchableOpacity>
+                        }
+                    />
+                </View>
                 <Button
                     name='update'
                     onPress={handleUpdatePassword}

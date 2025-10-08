@@ -22,8 +22,8 @@ export const DropDownModal = <T extends KeyValue,>({ text, avoidTranslation, opt
     const colors = [...getAnalogous(storeColors!['primary-hex']!)] as any;
 
     return (
-        <BottomSheet isOpen={isOpen} onClose={onClose} sheetHeight={(options.length * 75) + 120}>
-            <ScrollView className='flex-1' contentContainerClassName='flex px-4'>
+        <BottomSheet isOpen={isOpen} onClose={onClose}>
+            <ScrollView contentContainerClassName='flex px-4'>
                 <Text text={text} className='text-xl font-bold text-base-content' avoidTranslation={avoidTranslation} />
 
                 <View className='flex gap-4 pt-4'>

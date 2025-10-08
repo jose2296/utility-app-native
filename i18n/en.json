@@ -8,15 +8,18 @@
         "title": "Register",
         "go_to_login": "Already have an account? Log in",
         "register": "Sign up",
-        "verification_code": "Verification code",
-        "confirm_code": "Confirm code",
-        "error": "Error registering, contact the administrator"
+        "error": "Error registering, contact the administrator",
+        "success": "User registered successfully",
+        "loading": "Registering user..."
     },
     "dashboard": {
         "title": "Dashboard",
         "no_items_found": "No items found in your dashboard",
         "delete_item": "Delete item from dashboard",
-        "delete_item_confirmation": "Are you sure you want to delete <bold>{name}</bold> from dashboard?"
+        "delete_item_confirmation": "Are you sure you want to delete <bold>{name}</bold> from dashboard?",
+        "adding_item_to_dashboard": "Adding <bold>{name}</bold> to dashboard...",
+        "item_added_to_dashboard": "<bold><underline>{name}</underline></bold> added to dashboard",
+        "item_already_in_dashboard": "<bold><underline>{name}</underline></bold> already in dashboard"
     },
     "workspaces": {
         "title": "Workspaces",
@@ -31,7 +34,17 @@
         }
     },
     "notes": {
-        "title": "Notes"
+        "title": "Notes",
+        "delete": "Delete note",
+        "delete_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
+        "add_to_dashboard": "Add note to dashboard",
+        "share": "Share note",
+        "see_collaborators": "See collaborators",
+        "save_modal": {
+            "create_title": "Create note",
+            "edit_title": "Edit note",
+            "name": "Note name"
+        }
     },
     "list_types": {
         "tasks": "Tasks",
@@ -65,15 +78,6 @@
     },
     "list": {
         "collaborators": "Collaborators",
-        "collaborate": {
-            "title": "Collaborate invitation",
-            "message": "You have been invited to collaborate on the list <bold><underline>{title}</underline></bold>",
-            "select_location": "Select a workspace and/or folder where you want to save the list",
-            "select_workspace": "Select a workspace",
-            "select_folder": "Select a folder",
-            "accept_invitation": "Accept",
-            "decline_invitation": "Decline"
-        },
         "can_edit": "Can edit",
         "can_not_edit": "Can not edit",
         "toggle_seen": "Toggle seen",
@@ -163,6 +167,8 @@
         "required": "Required field.",
         "email": "Enter a valid email.",
         "min_length": "At least {value, plural, =1 {1 character} other {# characters}}.",
+        "min_length_one": "At least 1 character.",
+        "min_length_other": "At least {count} characters.",
         "at_least_letter": "At least {value, plural, =1 {1 letter} other {# letters}}.",
         "at_least_special": "At least {value, plural, =1 {1 special character} other {# special characters}}.",
         "at_least_number": "At least {value, plural, =1 {1 number} other {# numbers}}.",
@@ -174,10 +180,13 @@
         "user_data": "User data",
         "security": "Security",
         "change_password": "Change password",
+        "current_password": "Current password",
         "new_password": "New password",
         "change_email": "Change email",
         "change_name": "Change name",
+        "name_changed_successfully": "Name changed successfully",
         "language_changed_successfully": "Language changed successfully",
+        "error": "Error changing language",
         "email_changed_successfully": "Email changed successfully",
         "password_changed_successfully": "Password changed successfully"
     },
@@ -185,6 +194,24 @@
         "en": "English",
         "es": "Spanish"
     },
+    "collaborate": {
+        "title": "Collaborate invitation",
+        "message": "You have been invited to collaborate on the list <bold><underline>{title}</underline></bold>",
+        "select_location": "Select a workspace and/or folder where you want to save the list",
+        "select_folder": "Select a folder",
+        "accept_invitation": "Accept",
+        "decline_invitation": "Decline",
+        "save_item_in_folder": "Save <bold>{title}</bold> in folder <bold>{name}</bold>",
+        "save_item_in_workspace": "Save <bold>{title}</bold> in workspace <bold>{name}</bold>"
+    },
+    "item_types": {
+        "lists": "{value, plural, =1 {1 list} other {# lists}}",
+        "notes": "{value, plural, =1 {1 note} other {# notes}}",
+        "folders": "{value, plural, =1 {1 folder} other {# folders}}"
+    },
+    "select_workspace": "Select a workspace",
+    "select_folder_from": "Select a folder from <bold>{name}</bold>",
+    "select_folder_from_workspace": "Select a folder from workspace <bold>{name}</bold>",
     "email": "Email",
     "password": "Password",
     "name": "Name",

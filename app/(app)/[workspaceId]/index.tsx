@@ -49,6 +49,7 @@ export const noteOptions: BottomSheetOption[] = [
 
 export const folderOptions: BottomSheetOption[] = [
     { icon: <Pencil className='text-warning' />, key: 'folders.save_modal.edit_title', value: 'edit_folder' },
+    { icon: <Pin className='text-info' />, key: 'folders.add_to_dashboard', value: 'add_folder_to_dashboard' },
     { icon: <Trash2 className='text-error' />, key: 'folders.delete', value: 'remove_folder' },
 ];
 
@@ -63,6 +64,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
         icon: item.type as keyof typeof ITEMS_ICONS,
         href: `/(app)/${workspaceId}/lists/${parseListType(item.type)}/${item.id}` as Href
     }));
+
     const notes = data.notes.map((item) => ({
         id: item.id,
         name: item.title,
@@ -336,9 +338,9 @@ export default function WorkspaceScreen() {
     const handleItemLongPress = (item: FolderDetailsData['items'][number]) => {
         switch (item.type) {
             case 'lists':
+                setListOptions(item.collaborators?.length ? listOptions : listOptions.filter((option) => option.value !== 'see_collaborators'));
                 setListItemSelected(item);
                 setShowListOptionsModal(true);
-                setListOptions(item.collaborators?.length ? listOptions : listOptions.filter((option) => option.value !== 'see_collaborators'));
                 break;
             case 'notes':
                 setNoteItemSelected(item);
@@ -366,7 +368,7 @@ export default function WorkspaceScreen() {
                 setShowListOptionsModal(false);
                 await Share.share({
                     title: listItemSelected?.name || '',
-                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
+                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${listItemSelected?.id}?canEdit=true&title=${encodeURIComponent(listItemSelected?.name!)}&type=lists`,
                     // message: `jose-jerez-utility-app://${workspaceId}/lists/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
                 });
                 break;
@@ -395,7 +397,8 @@ export default function WorkspaceScreen() {
                 setShowNoteOptionsModal(false);
                 await Share.share({
                     title: noteItemSelected?.name || '',
-                    message: `jose-jerez-utility-app://${workspaceId}/notes/${noteItemSelected?.id}?canEdit=true&title=${noteItemSelected?.name}`,
+                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${noteItemSelected?.id}?canEdit=true&title=${encodeURIComponent(noteItemSelected?.name!)}&type=notes`,
+                    // message: `jose-jerez-utility-app://${workspaceId}/notes/${noteItemSelected?.id}?canEdit=true&title=${noteItemSelected?.name}`,
                 });
                 break;
             case 'see_collaborators':
@@ -413,6 +416,11 @@ export default function WorkspaceScreen() {
             case 'edit_folder':
                 setShowFolderOptionsModal(false);
                 await handleEditItem(folderItemSelected!);
+                break;
+            case 'add_folder_to_dashboard':
+                await handlePinItem(folderItemSelected!);
+                setShowFolderOptionsModal(false);
+                setFolderItemSelected(null);
                 break;
             case 'remove_folder':
                 setShowFolderOptionsModal(false);
@@ -551,7 +559,6 @@ export default function WorkspaceScreen() {
                 isOpen={showListOptionsModal}
                 onClose={() => setShowListOptionsModal(false)}
                 options={_listOptions}
-                sheetHeight={(_listOptions.length * 75) + 100}
                 title={listItemSelected?.name || ''}
                 handleItemOptionSelected={(value) => handleListOptionSelected(value)}
             />

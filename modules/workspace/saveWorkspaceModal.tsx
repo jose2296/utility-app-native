@@ -51,9 +51,8 @@ const SaveWorkspaceModal = ({ isOpen, mode, onClose, workspace, onSubmit, isSavi
             <BottomSheet
                 isOpen={isOpen}
                 onClose={() => { onClose(); }}
-                sheetHeight={350}
             >
-                <ScrollView className='flex flex-1 flex-col relative'>
+                <ScrollView className='flex flex-col relative'>
                     <Text text={mode === 'create' ? 'workspaces.save_modal.create_title' : 'workspaces.save_modal.edit_title'} className='text-base-content text-2xl font-bold' />
                     <View className='h-0.5 bg-base-content/50 my-2' />
                     <View className='flex flex-col gap-y-6'>
@@ -103,9 +102,8 @@ const SaveWorkspaceModal = ({ isOpen, mode, onClose, workspace, onSubmit, isSavi
             <BottomSheet
                 isOpen={showCustomColor}
                 onClose={() => setShowCustomColor(false)}
-                sheetHeight={450}
             >
-                <View className='flex-1 justify-between gap-4'>
+                <View className='justify-between gap-4'>
                     <Text
                         text={'workspaces.save_modal.pick_color'}
                         className='text-base-content text-2xl font-bold'

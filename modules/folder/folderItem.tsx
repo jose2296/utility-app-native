@@ -35,7 +35,6 @@ const RightActions = ({ handleDeleteItem, handleEditItem, handlePinItem, item }:
                 <Pencil size={24} className='text-secondary-content' />
             </TouchableOpacity>
         }
-        {/* TODO: If is folder hide pin option */}
         <TouchableOpacity
             onPress={() => { handlePinItem(item); }}
             className={`h-full bg-info flex items-center justify-center p-4 px-6 ${item.isOwner ? '' : 'rounded-xl'}`}
@@ -72,7 +71,7 @@ const FolderItem = ({ item, handleDeleteItem, handleEditItem, handlePinItem, han
             <TouchableOpacity
                 key={item.id}
                 activeOpacity={0.8}
-                className='flex flex-row items-center gap-4 p-4 py-6 bg-base-100 border border-neutral-content rounded-2xl'
+                className='flex flex-row items-center gap-4 p-4 py-6 bg-base-100  border-neutral-content rounded-2xl'
                 onPress={() => router.push(item.href)}
                 onLongPress={onLongPress}
             >

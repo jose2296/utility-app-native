@@ -1,10 +1,11 @@
+import BottomSheetOptions from '@/components/modal/bottom-sheet-options';
 import PageLayout from '@/components/PageLayout';
 import { sortByOptions } from '@/constants/list';
 import { useLazyApi } from '@/hooks/use-api';
 import useDebouncedText from '@/hooks/use-debounce-text';
 import { FixedItemList, ThemoviedbFixedItem } from '@/models/list';
 import { ThemoviedbProvider } from '@/models/themovieddb';
-import { KeyValue } from '@/models/utils';
+import { IdOrValue, KeyValue } from '@/models/utils';
 import { sortListItemsBy } from '@/services/lists';
 import { getItemProviders, searchMoviesOrSeriesItem } from '@/services/themoviedb';
 import { useUserStore } from '@/store';
@@ -93,8 +94,6 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
     }
 
     useEffect(() => {
-        console.log('listData', listData.type);
-
         applyFilters();
         if (listData.type === 'movies_and_series') {
             setCategory(categories[0]);
@@ -159,7 +158,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
         return getItemsByFiltersAndSort();
     }
 
-    const handleItemOptionSelected = async (option: string) => {
+    const handleItemOptionSelected = async (option: IdOrValue) => {
         switch (option) {
             case 'add_to_list':
                 if (!itemSelected?.id) {
@@ -232,7 +231,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
                                 <Input
                                     label={category.value === 'all' ? 'list.fixed.search_item' : category.value === 'movies' ? 'list.fixed.search_movie' : 'list.fixed.search_series'}
                                     value={searchText}
-                                    selectionColor={colors['secondary']}
+                                    selectionColor={colors?.['secondary']}
                                     onChangeText={(value) => setSearchText(value)}
                                     suffixIcon={
                                         searchText.length > 0
@@ -292,8 +291,8 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
             {/* Filters */}
             <BottomSheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)}>
-                <View className='flex flex-1 px-4 justify-between' style={{ paddingBottom: insets.bottom }}>
-                    <View className='flex gap-4 pt-4'>
+                <View className='flex px-4 gap-4 justify-between'>
+                    <View className='flex gap-2 pt-4'>
                         <Text text='filters' className='text-xl font-bold text-base-content' />
                         <Switch
                             label='list.toggle_seen'
@@ -318,7 +317,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
             {/* Sort By */}
             <BottomSheet isOpen={sortByOpen} onClose={() => setSortByOpen(false)} >
-                <ScrollView className='flex flex-1' contentContainerClassName='px-4' contentContainerStyle={{ paddingBottom: insets.bottom }}>
+                <ScrollView className='flex' contentContainerClassName='px-4'>
                     <Text text='sort_by' className='text-xl font-bold text-base-content' />
 
                     <View className='flex gap-4 pt-4'>
@@ -340,7 +339,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
             {/* Category */}
             <BottomSheet isOpen={categoryFiltersOpen} onClose={() => setCategoryFiltersOpen(false)}>
-                <View className='flex flex-1 px-4'>
+                <View className='flex px-4'>
                     <Text text='list.fixed.select_list_type' className='text-xl font-bold text-base-content' />
 
                     <View className='flex gap-4 pt-4'>
@@ -361,8 +360,18 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
             </BottomSheet>
 
             {/* Item Options */}
-            <BottomSheet isOpen={!!itemSelected} onClose={() => setItemSelected(null)}>
-                <View className='flex flex-1 px-4'>
+            <BottomSheetOptions
+                isOpen={!!itemSelected}
+                onClose={() => setItemSelected(null)}
+                options={itemOptions.map(_itemOption => ({
+                    ..._itemOption,
+                    value: _itemOption.value.toString()
+                }))}
+                title={itemSelected?.data.title}
+                handleItemOptionSelected={handleItemOptionSelected}
+            />
+            {/* <BottomSheet isOpen={!!itemSelected} onClose={() => setItemSelected(null)}>
+                <View className='flex px-4'>
                     <Text avoidTranslation text={itemSelected?.data.title} className='text-xl font-bold text-base-content' />
 
                     <View className='flex gap-4 pt-4'>
@@ -378,7 +387,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
                         ))}
                     </View>
                 </View>
-            </BottomSheet>
+            </BottomSheet> */}
 
             {/* Item Providers */}
             <FixedItemProvidersModal

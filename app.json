@@ -1,10 +1,10 @@
 {
     "expo": {
-        "name": "utility-app-native",
-        "slug": "utility-app-native",
-        "version": "1.0.0",
+        "name": "OrbitHub",
+        "slug": "orbithub",
+        "version": "0.0.1",
         "orientation": "portrait",
-        "scheme": "jose-jerez-utility-app",
+        "scheme": "orbithub",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "ios": {
@@ -14,7 +14,7 @@
                 "dark": "./assets/logos/ios-dark.png",
                 "tinted": "./assets/logos/ios-tinted.png"
             },
-            "bundleIdentifier": "com.jose.jerez.utilityapp"
+            "bundleIdentifier": "com.orbithublabs.orbithub"
         },
         "android": {
             "adaptiveIcon": {
@@ -23,7 +23,7 @@
                 "backgroundColor": "#ffffff"
             },
             "edgeToEdgeEnabled": true,
-            "package": "com.jose.jerez.utilityapp",
+            "package": "com.orbithublabs.orbithub",
             "permissions": [
                 "android.permission.RECORD_AUDIO",
                 "android.permission.MODIFY_AUDIO_SETTINGS"

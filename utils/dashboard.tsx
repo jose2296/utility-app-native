@@ -109,5 +109,9 @@ const parseDashboardItemHref = (item: any) => {
         return `/(app)/${item.entity.workspace.id}/${item.entity_type}/${parseListType(item.entity.type)}/${item.entity.id}` as Href;
     }
 
+    if (item.entity_type === DashboardItemType.folders) {
+        return `/(app)/${item.entity.workspace.id}/${item.entity.id}` as Href;
+    }
+
     return `/(app)/${item.entity.workspace.id}/${item.entity_type}/${item.entity.id}` as Href;
 }

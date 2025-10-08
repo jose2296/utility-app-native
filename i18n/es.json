@@ -8,9 +8,9 @@
         "title": "Registrarse",
         "go_to_login": "¿Tienes cuenta? Inicia sesión",
         "register": "Registrarse",
-        "verification_code": "Código de verificación",
-        "confirm_code": "Confirmar código",
-        "error": "Error al registrar, contacta con el administrador"
+        "error": "Error al registrar, contacta con el administrador",
+        "success": "Usuario registrado correctamente",
+        "loading": "Registrando usuario..."
     },
     "dashboard": {
         "title": "Dashboard",
@@ -65,15 +65,6 @@
     },
     "list": {
         "collaborators": "Colaboradores",
-        "collaborate": {
-            "title": "Invitación a colaborar",
-            "message": "Te han invitado a colaborar en la lista <bold><underline>{title}</underline></bold>",
-            "select_location": "Selecciona un espacio de trabajo y/o la carpeta dónde quieres que se guarde la lista",
-            "select_workspace": "Selecciona un espacio de trabajo",
-            "select_folder": "Selecciona una carpeta",
-            "accept_invitation": "Aceptar",
-            "decline_invitation": "Rechazar"
-        },
         "can_edit": "Puede editar",
         "can_not_edit": "No puede editar",
         "toggle_seen": "Mostrar vistas",
@@ -177,7 +168,7 @@
         "fill_all_fields": "Por favor, completa todos los campos.",
         "required": "Campo obligatorio.",
         "email": "Introduce un email válido.",
-        "min_length": "Al menos {value, plural, =1 {1 carácter} other {# caracteres}}.",
+        "min_length": "Al menos {count, plural, =1 {1 carácter} other {# caracteres}}.",
         "at_least_letter": "Al menos {value, plural, =1 {1 letra} other {# letras}}.",
         "at_least_special": "Al menos {value, plural, =1 {1 carácter especial} other {# caracteres especiales}}.",
         "at_least_number": "Al menos {value, plural, =1 {1 número} other {# números}}.",
@@ -185,13 +176,13 @@
     },
     "profile": {
         "title": "Perfil",
-        "change_language": "Cambiar idioma",
         "select_language": "Selecciona un idioma",
         "user_data": "Datos del usuario",
         "security": "Seguridad",
         "change_password": "Cambiar contraseña",
         "change_email": "Cambiar email",
         "change_name": "Cambiar nombre",
+        "current_password": "Contraseña actual",
         "new_password": "Nueva contraseña",
         "name_changed_successfully": "Nombre cambiado correctamente",
         "language_changed_successfully": "Idioma cambiado correctamente",
@@ -203,6 +194,24 @@
         "en": "Inglés",
         "es": "Español"
     },
+    "collaborate": {
+        "title": "Invitación a colaborar",
+        "message": "Te han invitado a colaborar en la lista <bold><underline>{title}</underline></bold>",
+        "select_location": "Selecciona un espacio de trabajo y/o la carpeta dónde quieres que se guarde la lista",
+        "select_folder": "Selecciona una carpeta",
+        "accept_invitation": "Aceptar",
+        "decline_invitation": "Rechazar",
+        "save_item_in_folder": "Guardar <bold>{title}</bold> en la carpeta <bold>{name}</bold>",
+        "save_item_in_workspace": "Guardar <bold>{title}</bold> en el espacio de trabajo <bold>{name}</bold>"
+    },
+    "item_types": {
+        "lists": "{value, plural, =1 {1 lista} other {# listas}}",
+        "notes": "{value, plural, =1 {1 nota} other {# notas}}",
+        "folders": "{value, plural, =1 {1 carpeta} other {# carpetas}}"
+    },
+    "select_workspace": "Selecciona un espacio de trabajo",
+    "select_folder_from": "Selecciona una carpeta de <bold>{name}</bold>",
+    "select_folder_from_workspace": "Selecciona una carpeta del espacio de trabajo <bold>{name}</bold>",
     "email": "Email",
     "password": "Contraseña",
     "name": "Nombre",

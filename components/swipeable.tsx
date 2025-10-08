@@ -248,6 +248,8 @@ export const CustomSwipeable = forwardRef<SwipeableRef, Props>(({
             else if (translateX.value < -RIGHT_THRESHOLD && rightActions) {
                 rightRevealed.value = true;
                 translateX.value = withTiming(-rightWidth);
+                contentOpacity.value = withTiming(0, { duration: 300 });
+
                 runOnJS(onSwipeRightReveal)();
             }
             // Volver a la posición inicial

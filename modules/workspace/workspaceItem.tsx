@@ -59,7 +59,7 @@ const WorkspaceItem = ({ item, handleDeleteItem, handleEditItem }: { item: any, 
             <TouchableOpacity
                 activeOpacity={0.8}
                 key={item.id}
-                className='flex flex-row items-center gap-4 p-4 py-6 bg-base-100 border border-neutral-content rounded-2xl'
+                className='flex flex-row items-center gap-4 p-4 py-6 bg-base-100  border-neutral-content rounded-2xl'
                 onPress={() => router.push(item.href)}
                 // TODO: Tooltip on long press
                 onLongPress={() => null}

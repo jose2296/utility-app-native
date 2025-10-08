@@ -1,11 +1,11 @@
 import { ITEMS_ICONS } from '@/utils/dashboard';
 import { Href } from 'expo-router';
-import { Folder } from './folder';
+import { Folder, FolderDetailsData } from './folder';
 import { DashboardItemType } from './utils';
 
 export interface Me extends User {
     dashboardItems: ParsedDashboardItem[];
-    workspaces: Folder[];
+    workspaces: FolderDetailsData[];
 }
 
 export interface User {

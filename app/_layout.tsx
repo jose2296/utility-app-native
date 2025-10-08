@@ -63,7 +63,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-    const { session, isLoading } = useSession();
+    const { session, isLoading, signOut } = useSession();
     // const { isSignedIn, isLoaded } = useAuth()
 
     if (isLoading) {

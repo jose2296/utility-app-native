@@ -2,7 +2,10 @@ import Text from '@/components/Text';
 import { hexToRgba } from '@/services/utils';
 import { useUserStore } from '@/store';
 import { CalendarBody, CalendarContainer, CalendarHeader, DeepPartial, ThemeConfigs } from '@howljs/calendar-kit';
+import dayjs from 'dayjs';
+import { useCallback } from 'react';
 import { View } from 'react-native';
+import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
 
 
 export default function CalendarScreen() {
@@ -24,7 +27,40 @@ export default function CalendarScreen() {
         dayBarBorderColor: colors?.['base-content'],
         singleDayBorderColor: colors?.['base-content'],
     };
+    const renderItem = useCallback(({ item }: any) => {
+        console.log(item);
 
+        return <View>
+            <Text avoidTranslation className='text-base-content' text={item.title} />
+        </View>;
+    }, []);
+
+    return (
+        <>
+            <CalendarProvider
+                date={dayjs().format('YYYY-MM-DD')}
+                showTodayButton
+            >
+                <ExpandableCalendar
+                    onDayPress={day => {
+                        console.log('selected day', day);
+                    }}
+                />
+
+                {/* <AgendaList
+                sections={[{
+                    title: 'hola',
+                    data: [{ hour: '12am', duration: '1h', title: 'Ashtanga Yoga' }]
+                }] as SectionListData<any>[]}
+                dayFormat='DD/MM/YYYY'
+                dayFormatter={(day) => dayjs(day).format('YYYY-MM-DD')}
+            // sections={ITEMS}
+            renderItem={renderItem}
+            // scrollToNextEvent
+            /> */}
+            </CalendarProvider>
+        </>
+    );
 
     return (
         <View className='flex-1'>
@@ -78,16 +114,16 @@ export default function CalendarScreen() {
                 ]}
             >
                 <CalendarHeader
-                    //  LeftAreaComponent={
-                    //     <View className=' bg-red-50 border-2 border-red-500'>
-                    //         <Text avoidTranslation text='Left' className='text-primary' />
-                    //     </View>
-                    // }
-                    // renderExpandIcon={(icon) => (
-                    //     <View className='flex-1 bg-red-50 border-2 border-red-500'>
-                    //         <Text avoidTranslation text='Left' className='text-primary' />
-                    //     </View>
-                    // )}
+                //  LeftAreaComponent={
+                //     <View className=' bg-red-50 border-2 border-red-500'>
+                //         <Text avoidTranslation text='Left' className='text-primary' />
+                //     </View>
+                // }
+                // renderExpandIcon={(icon) => (
+                //     <View className='flex-1 bg-red-50 border-2 border-red-500'>
+                //         <Text avoidTranslation text='Left' className='text-primary' />
+                //     </View>
+                // )}
                 // renderHeaderItem={(header) => (
                 //     <View className='flex-1 bg-red-50 border-2 border-red-500'>
                 //         <Text avoidTranslation text={header.index.toString()} className='text-primary' />

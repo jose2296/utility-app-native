@@ -65,7 +65,7 @@ const CollaborateListScreen = () => {
                     <Text className='text-2xl text-center text-base-content' text='list.collaborate.select_location' />
 
                     <Dropdown
-                        label='list.collaborate.select_workspace'
+                        label='select_workspace'
                         text={workspaceSelected?.name!}
                         onPress={() => setDropWorkspaceModalOpen(true)}
                     />

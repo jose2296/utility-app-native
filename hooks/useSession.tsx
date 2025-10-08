@@ -1,11 +1,11 @@
+import { useUserStore } from '@/store';
 import { createContext, use, type PropsWithChildren } from 'react';
-import { useLazyApi } from './use-api';
 import { useStorageState } from './useStorage';
 
 const AuthContext = createContext<{
     signIn: ({ access_token, refresh_token }: { access_token: string; refresh_token: string }) => void;
     signOut: () => void;
-    refreshToken: () => void;
+    refreshToken: () => Promise<{ access_token: string; refresh_token: string } | null> | null;
     session?: { access_token: string; refresh_token: string } | null;
     isLoading: boolean;
 }>({
@@ -28,7 +28,7 @@ export function useSession() {
 
 export function SessionProvider({ children }: PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState('session');
-
+    const { logout } = useUserStore();
 
     return (
         <AuthContext
@@ -43,22 +43,32 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 refreshToken: async () => {
                     console.log('Refreshing token...');
 
-                    const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh-token`;
+                    const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`;
                     const headers = new Headers();
                     headers.set('Content-Type', 'application/json');
-                    headers.set('refresh_token', session?.refresh_token!);
 
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers,
-                        body: null
-                    });
+                    try {
+                        const res = await fetch(url, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({
+                                refreshToken: session?.refresh_token!
+                            })
+                        });
 
-                    const newSession = await res.json();
-                    setSession({
-                        access_token: newSession.access_token,
-                        refresh_token: newSession.refresh_token
-                    });
+                        const newSession = await res.json();
+                        const _session = {
+                            access_token: newSession.access_token as string,
+                            refresh_token: newSession.refresh_token as string
+                        };
+                        setSession(_session);
+
+                        return _session;
+                    } catch (error) {
+                        await logout();
+                        setSession(null);
+                        return null;
+                    }
                 },
                 session,
                 isLoading,

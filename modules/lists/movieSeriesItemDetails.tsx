@@ -1,7 +1,7 @@
 import { useLazyApi } from '@/hooks/use-api';
 import { FixedItemList, ThemoviedbFixedItem, ThemoviedbFixedItemDetails } from '@/models/list';
 import { ThemoviedbProvider } from '@/models/themovieddb';
-import { KeyValue } from '@/models/utils';
+import { IdOrValue, KeyValue } from '@/models/utils';
 import { getItemDetails, getItemProviders, getItemToSaveByThemoviedbId } from '@/services/themoviedb';
 import { useUserStore } from '@/store';
 import { Image, ImageBackground } from 'expo-image';
@@ -9,7 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from "react-native-webview";
@@ -33,6 +33,7 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
     const [data, setData] = useState<ThemoviedbFixedItemDetails>();
     const [loading, setLoading] = useState(true);
     const [options, setOptions] = useState<KeyValue[]>([]);
+    const [showAllSynopsis, setShowAllSynopsis] = useState(false);
     const { request: getFixedListItem } = useLazyApi(`fixed-list-items/${itemId}`);
     const { request: getFixedListItemByThemoviedbId } = useLazyApi(`fixed-list-items/themoviedb/${type}/${themoviedbId}`);
     const { request: createFixedListItem } = useLazyApi(`fixed-list-items`, 'POST');
@@ -133,7 +134,7 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
         }
     }
 
-    const handleOptionSelected = async (option: string) => {
+    const handleOptionSelected = async (option: KeyValue['value']) => {
         switch (option) {
             case 'toggle_seen': {
                 const _data = {
@@ -264,7 +265,9 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                 <View className="flex flex-col gap-2">
                     {data?.tagline && <Text avoidTranslation text={data?.tagline} className='text-2xl text-base-content font-bold text-center italic' />}
                     {/* <ExpandableText text={data?.synopsis} lines={8} /> */}
-                    <Text numberOfLines={8} avoidTranslation text={data?.synopsis || ''} className='text-base-content text-2xl' />
+                    <TouchableOpacity onPress={() => setShowAllSynopsis(!showAllSynopsis)}>
+                        <Text numberOfLines={showAllSynopsis ? undefined : 8} avoidTranslation text={data?.synopsis || ''} className='text-base-content text-2xl' />
+                    </TouchableOpacity>
                     <View className='flex flex-row gap-x-6 items-center flex-wrap'>
                         <Text avoidTranslation text={data?.released || ''} className='text-xl text-base-content font-bold' />
                         <Text text={type === 'series' ? 'lists.types.serie' : 'lists.types.movie'} className={`text-xl text-base-content rounded-full px-4 py-2 font-bold ${type === 'series' ? 'bg-secondary text-secondary-content' : 'bg-primary text-primary-content'}`} />
@@ -274,7 +277,6 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                     {data?.nextEpisodeToAir && <Text avoidTranslation text={`Next episode: ${data?.nextEpisodeToAir}`} className='text-xl text-base-content font-bold' />}
                     <Text avoidTranslation text={data?.genres || ''} className='text-xl text-base-content font-bold' />
                 </View>
-
 
                 {!!data?.collection && (
                     <View className='rounded-xl overflow-hidden'>
@@ -380,8 +382,7 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                 >
                     <Text text='list.fixed.trailer' numberOfLines={1} translateData={{ title: data?.title! }} className='text-2xl text-base-content' />
 
-
-                    <View className='flex-1 items-center justify-center py-6'>
+                    <View className='items-center justify-center py-6 aspect-video'>
                         <WebView
                             style={{ maxWidth: '100%', width: '100%', aspectRatio: 16 / 9 }}
                             allowsFullscreenVideo
@@ -397,7 +398,6 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
                 <BottomSheet
                     isOpen={false}
                     onClose={() => setShowCollectionModal(false)}
-                    sheetHeight={Dimensions.get('screen').height * 0.8}
                 >
                     <Text text='list.fixed.collection' numberOfLines={1} translateData={{ title: data?.title! }} className='text-2xl text-base-content' />
                     <ScrollView contentContainerClassName='w-full'>
@@ -434,7 +434,7 @@ const MovieSeriesItemDetails = ({ type, themoviedbId, itemId, listId, workspaceI
 export default MovieSeriesItemDetails;
 
 
-const FixedItemDetailsButtonAction = ({ value, onPress, checked }: { value: string, onPress: () => void, checked?: boolean }) => {
+const FixedItemDetailsButtonAction = ({ value, onPress, checked }: { value: IdOrValue, onPress: () => void, checked?: boolean }) => {
     const [isPressed, setIsPressed] = useState(true);
 
     return (

@@ -23,7 +23,6 @@ const SaveFolderModal = ({ mode, name, isOpen, onClose, onSubmit }: { mode: 'cre
         <BottomSheet
             isOpen={isOpen}
             onClose={onClose}
-            sheetHeight={220}
         >
 
             <Text
@@ -31,7 +30,7 @@ const SaveFolderModal = ({ mode, name, isOpen, onClose, onSubmit }: { mode: 'cre
                 className='text-2xl font-bold text-base-content border-b border-base-content pb-2 mb-1'
             />
 
-            <View className='flex-1 justify-between'>
+            <View className='justify-between gap-6'>
                 <Input
                     label={mode === 'create' ? 'folders.save_modal.create_title' : 'folders.save_modal.edit_title'}
                     value={folderName}

@@ -19,7 +19,7 @@ import useDebouncedText from '@/hooks/use-debounce-text';
 import useRealtimeGetData from '@/hooks/use-realtime';
 import { BookFixedItem } from '@/models/books';
 import { FixedItemList } from '@/models/list';
-import { KeyValue } from '@/models/utils';
+import { IdOrValue, KeyValue } from '@/models/utils';
 import BooksList from '@/modules/lists/books/booksList';
 import { searchBookByTitle } from '@/services/books-api';
 import { sortListItemsBy } from '@/services/lists';
@@ -165,7 +165,7 @@ const BooksScreen = () => {
         return getItemsByFiltersAndSort();
     }
 
-    const handleItemOptionSelected = async (option: string) => {
+    const handleItemOptionSelected = async (option: IdOrValue) => {
         switch (option) {
             case 'add_to_list':
                 if (!itemSelected?.id) {
@@ -235,7 +235,7 @@ const BooksScreen = () => {
                         <Input
                             label='list.books.search_book'
                             value={searchText}
-                            selectionColor={colors['secondary']}
+                            selectionColor={colors?.['secondary']}
                             onChangeText={(value) => setSearchText(value)}
                             suffixIcon={
                                 searchText.length > 0
@@ -263,8 +263,8 @@ const BooksScreen = () => {
 
 
             {/* Filters */}
-            <BottomSheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)} sheetHeight={280}>
-                <View className='flex flex-1 px-4 justify-between' style={{ paddingBottom: insets.bottom }}>
+            <BottomSheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)}>
+                <View className='flex px-4 justify-between' style={{ paddingBottom: insets.bottom }}>
                     <View className='flex gap-4 pt-4'>
                         <Text text='filters' className='text-xl font-bold text-base-content' />
                         <Switch
@@ -309,7 +309,7 @@ const BooksScreen = () => {
 
             {/* Item Options */}
             <BottomSheet isOpen={!!itemSelected} onClose={() => setItemSelected(null)}>
-                <View className='flex flex-1 px-4'>
+                <View className='flex px-4'>
                     <Text avoidTranslation text={itemSelected?.data.title} className='text-xl font-bold text-base-content' />
 
                     <View className='flex gap-4 pt-4'>

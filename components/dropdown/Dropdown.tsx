@@ -11,13 +11,16 @@ interface DropdownProps {
     suffixLabelIcon?: React.ReactNode;
     avoidTranslationLabel?: boolean;
     avoidTranslationText?: boolean;
+    translateLabelData?: Record<string, string>;
+    translateTextData?: Record<string, string>;
 }
-const Dropdown = ({ label, text, onPress, disabled, prefixLabelIcon, suffixLabelIcon, avoidTranslationLabel, avoidTranslationText }: DropdownProps) => {
+const Dropdown = ({ label, text, onPress, disabled, prefixLabelIcon, suffixLabelIcon, avoidTranslationLabel, avoidTranslationText, translateLabelData, translateTextData }: DropdownProps) => {
     return (
         <View className='flex flex-col gap-y-1'>
             <Text
                 text={label}
                 avoidTranslation={avoidTranslationLabel}
+                translateData={translateLabelData}
                 className={`${disabled ? 'text-base-content/40' : 'text-base-content'} text-xl`}
             />
             <TouchableOpacity
@@ -29,6 +32,7 @@ const Dropdown = ({ label, text, onPress, disabled, prefixLabelIcon, suffixLabel
                 <Text
                     text={text}
                     avoidTranslation={avoidTranslationText}
+                    translateData={translateTextData}
                     className={`text-xl  flex-1 ${disabled ? 'text-base-content/40' : 'text-base-content'}`}
                 />
                 {!!suffixLabelIcon && suffixLabelIcon}

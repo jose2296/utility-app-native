@@ -13,6 +13,7 @@ export interface Folder {
     parent_id: number;
     user_id: number;
     root_id: number;
+    children?: Folder[];
     created_at: string;
     updated_at: string;
 };

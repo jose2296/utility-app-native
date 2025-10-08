@@ -25,17 +25,19 @@ export const toast = {
     loading: (props: ToastProps) => {
         return sonnerToast.custom(<CustomToast type='loading' {...props} />, { duration: Infinity });
     },
-    promise: async (promise: Promise<any>, { loading, success, error }: { loading: ToastProps, success: ToastProps, error: ToastProps }) => {
+    promise: async <T,>(promise: Promise<T>, { loading, success, error }: { loading: ToastProps, success: ToastProps, error: ToastProps }) => {
         const id = sonnerToast.custom(<CustomToast {...loading} type="loading" />,
             { duration: Infinity }
         );
 
-        promise.then((result) => {
+        return promise.then((result) => {
             sonnerToast.custom(<CustomToast {...success} type="success" />, { id });
             return result;
         })
         .catch((err) => {
             sonnerToast.custom(<CustomToast {...error} type="error" />, { id });
+            throw new Error("Error");
+
         });
     }
 };

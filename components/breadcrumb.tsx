@@ -10,7 +10,7 @@ const Breadcrumb = ({ breadcrumb }: { breadcrumb: BreadcrumbType[] }) => {
     return (
         <View className='flex flex-row items-center px-4 gap-2'>
             {breadcrumb.map((item, index) => (
-                <View key={`breadcrumb-item-${item.id || index}-${item.name}`}>
+                <View key={`breadcrumb-item-${item.id}-${item.name}-${index}`}>
                     <View className='flex flex-row items-center gap-2'>
                         <TouchableOpacity
                             disabled={index === breadcrumb.length - 1}
