@@ -92,8 +92,8 @@ android {
         applicationId 'com.orbithublabs.orbithub'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.0.1"
+        versionCode 9
+        versionName "v0.0.9"
     }
     signingConfigs {
         debug {
@@ -113,22 +113,15 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
-
         release {
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
+            shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
+            minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
         }
-        // release {
-        //     // Caution! In production, you need to generate your own keystore file.
-        //     // see https://reactnative.dev/docs/signed-apk-android.
-        //     signingConfig signingConfigs.debug
-        //     shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
-        //     minifyEnabled enableProguardInReleaseBuilds
-        //     proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        //     crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
-        // }
     }
     packagingOptions {
         jniLibs {
@@ -188,3 +181,5 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

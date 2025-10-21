@@ -8,9 +8,11 @@ import Eye from '@/components/svgs/Eye';
 import EyeOff from '@/components/svgs/EyeOff';
 import Text from '@/components/Text';
 import { useLazyApi } from '@/hooks/use-api';
+import { DaysOfWeek } from '@/models/me';
 import { toast } from '@/services/toast';
 import { useUserStore } from '@/store';
-import { Languages, Pencil, RectangleEllipsis, UserPen } from 'lucide-react-native';
+import dayjs from 'dayjs';
+import { Bell, Languages, Pencil, RectangleEllipsis, ShieldUser, UserPen, UserRound } from 'lucide-react-native';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, View } from 'react-native';
@@ -53,6 +55,7 @@ export default function ProfileScreen() {
             language
         });
         i18n.changeLanguage(language);
+        dayjs.locale(language);
     };
 
     const handleUpdateEmail = async () => {
@@ -125,45 +128,93 @@ export default function ProfileScreen() {
                     },
                 ]}>
 
-                <Text
-                    text='profile.user_data'
-                    className='text-2xl font-bold text-base-content'
-                />
-                <Dropdown
-                    prefixLabelIcon={<UserPen size={25} className='text-base-content' />}
-                    suffixLabelIcon={<Pencil size={20} className='text-base-content' />}
-                    label='profile.change_name'
-                    text={data?.name || ''}
-                    onPress={() => setIsChangeNameModalOpen(true)}
-                />
-                <Dropdown
-                    prefixLabelIcon={<Languages size={25} className='text-base-content' />}
-                    label='profile.change_language'
-                    text={`languages.${data?.language}`}
-                    onPress={() => setIsLanguageModalOpen(true)}
-                />
+                {/* User Data */}
+                <View className='gap-2'>
+                    <View className='flex-row gap-2 items-center'>
+                        <UserRound size={25} className='text-base-content' />
+                        <Text
+                            text='profile.user_data'
+                            className='text-2xl font-bold text-base-content'
+                        />
+                    </View>
+                    <View className='pl-8'>
+                        <Dropdown
+                            prefixLabelIcon={<UserPen size={25} className='text-base-content' />}
+                            suffixLabelIcon={<Pencil size={20} className='text-base-content' />}
+                            label='profile.change_name'
+                            text={data?.name || ''}
+                            onPress={() => setIsChangeNameModalOpen(true)}
+                        />
+                        <Dropdown
+                            prefixLabelIcon={<Languages size={25} className='text-base-content' />}
+                            label='profile.change_language'
+                            text={`languages.${data?.language}`}
+                            onPress={() => setIsLanguageModalOpen(true)}
+                        />
+                    </View>
+                </View>
 
                 <View className='h-0.5 mt-4 bg-neutral-content/40' />
 
-                <Text
-                    text='profile.security'
-                    className='text-2xl font-bold text-base-content'
-                />
-                {/* TODO: Change email and change name */}
-                {/* <Dropdown
-                    prefixLabelIcon={<Mail size={25} className='text-base-content' />}
-                    label='profile.change_email'
-                    text={data?.email || ''}
-                    onPress={() => setIsChangeEmailModalOpen(true)}
-                /> */}
-                <Dropdown
-                    prefixLabelIcon={<RectangleEllipsis size={25} className='text-base-content' />}
-                    suffixLabelIcon={<Pencil size={20} className='text-base-content' />}
-                    label='profile.change_password'
-                    text='**********'
-                    avoidTranslationText
-                    onPress={() => setIsChangePasswordModalOpen(true)}
-                />
+                {/* Notifications */}
+                <View className='gap-2'>
+                    <View className='flex-row gap-2 items-center'>
+                        <Bell size={25} className='text-base-content' />
+                        <Text
+                            text='profile.notifications'
+                            className='text-2xl font-bold text-base-content'
+                        />
+                    </View>
+
+                    <View className='pl-8 gap-2'>
+                        {data?.userNotifications?.map(((notification, index) => (
+                            <View key={`notification-${index}`} className='flex-row gap-4 items-center'>
+                                <Text avoidTranslation text={notification.time} className='text-base-content text-lg font-bold' />
+
+                                <View className='flex-row gap-2'>
+                                    {Object.keys(DaysOfWeek).map((day, index) => (
+                                        <View className={`flex-row items-center justify-center bg-neutral rounded-full size-10 ${notification.days.includes(day as DaysOfWeek) ? 'bg-primary' : ''}`} key={`day-${index}`}>
+                                            <Text
+                                                text={`days.initial.${day.toLocaleLowerCase()}`}
+                                                className='text-base-content'
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                            </View>
+                        )))}
+                    </View>
+                </View>
+
+                <View className='h-0.5 mt-4 bg-neutral-content/40' />
+
+                {/* Security */}
+                <View className='gap-2'>
+                    <View className='flex-row gap-2 items-center'>
+                        <ShieldUser size={25} className='text-base-content' />
+                        <Text
+                            text='profile.security'
+                            className='text-2xl font-bold text-base-content'
+                        />
+                    </View>
+                    {/* TODO: Change email and change name */}
+                    {/* <Dropdown
+                        prefixLabelIcon={<Mail size={25} className='text-base-content' />}
+                        label='profile.change_email'
+                        text={data?.email || ''}
+                        onPress={() => setIsChangeEmailModalOpen(true)}
+                    /> */}
+                    <View className='pl-8'>
+                        <Dropdown
+                            prefixLabelIcon={<RectangleEllipsis size={25} className='text-base-content' />}
+                            suffixLabelIcon={<Pencil size={20} className='text-base-content' />}
+                            label='profile.change_password'
+                            text='**********'
+                            avoidTranslationText
+                            onPress={() => setIsChangePasswordModalOpen(true)}
+                        />
+                    </View>
+                </View>
             </PageLayout>
 
 
@@ -272,13 +323,12 @@ const ChangePasswordModal = ({
 
     const handleUpdatePassword = async () => {
         if (!currentPassword || !newPassword || currentPassword.length < 6 || newPassword.length < 6) {
-            alert('Minimo 6 caracteres')
-            // toast.error({
-            //     title: 'validations.min_length',
-            //     translateData: {
-            //         count: 22 as any
-            //     }
-            // })
+            toast.error({
+                title: 'validations.min_length',
+                translateData: {
+                    count: 6 as any
+                }
+            })
             return;
         }
         onSubmit({ current_password: currentPassword, new_password: newPassword });

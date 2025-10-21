@@ -1,12 +1,12 @@
 import BottomSheetOptions from '@/components/modal/bottom-sheet-options';
 import PageLayout from '@/components/PageLayout';
-import { sortByOptions } from '@/constants/list';
+import { sortByFixedListOptions } from '@/constants/list';
 import { useLazyApi } from '@/hooks/use-api';
 import useDebouncedText from '@/hooks/use-debounce-text';
 import { FixedItemList, ThemoviedbFixedItem } from '@/models/list';
 import { ThemoviedbProvider } from '@/models/themovieddb';
 import { IdOrValue, KeyValue } from '@/models/utils';
-import { sortListItemsBy } from '@/services/lists';
+import { sortListFixedItemsBy } from '@/services/lists';
 import { getItemProviders, searchMoviesOrSeriesItem } from '@/services/themoviedb';
 import { useUserStore } from '@/store';
 import { Href, useRouter } from 'expo-router';
@@ -55,7 +55,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
     const [categoryFiltersOpen, setCategoryFiltersOpen] = useState(false);
     const [sortByOpen, setSortByOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState<any>(null);
-    const [sortByOption, setSortByOption] = useState(sortByOptions[0]);
+    const [sortByOption, setSortByOption] = useState(sortByFixedListOptions[0]);
     const [seen, setSeen] = useState(false);
     const [category, setCategory] = useState(categories[0]);
     const [carouselData, setCarouselData] = useState<any[]>([]);
@@ -87,10 +87,10 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
 
         if (category.value !== 'all') {
             const filterItems = newItems.filter((item: any) => item.data.type === category.value);
-            return sortListItemsBy(filterItems, sortByOption.value || 'title_asc') as any[];
+            return sortListFixedItemsBy(filterItems, sortByOption.value || 'title_asc') as any[];
         }
 
-        return sortListItemsBy(newItems, sortByOption.value || 'title_asc') as any[];
+        return sortListFixedItemsBy(newItems, sortByOption.value || 'title_asc') as any[];
     }
 
     useEffect(() => {
@@ -321,7 +321,7 @@ const MovieSeriesList = ({ workspaceId, listData, getList }: { workspaceId: stri
                     <Text text='sort_by' className='text-xl font-bold text-base-content' />
 
                     <View className='flex gap-4 pt-4'>
-                        {sortByOptions.length && sortByOptions.map((_sortByOption) => (
+                        {sortByFixedListOptions.length && sortByFixedListOptions.map((_sortByOption) => (
                             <TouchableOpacity
                                 key={_sortByOption.value}
                                 className={`px-6 py-4 rounded-xl border-2  ${sortByOption.value === _sortByOption.value ? 'border-primary/80' : 'border-base-content/20'}`}

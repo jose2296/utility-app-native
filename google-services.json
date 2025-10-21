@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "25537452909",
+    "project_id": "orbithub-a52bc",
+    "storage_bucket": "orbithub-a52bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25537452909:android:463c9fc4d617a0f145d864",
+        "android_client_info": {
+          "package_name": "com.orbithublabs.orbithub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSzlXuUFpYHXaYaGJ2zkC6vJMWmvIjICo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

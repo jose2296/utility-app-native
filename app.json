@@ -14,7 +14,8 @@
                 "dark": "./assets/logos/ios-dark.png",
                 "tinted": "./assets/logos/ios-tinted.png"
             },
-            "bundleIdentifier": "com.orbithublabs.orbithub"
+            "bundleIdentifier": "com.orbithublabs.orbithub",
+            "googleServicesFile": "./GoogleService-Info.plist"
         },
         "android": {
             "adaptiveIcon": {
@@ -24,6 +25,7 @@
             },
             "edgeToEdgeEnabled": true,
             "package": "com.orbithublabs.orbithub",
+            "googleServicesFile": "./google-services.json",
             "permissions": [
                 "android.permission.RECORD_AUDIO",
                 "android.permission.MODIFY_AUDIO_SETTINGS"
@@ -46,10 +48,12 @@
                 }
             ]
         },
+        "jsEngine": "hermes",
         "web": {
             "bundler": "metro",
-            "output": "single",
-            "favicon": "./assets/logos/logo-1"
+            "output": "static",
+            "favicon": "./assets/logos/adaptive-icon.png",
+            "jsEngine": "jsc"
         },
         "plugins": [
             "expo-router",
@@ -73,6 +77,16 @@
                         "backgroundColor": "#282a36"
                     },
                     "imageWidth": 200
+                }
+            ],
+            "@react-native-firebase/app",
+            "@react-native-firebase/messaging",
+            [
+                "expo-notifications",
+                {
+                    "icon": "./assets/logos/adaptive-icon.png",
+                    "defaultChannel": "default",
+                    "enableBackgroundRemoteNotifications": false
                 }
             ]
         ],

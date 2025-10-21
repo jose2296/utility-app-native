@@ -254,7 +254,7 @@ type PastelThemeNames = typeof pastelTheme[number]["name"];
 type ThemeNames = DraculaThemeNames | PastelThemeNames;
 
 // 🔑 Ahora generamos nuevas variantes con template literals:
-export type ThemeColors = ThemeNames | `${ThemeNames}-hex` | `${ThemeNames}-rgb`;
+export type ThemeColors = ThemeNames | `${ThemeNames}-hex` | `${ThemeNames}-rgb` | `${ThemeNames}-rgba/10` | `${ThemeNames}-rgba/20` | `${ThemeNames}-rgba/30` | `${ThemeNames}-rgba/40` | `${ThemeNames}-rgba/50` | `${ThemeNames}-rgba/60` | `${ThemeNames}-rgba/70` | `${ThemeNames}-rgba/80` | `${ThemeNames}-rgba/90` | `${ThemeNames}-rgba/100`;
 
 const themes = {
     dark: draculaTheme,
@@ -283,11 +283,23 @@ export function ThemeProvider({ children }: any) {
 
     useEffect(() => {
         const colors = themes[colorScheme].reduce((acc, item) => {
+            const rgba = item.rgb.replace('rgb', 'rgba');
+
             return {
                 ...acc,
                 [item.name]: item.rgb,
                 [item.name + '-rgb']: item.rgb.slice(4, -1),
                 [item.name + '-hex']: item.hex,
+                [item.name + '-rgba/10']: rgba.replace(')', ', 0.1)'),
+                [item.name + '-rgba/20']: rgba.replace(')', ', 0.2)'),
+                [item.name + '-rgba/30']: rgba.replace(')', ', 0.3)'),
+                [item.name + '-rgba/40']: rgba.replace(')', ', 0.4)'),
+                [item.name + '-rgba/50']: rgba.replace(')', ', 0.5)'),
+                [item.name + '-rgba/60']: rgba.replace(')', ', 0.6)'),
+                [item.name + '-rgba/70']: rgba.replace(')', ', 0.7)'),
+                [item.name + '-rgba/80']: rgba.replace(')', ', 0.8)'),
+                [item.name + '-rgba/90']: rgba.replace(')', ', 0.9)'),
+                [item.name + '-rgba/100']: rgba.replace(')', ', 1)'),
             };
         }, {} as Record<string, any>);
 

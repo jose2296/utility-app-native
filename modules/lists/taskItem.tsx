@@ -39,7 +39,7 @@ const RightActions = ({ handleEditItem, handleDeleteItem, item }: TaskItemProps)
     const colorsDelete = [...getAnalogous(storeColors!['error-hex']!)] as any;
 
     return (
-        <View className='flex flex-row items-center pl-4'>
+        <View className='flex flex-row items-center'>
             <TouchableOpacity
                 onPress={() => { handleEditItem(item); }}
                 className='h-full rounded-l-xl overflow-hidden flex items-center justify-center p-4 px-6'
@@ -56,7 +56,7 @@ const RightActions = ({ handleEditItem, handleDeleteItem, item }: TaskItemProps)
                         bottom: 0
                     }}
                 />
-                <Pencil size={24} className='text-secondary-content' />
+                <Pencil size={20} className='text-secondary-content' />
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => { handleDeleteItem(item); }}
@@ -74,7 +74,7 @@ const RightActions = ({ handleEditItem, handleDeleteItem, item }: TaskItemProps)
                         bottom: 0
                     }}
                 />
-                <Trash2 size={24} className='text-error-content' />
+                <Trash2 size={20} className='text-error-content' />
             </TouchableOpacity>
         </View>
     );
@@ -90,7 +90,7 @@ const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: LeftAc
     const colors = [...getAnalogous(item.completed ? storeColors!['warning-hex']! : storeColors!['success-hex']!)] as any;
 
     return (
-        <View className='flex flex-row flex-1 items-center pr-4'>
+        <View className='flex flex-row flex-1 items-center'>
             <TouchableOpacity
                 onPress={() => { handleToggleCompletedItem(item.id, !item.completed); }}
                 className={`h-full flex-1 rounded-xl relative overflow-hidden flex items-center justify-center p-4 px-6`}
@@ -107,7 +107,7 @@ const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: LeftAc
                         bottom: 0
                     }}
                 />
-                {savingListItem ? <Loader size={35} /> : item.completed ? <Undo size={35} className='text-warning-content' /> : <Check size={35} className='text-success-content' />}
+                {savingListItem ? <Loader size={30} /> : item.completed ? <Undo size={30} className='text-warning-content' /> : <Check size={35} className='text-success-content' />}
             </TouchableOpacity>
         </View>
     );
@@ -115,6 +115,12 @@ const LeftActions = ({ savingListItem, handleToggleCompletedItem, item }: LeftAc
 
 const TaskItem = ({ item, savingListItem, handleToggleCompletedItem, handleEditItem, handleDeleteItem }: { item: any, savingListItem: boolean, handleToggleCompletedItem: (listItemId: number, completed: boolean) => Promise<any>, handleEditItem: (listItem: any) => void, handleDeleteItem: (listItem: any) => void }) => {
     const { ref: swipeableRef, closeRightActions, reset } = useSwipeableControl();
+
+    if (item.id === 'empty') {
+        return (
+            <View className='px-4 flex-row gap-4 h-0.5 bg-base-content/50 my-1' />
+        );
+    }
 
     return (
         <CustomSwipeable
@@ -139,7 +145,7 @@ const TaskItem = ({ item, savingListItem, handleToggleCompletedItem, handleEditI
                     size={24}
                     onChange={(checked) => handleToggleCompletedItem(item.id, checked)}
                     checked={item.completed}
-                    className='flex-row gap-4 py-6 items-center'
+                    className='flex-row gap-4 py-4 items-center'
                 />
                 <TouchableOpacity className='flex-1 h-full justify-center' onPress={() => { handleEditItem(item); reset(); }}>
                     <Text text={item.content} numberOfLines={1} avoidTranslation className={`text-base-content text-xl ${item.completed ? 'line-through' : ''}`} />

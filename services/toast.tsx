@@ -22,6 +22,9 @@ export const toast = {
     warning: (props: ToastProps) => {
         return sonnerToast.custom(<CustomToast type='warning' {...props} />);
     },
+    info: (props: ToastProps) => {
+        return sonnerToast.custom(<CustomToast type='accent' {...props} />);
+    },
     loading: (props: ToastProps) => {
         return sonnerToast.custom(<CustomToast type='loading' {...props} />, { duration: Infinity });
     },
@@ -34,15 +37,15 @@ export const toast = {
             sonnerToast.custom(<CustomToast {...success} type="success" />, { id });
             return result;
         })
-        .catch((err) => {
-            sonnerToast.custom(<CustomToast {...error} type="error" />, { id });
-            throw new Error("Error");
+            .catch((err) => {
+                sonnerToast.custom(<CustomToast {...error} type="error" />, { id });
+                throw new Error("Error");
 
-        });
+            });
     }
 };
 
-const CustomToast = ({ type, title, avoidTranslation, translateData }: { type: 'success' | 'error' | 'warning' | 'loading', title: string, avoidTranslation?: boolean, translateData?: Record<string, string> }) => {
+const CustomToast = ({ type, title, avoidTranslation, translateData }: { type: 'success' | 'error' | 'warning' | 'loading' | 'accent', title: string, avoidTranslation?: boolean, translateData?: Record<string, string> }) => {
     return (
         <View
             className={cn(
@@ -52,6 +55,7 @@ const CustomToast = ({ type, title, avoidTranslation, translateData }: { type: '
                     'bg-error': type === 'error',
                     'bg-warning': type === 'warning',
                     'bg-info': type === 'loading',
+                    'bg-accent': type === 'accent',
                 }
             )}>
             {type === 'loading' && <Loader size={40} className='text-info-content' />}
@@ -69,6 +73,7 @@ const CustomToast = ({ type, title, avoidTranslation, translateData }: { type: '
                         'text-error-content': type === 'error',
                         'text-warning-content': type === 'warning',
                         'text-info-content': type === 'loading',
+                        'text-accent-content': type === 'accent',
                     }
                 )}
             />

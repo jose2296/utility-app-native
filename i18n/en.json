@@ -91,7 +91,11 @@
             "create_item": "Create item",
             "delete_item": "Delete item",
             "delete_item_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
-            "match_items_in_list": "Items that match in the list"
+            "match_items_in_list": "Items that match in the list",
+            "sort_by_content_asc": "Sort by content ascending",
+            "sort_by_content_desc": "Sort by content descending",
+            "sort_by_added_at_asc": "Sort by added at ascending",
+            "sort_by_added_at_desc": "Sort by added at descending"
         },
         "fixed": {
             "adding_item_to_list": "Adding <b>{title}</b> to list...",
@@ -139,9 +143,11 @@
             "removing_item_from_list": "Removing <b>{title}</b> from list...",
             "remove_from_list": "Remove from list",
             "add_to_list": "Add to list",
-            "authors": "{length, plural, =1 {Author} other {Authors}}",
+            "authors_one": "Author",
+            "authors_other": "Authors",
             "more_author_books": "More books by author:",
-            "page_count": "{count, plural, =1 {1 page} other {# pages}}",
+            "page_count_one": "1 page",
+            "page_count_other": "{count} pages",
             "adding_item_to_list": "Adding <b>{title}</b> to list...",
             "marking_item_as_read": "Marking <b>{title}</b> as read...",
             "marking_item_as_not_read": "Marking <b>{title}</b> as not read...",
@@ -166,12 +172,14 @@
         "fill_all_fields": "Please fill in all fields.",
         "required": "Required field.",
         "email": "Enter a valid email.",
-        "min_length": "At least {value, plural, =1 {1 character} other {# characters}}.",
         "min_length_one": "At least 1 character.",
         "min_length_other": "At least {count} characters.",
-        "at_least_letter": "At least {value, plural, =1 {1 letter} other {# letters}}.",
-        "at_least_special": "At least {value, plural, =1 {1 special character} other {# special characters}}.",
-        "at_least_number": "At least {value, plural, =1 {1 number} other {# numbers}}.",
+        "at_least_letter_one": "At least 1 letter.",
+        "at_least_letter_other": "At least {count} letters.",
+        "at_least_special_one": "At least 1 special character.",
+        "at_least_special_other": "At least {count} special characters.",
+        "at_least_number_one": "At least 1 number.",
+        "at_least_number_other": "At least {count} numbers.",
         "wrong_credentials": "Wrong credentials"
     },
     "profile": {
@@ -180,6 +188,7 @@
         "user_data": "User data",
         "security": "Security",
         "change_password": "Change password",
+        "change_language": "Change language",
         "current_password": "Current password",
         "new_password": "New password",
         "change_email": "Change email",
@@ -205,9 +214,51 @@
         "save_item_in_workspace": "Save <bold>{title}</bold> in workspace <bold>{name}</bold>"
     },
     "item_types": {
-        "lists": "{value, plural, =1 {1 list} other {# lists}}",
-        "notes": "{value, plural, =1 {1 note} other {# notes}}",
-        "folders": "{value, plural, =1 {1 folder} other {# folders}}"
+        "lists_one": "List",
+        "lists_other": "Lists",
+        "notes_one": "Note",
+        "notes_other": "Notes",
+        "folders_one": "Folder",
+        "folders_other": "Folders"
+    },
+    "events": {
+        "title": "Calendar",
+        "no_items": "No events yet",
+        "today_events": "Events for today <bold><underline>{date}</underline></bold>",
+        "no_events_today": "No events for today",
+        "events_for_day": "Events for the <bold><underline>{date}</underline></bold>",
+        "add_event": "Add event",
+        "edit_event": "edit event",
+        "save_event_title": "Event name",
+        "save_event_description": "Event description",
+        "save_event_date": "Event date",
+        "save_event_time": "Event time",
+        "save_event_is_all_day": "Is all day",
+        "reminders_time": {
+            "is_all_day": {
+                "reminder_same_day": "Same day at {time}.",
+                "reminder_before_days_one": "{count} day before at {time}.",
+                "reminder_before_days_other": "{count} days before at {time}.",
+                "reminder_before_weeks_one": "{count} week before at {time}.",
+                "reminder_before_weeks_other": "{count} weeks before at {time}."
+            },
+            "is_not_all_day": {
+                "reminder_before_minutes_one": "1 minute before",
+                "reminder_before_minutes_other": "{count} minutes before",
+                "reminder_before_hours_one": "1 hour before",
+                "reminder_before_hours_other": "{count} hours before",
+                "reminder_before_days_one": "1 day before",
+                "reminder_before_days_other": "{count} days before",
+                "reminder_before_weeks_one": "1 week before",
+                "reminder_before_weeks_other": "{count} weeks before"
+            }
+        },
+        "add_reminder": "Add reminder",
+        "edit_reminder": "Edit reminder",
+        "no_reminders": "No reminders",
+        "reminders": "Reminders",
+        "delete_event": "Delete event",
+        "delete_event_message": "Are you sure you want to delete the event <bold>{title}</bold>?"
     },
     "select_workspace": "Select a workspace",
     "select_folder_from": "Select a folder from <bold>{name}</bold>",
@@ -220,6 +271,7 @@
     "collaborator": "Collaborator",
     "create": "Create",
     "save": "Save",
+    "edit": "Edit",
     "update": "Update",
     "cancel": "Cancel",
     "close": "Close",
@@ -232,5 +284,34 @@
     "confirm": "Confirm",
     "logout": "Logout",
     "loading": "Loading...",
-    "error": "An error has occurred"
+    "error": "An error has occurred",
+    "days": {
+        "initial": {
+            "monday": "M",
+            "tuesday": "T",
+            "wednesday": "W",
+            "thursday": "Th",
+            "friday": "F",
+            "saturday": "S",
+            "sunday": "Su"
+        },
+        "short": {
+            "monday": "Mon",
+            "tuesday": "Tue",
+            "wednesday": "Wed",
+            "thursday": "Thu",
+            "friday": "Fri",
+            "saturday": "Sat",
+            "sunday": "Sun"
+        },
+        "long": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday"
+        }
+    }
 }

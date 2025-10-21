@@ -78,7 +78,11 @@
             "create_item": "Crear elemento",
             "delete_item": "Eliminar elemento",
             "delete_item_confirmation": "¿Estás seguro de que quieres eliminar <bold>{name}</bold>?",
-            "match_items_in_list": "Elementos que coinciden en la lista"
+            "match_items_in_list": "Elementos que coinciden en la lista",
+            "sort_by_content_asc": "Ordenar por contenido ascendente",
+            "sort_by_content_desc": "Ordenar por contenido descendente",
+            "sort_by_added_at_asc": "Ordenar por fecha de añadido ascendente",
+            "sort_by_added_at_desc": "Ordenar por fecha de añadido descendente"
         },
         "fixed": {
             "adding_item_to_list": "Añadiendo <b>{title}</b> a la lista...",
@@ -126,9 +130,11 @@
             "removing_item_from_list": "Eliminando <b>{title}</b> de la lista...",
             "remove_from_list": "Eliminar de la lista",
             "add_to_list": "Añadir a la lista",
-            "authors": "{length, plural, =1 {Autor} other {Autores}}",
+            "authors_one": "Autor",
+            "authors_other": "Autores",
             "more_author_books": "Más libros del autor:",
-            "page_count": "{count, plural, =1 {1 página} other {# páginas}}",
+            "page_count_one": "1 página",
+            "page_count_other": "{count} páginas",
             "adding_item_to_list": "Añadiendo <b>{title}</b> a la lista...",
             "marking_item_as_read": "Marcando <b>{title}</b> como leído...",
             "marking_item_as_not_read": "Marcando <b>{title}</b> como no leído...",
@@ -168,10 +174,14 @@
         "fill_all_fields": "Por favor, completa todos los campos.",
         "required": "Campo obligatorio.",
         "email": "Introduce un email válido.",
-        "min_length": "Al menos {count, plural, =1 {1 carácter} other {# caracteres}}.",
-        "at_least_letter": "Al menos {value, plural, =1 {1 letra} other {# letras}}.",
-        "at_least_special": "Al menos {value, plural, =1 {1 carácter especial} other {# caracteres especiales}}.",
-        "at_least_number": "Al menos {value, plural, =1 {1 número} other {# números}}.",
+        "min_length_one": "Al menos {count} carácter.",
+        "min_length_other": "Al menos {count} caracteres.",
+        "at_least_letter_one": "Al menos {count} letra.",
+        "at_least_letter_other": "Al menos {count} letras.",
+        "at_least_special_one": "Al menos {count} carácter especial.",
+        "at_least_special_other": "Al menos {count} caracteres especiales.",
+        "at_least_number_one": "Al menos {count} número.",
+        "at_least_number_other": "Al menos {count} números.",
         "wrong_credentials": "Credenciales incorrectas"
     },
     "profile": {
@@ -180,6 +190,7 @@
         "user_data": "Datos del usuario",
         "security": "Seguridad",
         "change_password": "Cambiar contraseña",
+        "change_language": "Cambiar idioma",
         "change_email": "Cambiar email",
         "change_name": "Cambiar nombre",
         "current_password": "Contraseña actual",
@@ -205,9 +216,53 @@
         "save_item_in_workspace": "Guardar <bold>{title}</bold> en el espacio de trabajo <bold>{name}</bold>"
     },
     "item_types": {
-        "lists": "{value, plural, =1 {1 lista} other {# listas}}",
-        "notes": "{value, plural, =1 {1 nota} other {# notas}}",
-        "folders": "{value, plural, =1 {1 carpeta} other {# carpetas}}"
+        "lists_one": "Lista",
+        "lists_other": "Listas",
+        "notes_one": "Nota",
+        "notes_other": "Notas",
+        "folders_one": "Carpeta",
+        "folders_other": "Carpeta"
+    },
+    "events": {
+        "title": "Calendario",
+        "events_for_day": "Eventos para el <bold><underline>{date}</underline></bold>",
+        "no_items": "No hay eventos todavía",
+        "today_events": "Eventos para hoy <bold><underline>{date}</underline></bold>",
+        "no_events_today": "No hay eventos para hoy",
+        "add_event": "Añadir evento",
+        "edit_event": "Editar evento",
+        "save_event_title": "Nombre del evento",
+        "save_event_description": "Descripción del evento",
+        "save_event_date": "Fecha del evento",
+        "save_event_time": "Hora del evento",
+        "save_event_is_all_day": "Todo el día",
+        "reminders_duplicated": "Ya hay un recordatorio con la misma configuración",
+        "reminders_time": {
+            "time": "Tiempo",
+            "is_all_day": {
+                "same_day": "El mismo día a las {time}.",
+                "before_days_one": "{count} día antes a las {time}.",
+                "before_days_other": "{count} días antes a las {time}.",
+                "before_weeks_one": "{count} semana antes a las {time}.",
+                "before_weeks_other": "{count} semanas antes a las {time}."
+            },
+            "is_not_all_day": {
+                "before_minutes_one": "1 minuto antes.",
+                "before_minutes_other": "{count} minutos antes.",
+                "before_hours_one": "1 hora antes.",
+                "before_hours_other": "{count} horas antes.",
+                "before_days_one": "1 día antes.",
+                "before_days_other": "{count} días antes.",
+                "before_weeks_one": "1 semana antes.",
+                "before_weeks_other": "{count} semanas antes."
+            }
+        },
+        "add_reminder": "Añadir recordatorio",
+        "edit_reminder": "Editar recordatorio",
+        "no_reminders": "No hay recordatorios",
+        "reminders": "Recordatorios",
+        "delete_event": "Eliminar evento",
+        "delete_event_message": "¿Estás seguro de que quieres eliminar el evento <bold>{title}</bold>?"
     },
     "select_workspace": "Selecciona un espacio de trabajo",
     "select_folder_from": "Selecciona una carpeta de <bold>{name}</bold>",
@@ -220,6 +275,7 @@
     "collaborator": "Colaborador",
     "create": "Crear",
     "save": "Guardar",
+    "edit": "Editar",
     "update": "Actualizar",
     "cancel": "Cancelar",
     "close": "Cerrar",
@@ -232,5 +288,34 @@
     "confirm": "Confirmar",
     "logout": "Cerrar sesión",
     "loading": "Cargando...",
-    "error": "Ha habido un error"
+    "error": "Ha habido un error",
+    "days": {
+        "initial": {
+            "monday": "L",
+            "tuesday": "M",
+            "wednesday": "X",
+            "thursday": "J",
+            "friday": "V",
+            "saturday": "S",
+            "sunday": "D"
+        },
+        "short": {
+            "monday": "Lun",
+            "tuesday": "Mar",
+            "wednesday": "Mie",
+            "thursday": "Jue",
+            "friday": "Vie",
+            "saturday": "Sab",
+            "sunday": "Dom"
+        },
+        "long": {
+            "monday": "Lunes",
+            "tuesday": "Martes",
+            "wednesday": "Miércoles",
+            "thursday": "Jueves",
+            "friday": "Viernes",
+            "saturday": "Sábado",
+            "sunday": "Domingo"
+        }
+    }
 }

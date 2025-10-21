@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, Keyboard, KeyboardEvent, Pressable, View } from 'react-native';
 import {
     Gesture,
-    GestureDetector,
+    GestureDetector
 } from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,

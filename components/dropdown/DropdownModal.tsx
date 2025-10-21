@@ -50,7 +50,7 @@ export const DropDownModal = <T extends KeyValue,>({ text, avoidTranslation, opt
                                     }}
                                 />
                             }
-                            <Text text={option.key} className={`text-2xl text-base-content`} />
+                            <Text text={option.key} className={`text-2xl ${value === option.value ? 'text-primary-content' : 'text-base-content'}`} />
                         </TouchableOpacity>
                     ))}
                 </View>

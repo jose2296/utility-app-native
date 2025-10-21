@@ -1,4 +1,4 @@
-package com.jose.jerez.utilityapp
+package com.orbithublabs.orbithub
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

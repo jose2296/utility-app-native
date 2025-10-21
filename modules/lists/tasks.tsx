@@ -1,7 +1,11 @@
 import BottomSheet from '@/components/BottomSheet';
-import FixedButton from '@/components/FixedButton';
+import FixedButton, { FixedButtonSizeMap } from '@/components/FixedButton';
 import Checkbox from '@/components/checkbox';
+import DropDownModal from '@/components/dropdown/DropdownModal';
+import ArrowDownWideNarrow from '@/components/svgs/ArrowDownWideNarrow';
+import { sortByTasksListOptions } from '@/constants/list';
 import { useLazyApi } from '@/hooks/use-api';
+import { sortTasksListItemsBy } from '@/services/lists';
 import { useAudioPlayer } from 'expo-audio';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, TouchableOpacity, View } from "react-native";
@@ -29,7 +33,7 @@ const audioSourceTrash = require('../../assets/sounds/trash.mp3');
 
 const TasksList = ({ listData, loading, getList }: { listData: any, loading: boolean, getList: () => Promise<void> }) => {
     const [listItemSelected, setListItemSelected] = useState<any>(null);
-    // const [itemsCompleted, setItemCompleted] = useState<any[]>([]);
+    const [items, setItems] = useState<any[]>([]);
     // const [itemsNotCompleted, setItemsNotCompleted] = useState<any[]>([]);
     const { request: saveListItem, loading: savingListItem } = useLazyApi<any>(`list-items`, 'POST');
     const { request: deleteListItem, loading: deletingListItem } = useLazyApi<any>(`list-items`, 'DELETE');
@@ -39,6 +43,8 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
     const [saveItemModalOpen, setSaveItemModalOpen] = useState(false);
     const [deleteBottomModalOpen, setDeleteBottomModalOpen] = useState(false);
     const insets = useSafeAreaInsets();
+    const [sortByModalOpen, setSortByModalOpen] = useState(false);
+    const [sortByOption, setSortByOption] = useState<any>(sortByTasksListOptions[0]);
 
     // const { openModal: openSaveItemModal, updateModalProps: updateSaveItemModalProps, closeModal: closeSaveItemModal } = useModal();
 
@@ -85,6 +91,21 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
     //         console.error('Error saving new list item:', error);
     //     }
     // }
+
+    useEffect(() => {
+        const listItemsNotCompleted = sortTasksListItemsBy(listData.itemsNotCompleted, sortByOption.value);
+        const listItemsCompleted = sortTasksListItemsBy(listData.itemsCompleted, sortByOption.value);
+
+        const emptyItem = (listItemsNotCompleted.length && listItemsCompleted.length
+            ? [{ id: 'empty' }]
+            : []);
+
+        setItems([
+            ...listItemsNotCompleted,
+            ...emptyItem,
+            ...listItemsCompleted
+        ]);
+    }, [sortByOption, listData]);
 
     const handleToggleCompletedItem = async (listItemId: number, completed: boolean): Promise<any> => {
         const updatedData = await saveListItem(`list-items/${listItemId}`, { completed });
@@ -146,6 +167,21 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                         <Text text='list.no_items_found' className="mt-4 text-2xl text-base-content" />
                     </View>
                 }
+
+                <AnimatedList<any>
+                    data={items}
+                    getKey={(item) => item.id}
+                    renderItem={(item) => (
+                        <TaskItem
+                            item={item}
+                            savingListItem={savingListItem || loading}
+                            handleToggleCompletedItem={handleToggleCompletedItem}
+                            handleEditItem={handleEditItem}
+                            handleDeleteItem={handleOpenDeleteItemModal}
+                        />
+                    )}
+                />
+                {/*
                 {listData.itemsNotCompleted.length > 0 && (
                     <AnimatedList<any>
                         data={listData.itemsNotCompleted}
@@ -178,7 +214,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                             )}
                         />
                     </>
-                )}
+                )} */}
             </PageLayout>
             {/* <View className='flex-1 px-4 gap-2'>
                 <Breadcrumb breadcrumb={listData?.breadcrumb} />
@@ -227,10 +263,33 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
             </View> */}
 
             <FixedButton
+                offsetTop={80}
+                offsetRight={24}
+                size='sm'
+                type='secondary'
+                icon={<ArrowDownWideNarrow size={FixedButtonSizeMap.sm - 20} />}
+                onPress={() => {
+                    setSortByModalOpen(true);
+                }}
+            />
+
+            <FixedButton
                 onPress={() => {
                     setSaveBottomModalMode('create');
                     setSaveItemModalOpen(true);
                 }}
+            />
+
+            <DropDownModal
+                isOpen={sortByModalOpen}
+                onClose={() => setSortByModalOpen(false)}
+                options={sortByTasksListOptions}
+                value={sortByOption.value}
+                onPress={(value) => {
+                    setSortByOption(value);
+                    setSortByModalOpen(false);
+                }}
+                text='sort_by'
             />
 
             <SaveItemModal
@@ -240,7 +299,7 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
                 listData={listData}
                 toggleMatchItem={handleToggleCompletedItem}
                 onClose={() => { setSaveItemModalOpen(false); setListItemSelected(null); Keyboard.dismiss(); }}
-                onGetList={async () => await getList() }
+                onGetList={async () => await getList()}
             />
 
             <InformationModal
@@ -339,6 +398,7 @@ const SaveItemModal = ({ isOpen, mode, item, listData, toggleMatchItem, onClose,
                             value={inputValue}
                             onSubmitEditing={handleSave}
                             onChangeText={setNewListItemContent}
+                            multiline
                         />
                         {!!inputValue && matchItemsInList.length > 0 && (
                             <View className='gap-2 pb-2 '>

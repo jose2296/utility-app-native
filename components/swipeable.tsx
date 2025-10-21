@@ -13,18 +13,17 @@ interface SwipeableProps {
     overshootRight?: boolean;
     overshootLeft?: boolean;
     onSwipeableOpen?: (direction: 'left' | 'right', swipeableRef: SwipeableMethods) => void;
-    renderLeftActions: (props: SwActionProps) => React.ReactNode;
-    renderRightActions: (props: SwActionProps) => React.ReactNode;
+    renderLeftActions?: (props: SwActionProps) => React.ReactNode;
+    renderRightActions?: (props: SwActionProps) => React.ReactNode;
 }
-
 const SwipeableItem = ({ renderLeftActions, renderRightActions, children, friction = 2, overshootRight = false, overshootLeft = false, onSwipeableOpen }: SwipeableProps) => {
     const swipeableRef = useRef<SwipeableMethods>(null);
 
     return (
         <Swipeable
             ref={swipeableRef}
-            renderLeftActions={(progress, translation, swipeableMethods) => renderLeftActions({ progress, translation, swipeableMethods })}
-            renderRightActions={(progress, translation, swipeableMethods) => renderRightActions({ progress, translation, swipeableMethods })}
+            renderLeftActions={(progress, translation, swipeableMethods) => renderLeftActions?.({ progress, translation, swipeableMethods })}
+            renderRightActions={(progress, translation, swipeableMethods) => renderRightActions?.({ progress, translation, swipeableMethods })}
             onSwipeableOpen={(direction) => onSwipeableOpen?.(direction, swipeableRef.current!)}
             // leftThreshold={1}
             overshootRight={overshootRight}
@@ -282,7 +281,7 @@ export const CustomSwipeable = forwardRef<SwipeableRef, Props>(({
 
     const animatedContentStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: translateX.value }],
-        opacity: contentOpacity.value,
+        // opacity: contentOpacity.value,
         zIndex: 10,
     }));
 
@@ -331,6 +330,7 @@ export const CustomSwipeable = forwardRef<SwipeableRef, Props>(({
         <GestureDetector gesture={pan}>
             <View
                 style={{ width: '100%', overflow: 'hidden' }}
+                className='bg-base-300 rounded-xl'
                 onLayout={onContainerLayout}
             >
                 {/* Acciones derechas */}

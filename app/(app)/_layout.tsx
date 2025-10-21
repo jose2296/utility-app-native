@@ -1,13 +1,17 @@
+import Accordion from '@/components/accordion';
 import Loader from '@/components/loader';
 import Text from '@/components/Text';
 import { useApi, useLazyApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
-import { Folder } from '@/models/folder';
+import { registerForPushNotificationsAsync, setupNotificationListeners } from '@/services/notifications';
 import { cn, getAnalogous } from '@/services/utils';
 import { useUserStore } from '@/store';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerHeaderProps } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
+import 'dayjs/locale/es';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Href, usePathname, useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -23,14 +27,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function AppLayout() {
     const { data, loading } = useApi('me', 'GET');
     const { setData, data: userData } = useUserStore();
+    const [isNotificationListener, setIsNotificationListener] = useState(false);
+    const { request: updateDeviceToken } = useLazyApi('user/update-user', 'POST');
     const { i18n } = useTranslation()
 
     useEffect(() => {
         if (data) {
             setData(data);
-            i18n.changeLanguage(data.language)
+            i18n.changeLanguage(data.language);
+            dayjs.locale(data.language);
+            if (!isNotificationListener) {
+                registerDeviceNotificationToken();
+            }
         }
     }, [data]);
+
+    const registerDeviceNotificationToken = async () => {
+        const token = await registerForPushNotificationsAsync();
+
+        if (token && data?.device_token !== token) {
+            await updateDeviceToken('users/add-device-token', {
+                device_token: token
+            })
+        }
+
+        setupNotificationListeners();
+        setIsNotificationListener(true);
+    };
 
     if (loading || !userData) {
         return (
@@ -81,7 +104,7 @@ export default function AppLayout() {
             <Drawer.Screen
                 name="calendar"
                 options={{
-                    title: 'calendar.title',
+                    title: 'events.title',
                     headerShown: true
                 }}
             />
@@ -98,7 +121,7 @@ cssInterop(LogOut, {
     },
 });
 const DrawerContent = (props: DrawerContentComponentProps) => {
-    const { data, logout } = useUserStore();
+    const { data, drawerWorkspacesOpened, setDrawerWorkspacesOpened, logout } = useUserStore();
     const { request: logoutRequest } = useLazyApi('auth/logout', 'POST');
     const router = useRouter();
     const pathname = usePathname();
@@ -113,6 +136,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         } catch (error) {
         }
     };
+
+    useEffect(() => {
+        if (data?.workspaces?.map((workspace) => workspace.id).includes(parseInt(pathname.split('/')[1])) || pathname === "/workspaces") {
+            setDrawerWorkspacesOpened(true)
+        }
+    }, [pathname]);
 
     return (
         <View className="flex-1 flex flex-col bg-base-100 px-4">
@@ -138,39 +167,51 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                             props.navigation.dispatch(DrawerActions.toggleDrawer());
                         }}
                     />
+                    <Accordion
+                        isExpanded={drawerWorkspacesOpened}
+                        onToggle={() => setDrawerWorkspacesOpened(!drawerWorkspacesOpened)}
+                        title={
+                            <DrawerItem
+                                route='/workspaces'
+                                active={pathname === "/workspaces"}
+                                name='workspaces.title'
+                                onPress={() => {
+                                    router.replace('/workspaces');
+                                    setDrawerWorkspacesOpened(true);
+                                    props.navigation.dispatch(DrawerActions.toggleDrawer());
+                                }}
+                            />
+                        }
+                    >
+                        <View className='pl-2'>
+                            {data?.workspaces?.map((workspace) => (
+                                <DrawerItem
+                                    key={workspace.id}
+                                    route={`/${workspace.id}`}
+                                    active={pathname.split('/')[1] === `${workspace.id}`}
+                                    color={workspace.color}
+                                    name={workspace.name}
+                                    onPress={() => {
+                                        router.replace(`/${workspace.id}`);
+                                        setDrawerWorkspacesOpened(true);
+                                        props.navigation.dispatch(DrawerActions.toggleDrawer());
+                                    }}
+                                />
+                            )) || []}
+                        </View>
+                    </Accordion>
+
                     <DrawerItem
-                        route='/workspaces'
-                        active={pathname === "/workspaces"}
-                        name='workspaces.title'
+                        route='/calendar'
+                        active={pathname === "/calendar"}
+                        name='events.title'
                         onPress={() => {
-                            router.replace('/workspaces')
+                            router.replace('/calendar')
                             props.navigation.dispatch(DrawerActions.toggleDrawer());
                         }}
                     />
-                    {data?.workspaces?.map((workspace) => (
-                        <DrawerItem
-                            key={workspace.id}
-                            route={`/${workspace.id}`}
-                            active={pathname.split('/')[1] === `${workspace.id}`}
-                            color={workspace.color}
-                            name={workspace.name}
-                            onPress={() => {
-                                router.replace(`/${workspace.id}`)
-                                props.navigation.dispatch(DrawerActions.toggleDrawer());
-                            }}
-                        />
-                    )) || []}
                 </ScrollView>
 
-                <DrawerItem
-                    route='/calendar'
-                    active={pathname === "/calendar"}
-                    name='calendar.title'
-                    onPress={() => {
-                        router.replace('/calendar')
-                        props.navigation.dispatch(DrawerActions.toggleDrawer());
-                    }}
-                />
                 <DrawerItem
                     route='/profile'
                     active={pathname === "/profile"}

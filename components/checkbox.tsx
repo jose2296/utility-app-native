@@ -16,9 +16,10 @@ type CheckboxProps = {
     className?: string;
     checked?: boolean;
     disabled?: boolean;
+    readonly?: boolean;
 };
 
-const Checkbox = ({ size = 24, onChange, children, checked = false, disabled = false, className }: CheckboxProps) => {
+const Checkbox = ({ size = 24, onChange, children, checked = false, disabled = false, readonly = false, className }: CheckboxProps) => {
     const [_checked, setChecked] = useState(checked);
     const scale = useSharedValue(1);
     const dashOffset = useSharedValue(24);
@@ -30,6 +31,10 @@ const Checkbox = ({ size = 24, onChange, children, checked = false, disabled = f
 
         dashOffset.value = withTiming(_checked ? 0 : 24, { duration: 250 });
     }, [_checked]);
+
+    useEffect(() => {
+        setChecked(checked);
+    }, [checked]);
 
     const toggle = () => {
         if (disabled) return;
@@ -49,7 +54,10 @@ const Checkbox = ({ size = 24, onChange, children, checked = false, disabled = f
     }));
 
     return (
-        <Pressable onPress={toggle} className={`${className} ${disabled ? 'opacity-50' : ''}`}>
+        <Pressable
+            onPress={toggle}
+            disabled={disabled || readonly}
+            className={`${className} ${disabled ? 'opacity-50' : ''} flex-row items-center gap-4`}>
             <Animated.View
                 style={animatedBoxStyle}
                 className={`border-2 rounded-md items-center justify-center ${_checked ? 'bg-primary border-primary' : 'bg-transparent border-base-content'}`}

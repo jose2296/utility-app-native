@@ -8,11 +8,27 @@ import Animated, { FadeInDown, FadeOutRight, useAnimatedStyle, withTiming } from
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from './Text';
 
-const FixedButton = ({ onPress, options }: { onPress: (value?: string) => void, options?: { text: string, value: string }[] }) => {
+export const FixedButtonSizeMap = {
+    sm: 40,
+    md: 60,
+    lg: 80
+};
+
+interface FixedButtonProps {
+    onPress: (value?: string) => void;
+    options?: { text: string, value: string }[];
+    offsetTop?: number;
+    offsetRight?: number;
+    size?: 'sm' | 'md' | 'lg';
+    type?: 'primary' | 'secondary';
+    icon?: React.ReactNode;
+}
+const FixedButton = ({ onPress, type = 'primary', options, offsetTop = 0, offsetRight = 16, size = 'md', icon }: FixedButtonProps) => {
     const [showOptions, setShowOptions] = useState(false);
     const insets = useSafeAreaInsets();
     const storeColors = useUserStore(state => state.colors);
-    const colors = [...getAnalogous(storeColors!['primary-hex']!)] as any;
+    const colors = [...getAnalogous(storeColors![`${type}-hex`])];
+    const sizeValue = FixedButtonSizeMap[size];
 
     const styleAnimated = useAnimatedStyle(() => {
 
@@ -26,11 +42,11 @@ const FixedButton = ({ onPress, options }: { onPress: (value?: string) => void, 
         <>
             <TouchableOpacity
                 onPress={!!options?.length ? () => setShowOptions(!showOptions) : () => onPress()}
-                className='absolute right-4 p-4 overflow-hidden rounded-full shadow-lg z-40'
-                style={{ bottom: insets.bottom + 10 }}
+                className='absolute p-4 overflow-hidden rounded-full shadow-lg z-40 items-center justify-center'
+                style={{ bottom: insets.bottom + (offsetTop || 10), width: sizeValue, height: sizeValue, right: offsetRight }}
             >
                 <LinearGradient
-                    colors={colors}
+                    colors={colors as any}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={{
@@ -42,7 +58,9 @@ const FixedButton = ({ onPress, options }: { onPress: (value?: string) => void, 
                     }}
                 />
                 <Animated.View style={[styleAnimated]}>
-                    <Plus size={35} className='text-primary-content' />
+                    {!!icon ? icon :
+                        <Plus size={sizeValue - 20} className={`${type === 'primary' ? 'text-primary-content' : 'text-secondary-content'}`} />
+                    }
                 </Animated.View>
                 {/* {showOptions ? <X size={35} className='text-primary-content' /> : <Plus size={35} className='text-primary-content' />} */}
             </TouchableOpacity>
@@ -58,7 +76,7 @@ const FixedButton = ({ onPress, options }: { onPress: (value?: string) => void, 
             }
             {options?.length &&
                 <View className='absolute right-4 z-40'
-                    style={{ bottom: insets.bottom + 85 }}
+                    style={{ bottom: insets.bottom + (offsetTop || 10) + 85 }}
                 >
                     {showOptions && options?.map((option, index) => (
                         <Animated.View

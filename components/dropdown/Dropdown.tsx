@@ -3,7 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 import Text from '../Text';
 
 interface DropdownProps {
-    label: string;
+    label?: string;
     text: string;
     onPress: () => void;
     disabled?: boolean;
@@ -17,12 +17,14 @@ interface DropdownProps {
 const Dropdown = ({ label, text, onPress, disabled, prefixLabelIcon, suffixLabelIcon, avoidTranslationLabel, avoidTranslationText, translateLabelData, translateTextData }: DropdownProps) => {
     return (
         <View className='flex flex-col gap-y-1'>
-            <Text
-                text={label}
-                avoidTranslation={avoidTranslationLabel}
-                translateData={translateLabelData}
-                className={`${disabled ? 'text-base-content/40' : 'text-base-content'} text-xl`}
-            />
+            {label && (
+                <Text
+                    text={label}
+                    avoidTranslation={avoidTranslationLabel}
+                    translateData={translateLabelData}
+                    className={`${disabled ? 'text-base-content/40' : 'text-base-content'} text-xl`}
+                />
+            )}
             <TouchableOpacity
                 onPress={onPress}
                 disabled={disabled}

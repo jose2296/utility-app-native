@@ -6,12 +6,14 @@ import { DashboardItemType } from './utils';
 export interface Me extends User {
     dashboardItems: ParsedDashboardItem[];
     workspaces: FolderDetailsData[];
+    userNotifications: UserNotification[];
 }
 
 export interface User {
     id: number;
     name: string;
     email: string;
+    device_token?: string;
     language: string;
     created_at: string;
     updated_at: string;
@@ -61,4 +63,19 @@ interface DashboardItemEntity {
     folder: Folder;
     workspace: Folder;
     isOwner: boolean;
+}
+
+export enum DaysOfWeek {
+    MONDAY = 'monday',
+    TUESDAY = 'tuesday',
+    WEDNESDAY = 'wednesday',
+    THURSDAY = 'thursday',
+    FRIDAY = 'friday',
+    SATURDAY = 'saturday',
+    SUNDAY = 'sunday',
+}
+
+export interface UserNotification {
+    time: string;
+    days: DaysOfWeek[];
 }

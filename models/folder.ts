@@ -4,7 +4,7 @@ import { ITEMS_ICONS } from '../utils/dashboard';
 import { List } from './list';
 import { User } from './me';
 import { Note } from './note';
-import { Breadcrumb } from './utils';
+import { Breadcrumb, DashboardItemType } from './utils';
 
 export interface Folder {
     id: number;
@@ -28,7 +28,7 @@ export interface FolderDetailsData {
     items: {
         id: number;
         name: string;
-        type: string;
+        type: DashboardItemType;
         listType?: ListTypeValue;
         isOwner?: boolean;
         collaborators?: User[];

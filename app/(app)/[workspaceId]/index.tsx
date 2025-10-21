@@ -5,14 +5,15 @@ import Loader from '@/components/loader';
 import BottomSheetOptions, { BottomSheetOption } from '@/components/modal/bottom-sheet-options';
 import CollaboratorsModal from '@/components/modal/collaborators-modal';
 import PageLayout from '@/components/PageLayout';
+import useAddToDashboard from '@/hooks/use-add-to-dashboard';
 import { useLazyApi } from '@/hooks/use-api';
 import { FolderDetailsData } from '@/models/folder';
+import { DashboardItemType } from '@/models/utils';
 import FolderItem from '@/modules/folder/folderItem';
 import SaveFolderModal from '@/modules/folder/saveFolderModal';
 import SaveListModal, { ListTypeValue } from '@/modules/lists/saveListModal';
 import SaveNoteModal from '@/modules/notes/saveNoteModal';
 import SaveWorkspaceModal, { DEFAULT_COLORS } from '@/modules/workspace/saveWorkspaceModal';
-import { toast } from '@/services/toast';
 import { ITEMS_ICONS } from '@/utils/dashboard';
 import { parseListType } from '@/utils/lists';
 import { Href, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -57,7 +58,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
     const lists = data.lists.map((item) => ({
         id: item.id,
         name: item.name,
-        type: 'lists',
+        type: DashboardItemType.lists,
         listType: item.type,
         isOwner: item.isOwner,
         collaborators: item.collaborators,
@@ -69,7 +70,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
         id: item.id,
         name: item.title,
         icon: 'notes' as keyof typeof ITEMS_ICONS,
-        type: 'notes',
+        type: DashboardItemType.notes,
         isOwner: item.isOwner,
         href: `/(app)/${workspaceId}/notes/${item.id}` as Href,
     }));
@@ -77,7 +78,7 @@ const parseFolder = (workspaceId: string) => (data: FolderDetailsData): FolderDe
         id: item.id,
         name: item.name,
         icon: 'folders' as keyof typeof ITEMS_ICONS,
-        type: 'folders',
+        type: DashboardItemType.folders,
         isOwner: true,
         href: `/(app)/${workspaceId}/${item.id}` as Href,
     })) as any[];
@@ -105,7 +106,6 @@ export default function WorkspaceScreen() {
     );
     const { data: workspace, loading: loadingFolderData, request: getFolderData } = useLazyApi(`folders/${folderId || workspaceId}`, 'GET', null, transform);
     const { request: saveList } = useLazyApi(`lists`, 'POST');
-    const { request: addItemToDashboard } = useLazyApi(`dashboard`, 'POST');
     const [showSaveListModal, setShowSaveListModal] = useState(false);
     const [showSaveNoteModal, setShowSaveNoteModal] = useState(false);
     const [showSaveFolderModal, setShowSaveFolderModal] = useState(false);
@@ -128,6 +128,7 @@ export default function WorkspaceScreen() {
     const [workspaceOptionsOpen, setWorkspaceOptionsOpen] = useState(false);
     const [openSaveWorkspaceModal, setOpenSaveWorkspaceModal] = useState(false);
     const { request: saveWorkspace, loading: savingWorkspace } = useLazyApi<any>(`folders`, 'POST');
+    const addToDashboard = useAddToDashboard();
 
     useEffect(() => {
         getFolderData();
@@ -149,29 +150,11 @@ export default function WorkspaceScreen() {
     }, [workspace, workspaceOptionsOpen]);
 
     const handlePinItem = async (item: FolderDetailsData['items'][number]) => {
-        toast.promise(
-            addItemToDashboard(`dashboard`, { entity_id: item.id, entity_type: item.type, size: { width: 1, height: 1 } }),
-            {
-                loading: {
-                    title: 'dashboard.adding_item_to_dashboard',
-                    translateData: {
-                        name: item.name
-                    }
-                },
-                success: {
-                    title: 'dashboard.item_added_to_dashboard',
-                    translateData: {
-                        name: item.name
-                    }
-                },
-                error: {
-                    title: 'dashboard.item_already_in_dashboard',
-                    translateData: {
-                        name: item.name
-                    }
-                }
-            }
-        )
+        await addToDashboard({
+            entity_id: item.id,
+            entity_type: item.type,
+            name: item.name
+        });
     }
 
     const handleAddItem = (value: string) => {
@@ -190,15 +173,15 @@ export default function WorkspaceScreen() {
 
     const handleOpenDeleteItemModal = (item: FolderDetailsData['items'][number]) => {
         switch (item.type) {
-            case 'lists':
+            case DashboardItemType.lists:
                 setListItemSelected(item);
                 setDeleteListModalOpen(true);
                 break;
-            case 'notes':
+            case DashboardItemType.notes:
                 setNoteItemSelected(item);
                 setDeleteNoteModalOpen(true);
                 break;
-            case 'folders':
+            case DashboardItemType.folders:
                 setFolderItemSelected(item);
                 setDeleteFolderModalOpen(true);
                 break;
@@ -207,15 +190,15 @@ export default function WorkspaceScreen() {
 
     const handleEditItem = (item: FolderDetailsData['items'][number]) => {
         switch (item.type) {
-            case 'lists':
+            case DashboardItemType.lists:
                 setListItemSelected(item);
                 setShowSaveListModal(true);
                 break;
-            case 'notes':
+            case DashboardItemType.notes:
                 setNoteItemSelected(item);
                 setShowSaveNoteModal(true);
                 break;
-            case 'folders':
+            case DashboardItemType.folders:
                 setFolderItemSelected(item);
                 setShowSaveFolderModal(true);
                 break;
@@ -337,12 +320,12 @@ export default function WorkspaceScreen() {
 
     const handleItemLongPress = (item: FolderDetailsData['items'][number]) => {
         switch (item.type) {
-            case 'lists':
+            case DashboardItemType.lists:
                 setListOptions(item.collaborators?.length ? listOptions : listOptions.filter((option) => option.value !== 'see_collaborators'));
                 setListItemSelected(item);
                 setShowListOptionsModal(true);
                 break;
-            case 'notes':
+            case DashboardItemType.notes:
                 setNoteItemSelected(item);
                 setShowNoteOptionsModal(true);
                 break;
@@ -431,7 +414,7 @@ export default function WorkspaceScreen() {
 
     const handleSeeCollaborators = (item: FolderDetailsData['items'][number]) => {
         switch (item.type) {
-            case 'lists':
+            case DashboardItemType.lists:
                 setShowListOptionsModal(false);
                 setListItemSelected(item);
                 break;

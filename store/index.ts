@@ -7,6 +7,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface UserState {
     data?: Me;
+    drawerWorkspacesOpened: boolean;
     colors?: Record<ThemeColors, string>;
     setColors: (colors: Record<ThemeColors, string>) => void;
     updateProfile: (data: {
@@ -15,6 +16,7 @@ interface UserState {
         email?: string;
     }) => void;
     setData: (data: Me) => void;
+    setDrawerWorkspacesOpened: (drawerWorkspacesOpened: boolean) => void;
     logout: () => Promise<void>;
 }
 
@@ -23,6 +25,7 @@ export const useUserStore = create<UserState>()(
         (set, get) => ({
             data: undefined,
             colors: undefined,
+            drawerWorkspacesOpened: true,
             updateProfile: (data) => set((currentData: any) => {
                 return {
                     ...currentData,
@@ -43,6 +46,11 @@ export const useUserStore = create<UserState>()(
             setColors: (colors) => set(() => {
                 return {
                     colors
+                };
+            }),
+            setDrawerWorkspacesOpened: (drawerWorkspacesOpened) => set(() => {
+                return {
+                    drawerWorkspacesOpened
                 };
             }),
             logout: async () => {

@@ -74,8 +74,8 @@ export const Input = ({
                 className={`pl-0 pr-10 border-b py-2 w-full text-base-content ${isFocused ? "border-base-content" : "border-base-content/40"}`}
                 value={value}
                 onChangeText={onChangeText}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                onFocus={(e) => {setIsFocused(true); props.onFocus?.(e)}}
+                onBlur={(e) => {setIsFocused(false); props.onBlur?.(e)}}
             />
             {!!suffixIcon &&
                 <View className='absolute right-2 bottom-3'>

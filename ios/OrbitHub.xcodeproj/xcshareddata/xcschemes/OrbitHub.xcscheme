@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "utilityappnative.app"
-               BlueprintName = "utilityappnative"
-               ReferencedContainer = "container:utilityappnative.xcodeproj">
+               BuildableName = "OrbitHub.app"
+               BlueprintName = "OrbitHub"
+               ReferencedContainer = "container:OrbitHub.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "utilityappnativeTests.xctest"
-               BlueprintName = "utilityappnativeTests"
-               ReferencedContainer = "container:utilityappnative.xcodeproj">
+               BuildableName = "OrbitHubTests.xctest"
+               BlueprintName = "OrbitHubTests"
+               ReferencedContainer = "container:OrbitHub.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "utilityappnative.app"
-            BlueprintName = "utilityappnative"
-            ReferencedContainer = "container:utilityappnative.xcodeproj">
+            BuildableName = "OrbitHub.app"
+            BlueprintName = "OrbitHub"
+            ReferencedContainer = "container:OrbitHub.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "utilityappnative.app"
-            BlueprintName = "utilityappnative"
-            ReferencedContainer = "container:utilityappnative.xcodeproj">
+            BuildableName = "OrbitHub.app"
+            BlueprintName = "OrbitHub"
+            ReferencedContainer = "container:OrbitHub.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
