@@ -108,6 +108,18 @@ export default function CalendarScreen() {
     }
 
     const handleSaveEvent = async ({ date, time, title, description, isAllDay, reminders }: { date: dayjs.Dayjs, time: dayjs.Dayjs, title: string, description: string, isAllDay: boolean, reminders: EventReminder[] }) => {
+        const _reminders = reminders.map((reminder) => {
+            const specific_time = isAllDay
+                ? reminder.specific_time!
+                : dayjs(time).subtract(parseInt(reminder.offset_time), reminder.unit as any);
+
+            return {
+                offset_time: parseInt(reminder.offset_time),
+                unit: reminder.unit,
+                specific_time: specific_time.toDate()
+            };
+        });
+
         await saveEvent(`events`, {
             id: selectedEvent?.id,
             title,
@@ -115,11 +127,7 @@ export default function CalendarScreen() {
             date: date.toDate(),
             time: isAllDay ? null : time.toDate(),
             is_all_day: isAllDay,
-            reminders: reminders.map((reminder) => ({
-                offset_time: parseInt(reminder.offset_time),
-                unit: reminder.unit,
-                specific_time: reminder.specific_time?.toDate()
-            }))
+            reminders: _reminders
         });
         getEventsData();
         setSaveEventModalVisible(false);
@@ -701,7 +709,7 @@ const Reminder = ({ reminder, reminders, mode, isAllDay, setSelectedReminder, se
             )}
             {reminder.unit !== EventReminderUnits.same_day && (
                 <Text
-                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${reminder.unit}_${reminder.offset_time.length === 1 ? 'one' : 'other'}`}
+                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${reminder.unit}_${reminder.offset_time === '1' ? 'one' : 'other'}`}
                     translateData={{
                         count: reminder.offset_time ?? '0',
                         time
@@ -767,14 +775,14 @@ interface AddReminderModalProps {
 }
 const SaveReminderModal = ({ isOpen, mode, isAllDay, onClose, onSubmit, selectedReminder }: AddReminderModalProps) => {
     const [reminderTime, setReminderTime] = useState(selectedReminder?.offset_time ?? (isAllDay ? '1' : '15'));
-    const [reminderAt, setReminderAt] = useState(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : undefined);
+    const [reminderAt, setReminderAt] = useState(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : dayjs());
     const [showTimePicker, setShowTimePicker] = useState(false);
     const reminderOptions = isAllDay ? allDayReminderOptions : noAllDayReminderOptions;
     const [reminderUnit, setReminderUnit] = useState(selectedReminder?.unit ?? reminderOptions[0]);
 
     useEffect(() => {
         setReminderTime(selectedReminder?.offset_time ?? (isAllDay ? '1' : '15'));
-        setReminderAt(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : undefined);
+        setReminderAt(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : dayjs());
         setShowTimePicker(false);
         setReminderUnit(selectedReminder?.unit ?? reminderOptions[0]);
     }, [selectedReminder, isAllDay]);
@@ -837,9 +845,9 @@ const SaveReminderModal = ({ isOpen, mode, isAllDay, onClose, onSubmit, selected
                             )}
                             {option !== EventReminderUnits.same_day && (
                                 <Text
-                                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${option}_${reminderTime.length === 1 ? 'one' : 'other'}`}
+                                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${option}_${reminderTime === '1' ? 'one' : 'other'}`}
                                     translateData={{
-                                        count: reminderTime ?? '0',
+                                        count: reminderTime ?? '1',
                                         time: reminderAt?.format('HH:mm') ?? ''
                                     }}
                                     className='text-base-content text-lg'

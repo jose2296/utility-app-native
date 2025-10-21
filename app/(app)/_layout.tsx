@@ -3,6 +3,7 @@ import Loader from '@/components/loader';
 import Text from '@/components/Text';
 import { useApi, useLazyApi } from '@/hooks/use-api';
 import { useSession } from '@/hooks/useSession';
+import { Me } from '@/models/me';
 import { registerForPushNotificationsAsync, setupNotificationListeners } from '@/services/notifications';
 import { cn, getAnalogous } from '@/services/utils';
 import { useUserStore } from '@/store';
@@ -25,7 +26,7 @@ import Animated, { FadeIn, FadeOut, useAnimatedStyle, withTiming } from 'react-n
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AppLayout() {
-    const { data, loading } = useApi('me', 'GET');
+    const { data, loading } = useApi<Me>('me', 'GET');
     const { setData, data: userData } = useUserStore();
     const [isNotificationListener, setIsNotificationListener] = useState(false);
     const { request: updateDeviceToken } = useLazyApi('user/update-user', 'POST');
@@ -45,7 +46,7 @@ export default function AppLayout() {
     const registerDeviceNotificationToken = async () => {
         const token = await registerForPushNotificationsAsync();
 
-        if (token && data?.device_token !== token) {
+        if (token && !data?.device_tokens?.includes(token)) {
             await updateDeviceToken('users/add-device-token', {
                 device_token: token
             })

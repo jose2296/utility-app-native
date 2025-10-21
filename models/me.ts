@@ -13,7 +13,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    device_token?: string;
+    device_tokens?: string[];
     language: string;
     created_at: string;
     updated_at: string;

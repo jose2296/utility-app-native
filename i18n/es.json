@@ -240,21 +240,21 @@
         "reminders_time": {
             "time": "Tiempo",
             "is_all_day": {
-                "same_day": "El mismo día a las {time}.",
-                "before_days_one": "{count} día antes a las {time}.",
-                "before_days_other": "{count} días antes a las {time}.",
-                "before_weeks_one": "{count} semana antes a las {time}.",
-                "before_weeks_other": "{count} semanas antes a las {time}."
+                "same_day": "El mismo día a las {time}",
+                "before_days_one": "{count} día antes a las {time}",
+                "before_days_other": "{count} días antes a las {time}",
+                "before_weeks_one": "{count} semana antes a las {time}",
+                "before_weeks_other": "{count} semanas antes a las {time}"
             },
             "is_not_all_day": {
-                "before_minutes_one": "1 minuto antes.",
-                "before_minutes_other": "{count} minutos antes.",
-                "before_hours_one": "1 hora antes.",
-                "before_hours_other": "{count} horas antes.",
-                "before_days_one": "1 día antes.",
-                "before_days_other": "{count} días antes.",
-                "before_weeks_one": "1 semana antes.",
-                "before_weeks_other": "{count} semanas antes."
+                "before_minutes_one": "1 minuto antes",
+                "before_minutes_other": "{count} minutos antes",
+                "before_hours_one": "1 hora antes",
+                "before_hours_other": "{count} horas antes",
+                "before_days_one": "1 día antes",
+                "before_days_other": "{count} días antes",
+                "before_weeks_one": "1 semana antes",
+                "before_weeks_other": "{count} semanas antes"
             }
         },
         "add_reminder": "Añadir recordatorio",

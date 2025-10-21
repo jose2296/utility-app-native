@@ -236,11 +236,11 @@
         "save_event_is_all_day": "Is all day",
         "reminders_time": {
             "is_all_day": {
-                "reminder_same_day": "Same day at {time}.",
-                "reminder_before_days_one": "{count} day before at {time}.",
-                "reminder_before_days_other": "{count} days before at {time}.",
-                "reminder_before_weeks_one": "{count} week before at {time}.",
-                "reminder_before_weeks_other": "{count} weeks before at {time}."
+                "reminder_same_day": "Same day at {time}",
+                "reminder_before_days_one": "{count} day before at {time}",
+                "reminder_before_days_other": "{count} days before at {time}",
+                "reminder_before_weeks_one": "{count} week before at {time}",
+                "reminder_before_weeks_other": "{count} weeks before at {time}"
             },
             "is_not_all_day": {
                 "reminder_before_minutes_one": "1 minute before",

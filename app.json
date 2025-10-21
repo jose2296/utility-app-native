@@ -84,7 +84,7 @@
             [
                 "expo-notifications",
                 {
-                    "icon": "./assets/logos/adaptive-icon.png",
+                    "icon": "./assets/logos/notification-icon.png",
                     "defaultChannel": "default",
                     "enableBackgroundRemoteNotifications": false
                 }
