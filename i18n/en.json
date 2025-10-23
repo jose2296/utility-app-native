@@ -33,19 +33,6 @@
             "pick_color": "Pick a color"
         }
     },
-    "notes": {
-        "title": "Notes",
-        "delete": "Delete note",
-        "delete_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
-        "add_to_dashboard": "Add note to dashboard",
-        "share": "Share note",
-        "see_collaborators": "See collaborators",
-        "save_modal": {
-            "create_title": "Create note",
-            "edit_title": "Edit note",
-            "name": "Note name"
-        }
-    },
     "list_types": {
         "tasks": "Tasks",
         "movies": "Movies",
@@ -162,10 +149,25 @@
         "add_folder": "Add folder"
     },
     "folders": {
+        "delete": "Delete folder",
+        "delete_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
         "save_modal": {
             "create_title": "Create folder",
             "edit_title": "Edit folder",
             "name": "Folder name"
+        }
+    },
+    "notes": {
+        "title": "Notes",
+        "delete": "Delete note",
+        "delete_confirmation": "Are you sure you want to delete <bold>{name}</bold>?",
+        "add_to_dashboard": "Add note to dashboard",
+        "share": "Share note",
+        "see_collaborators": "See collaborators",
+        "save_modal": {
+            "create_title": "Create note",
+            "edit_title": "Edit note",
+            "name": "Note name"
         }
     },
     "validations": {
@@ -197,7 +199,14 @@
         "language_changed_successfully": "Language changed successfully",
         "error": "Error changing language",
         "email_changed_successfully": "Email changed successfully",
-        "password_changed_successfully": "Password changed successfully"
+        "password_changed_successfully": "Password changed successfully",
+        "notifications": "Notifications",
+        "delete_notification": "Delete notification",
+        "delete_notification_message": "Are you sure you want to delete the notification at <bold>{time}</bold>?",
+        "notification_deleted_successfully": "Notification deleted successfully",
+        "notification_saved_successfully": "Notification saved successfully",
+        "notification_created_successfully": "Notification created successfully",
+        "no_notifications": "No notifications"
     },
     "languages": {
         "en": "English",
@@ -234,23 +243,25 @@
         "save_event_date": "Event date",
         "save_event_time": "Event time",
         "save_event_is_all_day": "Is all day",
+        "reminders_duplicated": "Already exists a reminder with the same configuration",
         "reminders_time": {
+            "time": "Time",
             "is_all_day": {
-                "reminder_same_day": "Same day at {time}",
-                "reminder_before_days_one": "{count} day before at {time}",
-                "reminder_before_days_other": "{count} days before at {time}",
-                "reminder_before_weeks_one": "{count} week before at {time}",
-                "reminder_before_weeks_other": "{count} weeks before at {time}"
+                "same_day": "Same day at {time}",
+                "before_days_one": "{count} day before at {time}",
+                "before_days_other": "{count} days before at {time}",
+                "before_weeks_one": "{count} week before at {time}",
+                "before_weeks_other": "{count} weeks before at {time}"
             },
             "is_not_all_day": {
-                "reminder_before_minutes_one": "1 minute before",
-                "reminder_before_minutes_other": "{count} minutes before",
-                "reminder_before_hours_one": "1 hour before",
-                "reminder_before_hours_other": "{count} hours before",
-                "reminder_before_days_one": "1 day before",
-                "reminder_before_days_other": "{count} days before",
-                "reminder_before_weeks_one": "1 week before",
-                "reminder_before_weeks_other": "{count} weeks before"
+                "before_minutes_one": "1 minute before",
+                "before_minutes_other": "{count} minutes before",
+                "before_hours_one": "1 hour before",
+                "before_hours_other": "{count} hours before",
+                "before_days_one": "1 day before",
+                "before_days_other": "{count} days before",
+                "before_weeks_one": "1 week before",
+                "before_weeks_other": "{count} weeks before"
             }
         },
         "add_reminder": "Add reminder",
@@ -312,6 +323,72 @@
             "friday": "Friday",
             "saturday": "Saturday",
             "sunday": "Sunday"
+        }
+    },
+    "notifications": {
+        "user_notifications": {
+            "title_one": "You have 1 task pending for today",
+            "title_other": "You have {count} tasks pending for today",
+            "body_one": "Don't forget it!",
+            "body_other": "Don't forget them!"
+        },
+        "event_reminders": {
+            "is_all_day": {
+                "same_day": {
+                    "title": "🎉 It’s Today!",
+                    "body": "Don’t forget you have {event_name} today."
+                },
+                "in_days_one": {
+                    "title": "⏰ Tomorrow’s the big day!",
+                    "body": "Get ready for {event_name}, happening tomorrow."
+                },
+                "in_days_other": {
+                    "title": "⏰ Almost here!",
+                    "body": "Only {count} days left until {event_name}. Don’t forget!"
+                },
+                "in_weeks_one": {
+                    "title": "📅 It’s getting closer!",
+                    "body": "Remember, {event_name} is next week!"
+                },
+                "in_weeks_other": {
+                    "title": "📅 Coming soon",
+                    "body": "{count} weeks left until {event_name}. Don’t forget!"
+                }
+            },
+            "is_not_all_day": {
+                "in_minutes_one": {
+                    "title": "🔥 About to start!",
+                    "body": "Get ready for {event_name} that begins in 1 minute."
+                },
+                "in_minutes_other": {
+                    "title": "🔔 Starting soon - {date}",
+                    "body": "Only {count} minutes left until {event_name}. Let’s do this!"
+                },
+                "in_hours_one": {
+                    "title": "⏰ It’s coming up - {date}",
+                    "body": "Remember, {event_name} starts in 1 hour - {date}."
+                },
+                "in_hours_other": {
+                    "title": "⏰ The time’s getting closer - {date}",
+                    "body": "{event_name} starts in {count} hours. You’ve got time to get ready!"
+                },
+                "in_days_one": {
+                    "title": "📅 Tomorrow’s the big day!",
+                    "body": "Get ready for {event_name} at {date}."
+                },
+                "in_days_other": {
+                    "title": "📅 Almost here - {date}",
+                    "body": "Only {count} days left until {event_name}. Don’t forget!"
+                },
+                "in_weeks_one": {
+                    "title": "📅 Getting closer!",
+                    "body": "Remember, {event_name} is next week at {date}!"
+                },
+                "in_weeks_other": {
+                    "title": "📅 Coming soon - {date}",
+                    "body": "{count} weeks left until {event_name}. Don’t forget!"
+                }
+            }
         }
     }
 }

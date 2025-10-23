@@ -37,7 +37,7 @@
                     "data": [
                         {
                             "scheme": "https",
-                            "host": "thorough-communication-production.up.railway.app",
+                            "host": "orbithub-api.up.railway.app",
                             "pathPrefix": "/api/collaborate"
                         }
                     ],
@@ -76,7 +76,7 @@
                         "image": "./assets/logos/splash-icon-light.png",
                         "backgroundColor": "#282a36"
                     },
-                    "imageWidth": 200
+                    "imageWidth": 1024
                 }
             ],
             "@react-native-firebase/app",

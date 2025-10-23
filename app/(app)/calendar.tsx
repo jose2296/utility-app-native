@@ -59,7 +59,7 @@ export default function CalendarScreen() {
     const { request: deleteEvent } = useLazyApi('events', 'DELETE');
     const { request: getEvents, data: events, loading: isLoading } = useLazyApi<Event[]>('events', 'GET', null, parseEvents);
     const { request: toggleEventCompleted, loading: toggleEventCompletedLoading } = useLazyApi('events/', 'POST');
-    const { request: saveEvent } = useLazyApi('events/', 'POST');
+    const { request: saveEvent, loading: savingEventLoading } = useLazyApi('events/', 'POST');
 
     useEffect(() => {
         navigation.setOptions({
@@ -111,7 +111,7 @@ export default function CalendarScreen() {
         const _reminders = reminders.map((reminder) => {
             const specific_time = isAllDay
                 ? reminder.specific_time!
-                : dayjs(time).subtract(parseInt(reminder.offset_time), reminder.unit as any);
+                : dayjs(date).set('hour', time.hour()).set('minute', time.minute()).subtract(parseInt(reminder.offset_time), reminder.unit as any);
 
             return {
                 offset_time: parseInt(reminder.offset_time),
@@ -190,6 +190,7 @@ export default function CalendarScreen() {
                 mode={saveEventModalMode}
                 event={selectedEvent}
                 selectedDate={selectedDate}
+                isLoading={savingEventLoading}
                 handleEditEvent={handleOpenSaveEventModal}
                 handleDeleteEvent={(event) => {
                     setSelectedEvent(event);
@@ -444,12 +445,13 @@ interface SaveEventModalProps {
     mode: 'create' | 'edit' | 'see';
     event?: Event | null;
     selectedDate: dayjs.Dayjs;
+    isLoading: boolean;
     handleEditEvent: (event: Event) => void;
     handleDeleteEvent: (event: Event) => void;
     onClose: () => void;
     onSubmit: ({ date, time, title, description, isAllDay, reminders }: { date: dayjs.Dayjs, time: dayjs.Dayjs, title: string, description: string, isAllDay: boolean, reminders: EventReminder[] }) => void;
 }
-const SaveEventModal = ({ isOpen, mode, event, selectedDate, onClose, onSubmit, handleEditEvent, handleDeleteEvent }: SaveEventModalProps) => {
+const SaveEventModal = ({ isOpen, mode, event, selectedDate, isLoading, onClose, onSubmit, handleEditEvent, handleDeleteEvent }: SaveEventModalProps) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(selectedDate);
@@ -632,6 +634,7 @@ const SaveEventModal = ({ isOpen, mode, event, selectedDate, onClose, onSubmit, 
                             <Button
                                 name={mode === 'create' ? 'create' : 'save'}
                                 disabled={!title}
+                                isLoading={isLoading}
                                 onPress={() => onSubmit({ date, time, title, description, isAllDay, reminders })}
                             />
                         }
@@ -698,6 +701,7 @@ const Reminder = ({ reminder, reminders, mode, isAllDay, setSelectedReminder, se
     const Content = () => (
         <TouchableOpacity
             className='flex-row justify-between items-center w-full pl-2 py-3 bg-base-100 rounded-xl'
+            disabled={mode === 'see'}
             onPress={() => { setShowAddReminderModal(true); setSelectedReminder(reminder); }}
         >
             {reminder.unit === EventReminderUnits.same_day && (
@@ -709,7 +713,7 @@ const Reminder = ({ reminder, reminders, mode, isAllDay, setSelectedReminder, se
             )}
             {reminder.unit !== EventReminderUnits.same_day && (
                 <Text
-                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${reminder.unit}_${reminder.offset_time === '1' ? 'one' : 'other'}`}
+                    text={`events.reminders_time.${isAllDay ? 'is_all_day' : 'is_not_all_day'}.before_${reminder.unit}_${reminder.offset_time == '1' ? 'one' : 'other'}`}
                     translateData={{
                         count: reminder.offset_time ?? '0',
                         time
@@ -749,9 +753,6 @@ const Reminder = ({ reminder, reminders, mode, isAllDay, setSelectedReminder, se
     );
 }
 
-
-
-
 const noAllDayReminderOptions = [
     EventReminderUnits.minutes,
     EventReminderUnits.hours,
@@ -774,14 +775,14 @@ interface AddReminderModalProps {
     selectedReminder: EventReminder | null;
 }
 const SaveReminderModal = ({ isOpen, mode, isAllDay, onClose, onSubmit, selectedReminder }: AddReminderModalProps) => {
-    const [reminderTime, setReminderTime] = useState(selectedReminder?.offset_time ?? (isAllDay ? '1' : '15'));
+    const [reminderTime, setReminderTime] = useState(selectedReminder?.offset_time.toString() ?? (isAllDay ? '1' : '15'));
     const [reminderAt, setReminderAt] = useState(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : dayjs());
     const [showTimePicker, setShowTimePicker] = useState(false);
     const reminderOptions = isAllDay ? allDayReminderOptions : noAllDayReminderOptions;
     const [reminderUnit, setReminderUnit] = useState(selectedReminder?.unit ?? reminderOptions[0]);
 
     useEffect(() => {
-        setReminderTime(selectedReminder?.offset_time ?? (isAllDay ? '1' : '15'));
+        setReminderTime(selectedReminder?.offset_time.toString() ?? (isAllDay ? '1' : '15'));
         setReminderAt(isAllDay && selectedReminder?.specific_time ? dayjs(selectedReminder.specific_time) : dayjs());
         setShowTimePicker(false);
         setReminderUnit(selectedReminder?.unit ?? reminderOptions[0]);

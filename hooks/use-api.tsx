@@ -42,7 +42,7 @@ export function useLazyApi<T = any, R = T>(endpoint: string, method: Method = 'G
 
             try {
                 const url = `${process.env.EXPO_PUBLIC_API_URL}/${_endpoint || endpoint}`;
-                const headers =new Headers();
+                const headers = new Headers();
                 headers.set('Content-Type', 'application/json');
                 headers.set('Authorization', `Bearer ${session?.access_token!}`);
                 headers.set('refresh_token', session?.refresh_token!);
@@ -90,7 +90,13 @@ export function useLazyApi<T = any, R = T>(endpoint: string, method: Method = 'G
                 return mappedData;
             } catch (err) {
                 const error = err as ApiError;
-                console.error(err);
+
+                if (error.message == "Network request failed") {
+                    setError(error);
+                    await logout();
+                    signOut();
+                    alert("Network please contact with support team: \n\n orbithublabs@gmail.com")
+                }
 
                 setError(error);
                 throw error;

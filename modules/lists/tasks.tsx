@@ -162,14 +162,9 @@ const TasksList = ({ listData, loading, getList }: { listData: any, loading: boo
     return (
         <>
             <PageLayout onRefresh={getList} breadcrumbData={listData?.breadcrumb}>
-                {!listData.itemsNotCompleted.length && !listData.itemsCompleted.length &&
-                    <View className='flex-1 items-center justify-center'>
-                        <Text text='list.no_items_found' className="mt-4 text-2xl text-base-content" />
-                    </View>
-                }
-
                 <AnimatedList<any>
                     data={items}
+                    noItemsKey='list.no_items_found'
                     getKey={(item) => item.id}
                     renderItem={(item) => (
                         <TaskItem

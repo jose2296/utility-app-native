@@ -76,6 +76,7 @@ export enum DaysOfWeek {
 }
 
 export interface UserNotification {
-    time: string;
+    id?: string;
+    time: Date;
     days: DaysOfWeek[];
 }

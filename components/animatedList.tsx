@@ -2,7 +2,14 @@ import { FlashList } from '@shopify/flash-list';
 import Animated, { FadeInLeft, LinearTransition } from 'react-native-reanimated';
 import Text from './Text';
 
-const AnimatedList = <T,>({ data, renderItem, getKey, getItemType }: { data: T[], renderItem: (item: T, index: number) => React.ReactNode, getKey: (item: T) => string, getItemType?: (item: T) => string }) => {
+interface AnimatedListProps<T> {
+    data: T[];
+    noItemsKey?: string;
+    renderItem: (item: T, index: number) => React.ReactNode;
+    getKey: (item: T) => string;
+    getItemType?: (item: T) => string;
+}
+const AnimatedList = <T,>({ data, noItemsKey, renderItem, getKey, getItemType }: AnimatedListProps<T>) => {
     return (
         <>
             {data.length > 0 &&
@@ -25,7 +32,7 @@ const AnimatedList = <T,>({ data, renderItem, getKey, getItemType }: { data: T[]
             }
             {data.length === 0 && (
                 <Text
-                    text="no_items"
+                    text={noItemsKey || 'no_items'}
                     className='text-base-content text-2xl text-center py-8'
                 />
             )}

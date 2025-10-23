@@ -53,6 +53,7 @@
     "expo-web-browser": "~14.2.0",
     "firebase-admin": "^13.5.0",
     "i18next": "^25.3.2",
+    "i18next-http-backend": "^3.0.2",
     "i18next-icu": "^2.4.0",
     "lucide-react-native": "^0.533.0",
     "nativewind": "^4.1.23",

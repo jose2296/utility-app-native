@@ -1,4 +1,6 @@
+import i18n from '@/i18n';
 import messaging from '@react-native-firebase/messaging';
+import dayjs from 'dayjs';
 import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 
@@ -30,7 +32,7 @@ export async function registerForPushNotificationsAsync() {
     }
 
     const token = await messaging().getToken();
-    console.log('FCM Token:', token);
+    // console.log('FCM Token:', token);
     return token;
 }
 
@@ -38,11 +40,19 @@ export async function registerForPushNotificationsAsync() {
 export function setupNotificationListeners() {
     // Cuando se recibe una notificación con la app abierta
     messaging().onMessage(async remoteMessage => {
-        console.log('Mensaje foreground:', remoteMessage);
+        // console.log('Mensaje foreground:', remoteMessage);
+        const translationData = remoteMessage.data?.translation_data ? JSON.parse(remoteMessage.data?.translation_data as string) : {};
+        if (translationData.date) {
+            translationData.date = dayjs(translationData.date).format(translationData.date_format || 'DD/MM/YYYY HH:mm');
+        }
+
+        const title = i18n.t(remoteMessage.notification?.title!, translationData) as string;
+        const body = i18n.t(remoteMessage.notification?.body!, translationData) as string;
+
         Notifications.scheduleNotificationAsync({
             content: {
-                title: remoteMessage.notification?.title,
-                body: remoteMessage.notification?.body,
+                title,
+                body,
                 data: remoteMessage.data,
             },
             trigger: null,

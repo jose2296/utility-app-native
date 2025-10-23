@@ -199,7 +199,14 @@
         "language_changed_successfully": "Idioma cambiado correctamente",
         "error": "Error al cambiar el idioma",
         "email_changed_successfully": "Email cambiado correctamente",
-        "password_changed_successfully": "Contraseña cambiada correctamente"
+        "password_changed_successfully": "Contraseña cambiada correctamente",
+        "notifications": "Notificaciones",
+        "delete_notification": "Eliminar notificación",
+        "delete_notification_message": "¿Estás seguro de que quieres eliminar la notificación de las <bold>{time}</bold>?",
+        "notification_deleted_successfully": "Notificación eliminada correctamente",
+        "notification_saved_successfully": "Notificación guardada correctamente",
+        "notification_created_successfully": "Notificación creada correctamente",
+        "no_notifications": "No hay notificaciones"
     },
     "languages": {
         "en": "Inglés",
@@ -316,6 +323,72 @@
             "friday": "Viernes",
             "saturday": "Sábado",
             "sunday": "Domingo"
+        }
+    },
+    "notifications": {
+        "user_notifications": {
+            "title_one": "Tienes 1 tarea pendiente para hoy",
+            "title_other": "Tienes {count} tareas pendientes para hoy",
+            "body_one": "¡No la olvides!",
+            "body_other": "¡No las olvides!"
+        },
+        "event_reminders": {
+            "is_all_day": {
+                "same_day": {
+                    "title": "🎉 ¡Es Hoy!",
+                    "body": "No olvides que hoy tienes {event_name}"
+                },
+                "in_days_one": {
+                    "title": "⏰ ¡Mañana es el gran día!",
+                    "body": "Prepárate para {event_name} que es mañana"
+                },
+                "in_days_other": {
+                    "title": "⏰ ¡Ya casi está aquí!",
+                    "body": "Solo quedan {count} días para {event_name}. ¡No lo olvides!"
+                },
+                "in_weeks_one": {
+                    "title": "📅 ¡Ya falta menos!",
+                    "body": "¡Recuerda que {event_name} es la semana que viene!"
+                },
+                "in_weeks_other": {
+                    "title": "📅 Próximamente",
+                    "body": "Quedan {count} semanas para {event_name}. ¡No lo olvides!"
+                }
+            },
+            "is_not_all_day": {
+                "in_minutes_one": {
+                    "title": "🔥 ¡A punto de empezar!",
+                    "body": "Prepárate para {event_name} que empieza en 1 minuto"
+                },
+                "in_minutes_other": {
+                    "title": "🔔 ¡Empieza pronto! - {date}",
+                    "body": "Solo quedan {count} minutos para {event_name}. ¡A por ello!"
+                },
+                "in_hours_one": {
+                    "title": "⏰ ¡Ya falta poco!",
+                    "body": "Recuerda que {event_name} es en 1 hora - {date}"
+                },
+                "in_hours_other": {
+                    "title": "⏰ ¡Se acerca la hora! - {date}",
+                    "body": "Quedan {count} horas para {event_name}. ¡Tienes tiempo para prepararte!"
+                },
+                "in_days_one": {
+                    "title": "📅 ¡Mañana es el gran día!",
+                    "body": "Prepárate para {event_name} a las {date}"
+                },
+                "in_days_other": {
+                    "title": "📅 ¡Ya casi está aquí! - {date}",
+                    "body": "Solo quedan {count} días para {event_name}. ¡No lo olvides!"
+                },
+                "in_weeks_one": {
+                    "title": "📅 ¡Ya falta menos!",
+                    "body": "¡Recuerda que {event_name} es la semana que viene a las {date}!"
+                },
+                "in_weeks_other": {
+                    "title": "📅 Próximamente - {date}",
+                    "body": "Quedan {count} semanas para {event_name}. ¡No lo olvides!"
+                }
+            }
         }
     }
 }
