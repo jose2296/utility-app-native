@@ -43,7 +43,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 refreshToken: async () => {
                     console.log('Refreshing token...');
 
-                    const url = `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`;
+                    const url = `${process.env.EXPO_PUBLIC_API_URL}/api/auth/refresh`;
                     const headers = new Headers();
                     headers.set('Content-Type', 'application/json');
 

@@ -41,7 +41,7 @@ export function useLazyApi<T = any, R = T>(endpoint: string, method: Method = 'G
             setError(null);
 
             try {
-                const url = `${process.env.EXPO_PUBLIC_API_URL}/${_endpoint || endpoint}`;
+                const url = `${process.env.EXPO_PUBLIC_API_URL}/api/${_endpoint || endpoint}`;
                 const headers = new Headers();
                 headers.set('Content-Type', 'application/json');
                 headers.set('Authorization', `Bearer ${session?.access_token!}`);

@@ -92,8 +92,8 @@ android {
         applicationId 'com.orbithublabs.orbithub'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "v0.0.18"
+        versionCode 20
+        versionName "v0.0.20"
     }
     signingConfigs {
         debug {

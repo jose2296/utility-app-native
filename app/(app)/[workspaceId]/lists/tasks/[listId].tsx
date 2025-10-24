@@ -106,7 +106,7 @@ const TaskListScreen = () => {
                         case 'share_list':
                             await Share.share({
                                 title: listData?.name || '',
-                                message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${listData?.id}?canEdit=true&title=${encodeURIComponent(listData?.name!)}&type=lists`,
+                                message: `${process.env.EXPO_PUBLIC_API_URL}/api/collaborate/${listData?.id}?canEdit=true&title=${encodeURIComponent(listData?.name!)}&type=lists`,
                             });
                             setIsListOptionsOpen(false);
                             break;

@@ -351,7 +351,7 @@ export default function WorkspaceScreen() {
                 setShowListOptionsModal(false);
                 await Share.share({
                     title: listItemSelected?.name || '',
-                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${listItemSelected?.id}?canEdit=true&title=${encodeURIComponent(listItemSelected?.name!)}&type=lists`,
+                    message: `${process.env.EXPO_PUBLIC_API_URL}/api/collaborate/${listItemSelected?.id}?canEdit=true&title=${encodeURIComponent(listItemSelected?.name!)}&type=lists`,
                     // message: `jose-jerez-utility-app://${workspaceId}/lists/collaborate/${listItemSelected?.id}?canEdit=true&title=${listItemSelected?.name}`,
                 });
                 break;
@@ -380,7 +380,7 @@ export default function WorkspaceScreen() {
                 setShowNoteOptionsModal(false);
                 await Share.share({
                     title: noteItemSelected?.name || '',
-                    message: `${process.env.EXPO_PUBLIC_API_URL}/collaborate/${noteItemSelected?.id}?canEdit=true&title=${encodeURIComponent(noteItemSelected?.name!)}&type=notes`,
+                    message: `${process.env.EXPO_PUBLIC_API_URL}/api/collaborate/${noteItemSelected?.id}?canEdit=true&title=${encodeURIComponent(noteItemSelected?.name!)}&type=notes`,
                     // message: `jose-jerez-utility-app://${workspaceId}/notes/${noteItemSelected?.id}?canEdit=true&title=${noteItemSelected?.name}`,
                 });
                 break;
